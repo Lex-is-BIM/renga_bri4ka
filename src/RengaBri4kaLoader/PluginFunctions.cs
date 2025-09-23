@@ -111,7 +111,12 @@ namespace RengaBri4kaLoader
                     break;
                 case PluginFunctionVariant.RENGA_BRI4KA_PLUGINHELP:
                     {
-                        Process.Start(new ProcessStartInfo("https://inj9.gitbook.io/renga-bri4ka-1/") { UseShellExecute = true });
+                        string pdfGuidePath = Path.Combine(PluginData.PluginFolder, "Bri4kaGuide.pdf");
+                        if (File.Exists(pdfGuidePath))
+                        {
+                            Process.Start("explorer.exe", pdfGuidePath);
+                        }
+                        
                     }
                     break;
 
