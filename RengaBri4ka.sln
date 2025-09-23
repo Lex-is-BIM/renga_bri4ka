@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35122.118
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RengaBri4kaLoader", "src\RengaBri4kaLoader\RengaBri4kaLoader.csproj", "{BF95C6F8-7788-4087-858B-D5572CC977DE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RengaBri4kaKernel", "src\RengaBri4kaKernel\RengaBri4kaKernel.csproj", "{049314B1-43E0-496D-8592-CBA655F4B6A5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A991FFE9-99AA-4696-BB83-3511D5B827F8}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		README.md = README.md
+		TODO.md = TODO.md
+		UPDATES.md = UPDATES.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RengaBri4kaTests", "src\RengaBri4kaTests\RengaBri4kaTests.csproj", "{E1007B53-E304-4D27-AF62-13D6308CCDBC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BF95C6F8-7788-4087-858B-D5572CC977DE}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{BF95C6F8-7788-4087-858B-D5572CC977DE}.Debug|Any CPU.Build.0 = Debug|x64
+		{BF95C6F8-7788-4087-858B-D5572CC977DE}.Debug|x64.ActiveCfg = Debug|x64
+		{BF95C6F8-7788-4087-858B-D5572CC977DE}.Debug|x64.Build.0 = Debug|x64
+		{BF95C6F8-7788-4087-858B-D5572CC977DE}.Release|Any CPU.ActiveCfg = Release|x64
+		{BF95C6F8-7788-4087-858B-D5572CC977DE}.Release|Any CPU.Build.0 = Release|x64
+		{BF95C6F8-7788-4087-858B-D5572CC977DE}.Release|x64.ActiveCfg = Release|x64
+		{BF95C6F8-7788-4087-858B-D5572CC977DE}.Release|x64.Build.0 = Release|x64
+		{049314B1-43E0-496D-8592-CBA655F4B6A5}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{049314B1-43E0-496D-8592-CBA655F4B6A5}.Debug|Any CPU.Build.0 = Debug|x64
+		{049314B1-43E0-496D-8592-CBA655F4B6A5}.Debug|x64.ActiveCfg = Debug|x64
+		{049314B1-43E0-496D-8592-CBA655F4B6A5}.Debug|x64.Build.0 = Debug|x64
+		{049314B1-43E0-496D-8592-CBA655F4B6A5}.Release|Any CPU.ActiveCfg = Release|x64
+		{049314B1-43E0-496D-8592-CBA655F4B6A5}.Release|Any CPU.Build.0 = Release|x64
+		{049314B1-43E0-496D-8592-CBA655F4B6A5}.Release|x64.ActiveCfg = Release|x64
+		{049314B1-43E0-496D-8592-CBA655F4B6A5}.Release|x64.Build.0 = Release|x64
+		{E1007B53-E304-4D27-AF62-13D6308CCDBC}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{E1007B53-E304-4D27-AF62-13D6308CCDBC}.Debug|Any CPU.Build.0 = Debug|x64
+		{E1007B53-E304-4D27-AF62-13D6308CCDBC}.Debug|x64.ActiveCfg = Debug|x64
+		{E1007B53-E304-4D27-AF62-13D6308CCDBC}.Debug|x64.Build.0 = Debug|x64
+		{E1007B53-E304-4D27-AF62-13D6308CCDBC}.Release|Any CPU.ActiveCfg = Release|x64
+		{E1007B53-E304-4D27-AF62-13D6308CCDBC}.Release|x64.ActiveCfg = Release|x64
+		{E1007B53-E304-4D27-AF62-13D6308CCDBC}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {543E5C74-9B50-4955-8DAE-5C765F342AF6}
+	EndGlobalSection
+EndGlobal
