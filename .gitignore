@@ -269,3 +269,7 @@ external
 # res
 res
 RengaBri4ka.zip
+
+# Mdbook compilation result
+docs/book
+docs/Bri4kaGuide.pdf

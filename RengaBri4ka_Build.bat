@@ -12,6 +12,7 @@ xcopy bin\Release\*.* RengaBri4ka /Y /I /E
 xcopy .\README.md "bin\Release" /Y /I
 xcopy .\UPDATES.md "bin\Release" /Y /I
 xcopy .\LICENSE "bin\Release" /Y /I
+xcopy .\docs\Bri4kaGuide.pdf "bin\Release" /Y /I
 
 ::ZIP release
 "C:\Program Files\7-Zip\7z" a -tzip "RengaBri4ka.zip" RengaBri4ka

@@ -1,0 +1,11 @@
+[book]
+authors = ["Cu4er"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Справочное руководство к плагину Bri4ka"
+
+[output.html]
+
+[output.html.print]
+enable = true
