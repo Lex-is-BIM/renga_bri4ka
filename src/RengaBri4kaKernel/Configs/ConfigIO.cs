@@ -35,6 +35,9 @@ namespace RengaBri4kaKernel.Configs
             openFileDialog.Multiselect = false;
             openFileDialog.Filter = "Конфиграционный файл (*.XML, *.xml) | *.XML;*.xml";
 
+            openFileDialog.InitialDirectory = Path.Combine(PluginConfig.GetDirectoryPath(), "Configs", typeof(ConfigType).Name);
+            if (!Directory.Exists(openFileDialog.InitialDirectory)) Directory.CreateDirectory(openFileDialog.InitialDirectory);
+
             if (openFileDialog.ShowDialog() == true && File.Exists(openFileDialog.FileName))
             {
                 return LoadFrom<ConfigType>(openFileDialog.FileName);
@@ -59,6 +62,9 @@ namespace RengaBri4kaKernel.Configs
             saveFileDialog.Title = "Сохранение файла конфигурации";
             saveFileDialog.Filter = "Конфиграционный файл (*.XML, *.xml) | *.XML;*.xml";
             saveFileDialog.AddExtension = true;
+
+            saveFileDialog.InitialDirectory = Path.Combine(PluginConfig.GetDirectoryPath(), "Configs", typeof(ConfigType).Name);
+            if (!Directory.Exists(saveFileDialog.InitialDirectory)) Directory.CreateDirectory(saveFileDialog.InitialDirectory);
 
             if (saveFileDialog.ShowDialog() == true)
             {

@@ -18,7 +18,8 @@ namespace RengaBri4kaKernel.Configs
         public bool IgnoreValuesLess { get; set; } = false;
         public double? IgnoringValuesLess { get; set; }
         public SlopeResultUnitsVariant Units { get; set; } = SlopeResultUnitsVariant.Promille;
-        public bool CreateNewLevelForResults { get; set; } = true;
+        public bool CreateNewLevelForResults { get; set; } = false;
         public bool SaveExtremeResultsToProperties { get; set; } = false;
+        public TextSettingsConfig TextStyle { get; set; } = new TextSettingsConfig();
     }
 }

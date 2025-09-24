@@ -130,7 +130,7 @@ namespace RengaBri4kaKernel.Functions
                                 Position = trStat.Center,
                                 Angle = trStat.Angle,
                                 ModelObjectId = id,
-                                Slope = Math.Round(trStat.Slope, 1)
+                                Slope = trStat.SlopeStr
                             });
                         }
                     }
@@ -183,7 +183,7 @@ namespace RengaBri4kaKernel.Functions
                 var args = rengaModel.CreateNewEntityArgs();
                 args.TypeId = RengaObjectTypes.ModelText;
                 var pl3d = new Placement3D();
-                pl3d.Origin = new Point3D { X = slopeMark.Position[0], Y = slopeMark.Position[1], Z = zMax };
+                pl3d.Origin = new Point3D { X = slopeMark.Position[0], Y = slopeMark.Position[1], Z = 0 };
                 pl3d.xAxis = new Vector3D() { X = 1, Y = 0, Z = 0 };
                 pl3d.xAxis = new Vector3D { X = Math.Cos(slopeMark.Angle), Y = Math.Sin(slopeMark.Angle), Z = 0 };
                 pl3d.zAxis = new Vector3D { X = 0, Y = 0, Z = 1 };
@@ -204,7 +204,7 @@ namespace RengaBri4kaKernel.Functions
                     FontCapSize = 3,
                     FontColor = new Renga.Color() { Red = 51, Green = 102, Blue = 0, Alpha = 255 },
                     //FontStyle = new FontStyle() { },
-                    Text = slopeMark.Slope.ToString() + "→"
+                    Text = slopeMark.Slope + "→"
                 };
                 Array tokens = new RichTextToken[] { slopeInfo };
                 IRichTextParagraph? testParagraph = textData.AppendParagraph(tokens);
@@ -227,7 +227,8 @@ namespace RengaBri4kaKernel.Functions
                     //textObjectOnLevel.SetPlacement(pl);
 
                     //pl = textObjectOnLevel.GetPlacement();
-                    
+
+                    /*
                     pl.Rotate2(new Point3D()
                     {
                         X = pl.Origin.X,
@@ -235,11 +236,20 @@ namespace RengaBri4kaKernel.Functions
                         Z = pl.Origin.Z
                     },
                     new Vector3D() { X = 1, Y = 0, Z = 0 }, slopeMark.Angle / Math.PI * 180.0);
-                    
+                    */
+
                     //pl.Rotate(new Vector3D() { X = 1, Y = 0, Z = 0 }, slopeMark.Angle);
 
                     //pl.Move(new Vector3D() { X = - rect.Right/2 * Math.Cos(slopeMark.Angle), Y = - rect.Top/2* Math.Sin(slopeMark.Angle), Z = 0 });
                     //textObjectOnLevel.SetPlacement(pl);
+
+                    Renga.IModelObject? textObjectAsModel = textObject as Renga.IModelObject;
+                    if (textObjectAsModel != null)
+                    {
+                        textObjectAsModel.SetObjectsProperties(propIds_Text, new object[] { slopeMark.ModelObjectId });
+                    }
+
+                    //break;
                 }
                 
             }
@@ -257,6 +267,6 @@ namespace RengaBri4kaKernel.Functions
         public int ModelObjectId { get; set; }
         public double[] Position { get; set; }
         public double Angle { get; set; }
-        public double Slope { get; set; }
+        public string Slope { get; set; }
     }
 }

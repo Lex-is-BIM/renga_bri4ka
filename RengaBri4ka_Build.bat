@@ -2,7 +2,7 @@ REM Step 1: Autobuild solution in Release-mode
 set VSVER=[17.0^,18.0^)
 
 ::Edit path if VS 2022 is installed on other path
-call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
+call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" 
 
 rmdir /s /q RengaBri4ka
 

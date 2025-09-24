@@ -8,7 +8,7 @@
         Title="Настройка расчета уклонов сеток" d:DesignHeight="600" d:DesignWidth="500">
     <Grid>
         <StackPanel Orientation="Vertical" Margin="5,5,5,5">
-            <GroupBox Header="Настройки анализа" IsEnabled="False">
+            <GroupBox Header="Настройки анализа">
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                         <CheckBox x:Name="CheckBox_IgnoreTrianglesSquareMore" Content="Игнорировать грани, с площадью более (м²)" Width="300"></CheckBox>
@@ -46,12 +46,13 @@
             </GroupBox>
             <GroupBox Header="Прочие настройки">
                 <StackPanel Orientation="Vertical">
-                    <CheckBox x:Name="CheckBox_SaveResultsMinMax" Margin="0,5,0,0" Content="Сохранять в параметры объектов минимальное и максимальное значения" IsEnabled="False"></CheckBox>
-                    <Button x:Name="Button_FontSettingsShow" Margin="0,5,0,0" Content="Настройки отображения текста" IsEnabled="False"></Button>
+                    <CheckBox x:Name="CheckBox_SaveResultsMinMax" Margin="0,5,0,0" Content="Сохранять в параметры объектов минимальное и максимальное значения" IsChecked="True"></CheckBox>
+                    <CheckBox x:Name="CheckBox_DeletePreviousMarksFor_Objects" Margin="0,5,0,0" Content="Удалять ранние метки для анализируемых объектов" IsEnabled="False"></CheckBox>
+                    <Button x:Name="Button_FontSettingsShow" Margin="0,5,0,0" Content="Настройки отображения текста" Click="Button_FontSettingsShow_Click"></Button>
                 </StackPanel>
             </GroupBox>
-            <Button x:Name="Button_SaveSettingsToFile" Margin="0,5,0,0" Content="Сохранить настройки в файл" Click="Button_SaveSettingsToFile_Click" IsEnabled="False"></Button>
-            <Button x:Name="Button_LoadSettingsFromFile" Margin="0,5,0,0" Content="Загрузить настройки из файла" Click="Button_LoadSettingsFromFile_Click" IsEnabled="False"></Button>
+            <Button x:Name="Button_SaveSettingsToFile" Margin="0,5,0,0" Content="Сохранить настройки в файл" Click="Button_SaveSettingsToFile_Click"></Button>
+            <Button x:Name="Button_LoadSettingsFromFile" Margin="0,5,0,0" Content="Загрузить настройки из файла" Click="Button_LoadSettingsFromFile_Click"></Button>
             <Separator Margin="0,5,0,5"></Separator>
             <Button x:Name="Button_Start" Content="Начать расчёт" Click="Button_Start_Click"></Button>
         </StackPanel>

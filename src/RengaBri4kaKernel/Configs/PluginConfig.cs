@@ -15,11 +15,15 @@ namespace RengaBri4kaKernel.Configs
     /// </summary>
     public class PluginConfig : ConfigIO
     {
-        public static string GetConfigPath()
+        public static string GetDirectoryPath()
         {
             string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Renga Bri4ka Plugin");
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-            return Path.Combine(path, "RengaBri4kaConfig.xml");
+            return path;
+        }
+        public static string GetConfigPath()
+        {
+            return Path.Combine(GetDirectoryPath(), "RengaBri4kaConfig.xml");
         }
 
         public static void Initialize()

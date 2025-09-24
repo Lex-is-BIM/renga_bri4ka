@@ -1,5 +1,6 @@
 using Renga;
 using RengaBri4kaKernel.AuxFunctions;
+using RengaBri4kaKernel.Configs;
 using RengaBri4kaKernel.Extensions;
 using RengaBri4kaKernel.RengaInternalResources;
 using System;
@@ -15,7 +16,7 @@ namespace RengaBri4kaKernel.Functions
         public class ParametersTextColoring : PLuginParametersCollection
         {
             public static Guid TextColorId = new Guid("{7a7429dc-85ca-4f5a-8665-1de4647d526e}");
-            public const string TextColor = "Bri4ka. Код цвета";
+            public const string TextColor = "Bri4ka. Код цвета RGBA";
 
         }
 
@@ -35,7 +36,7 @@ namespace RengaBri4kaKernel.Functions
             editOperation.Start();
 
             Renga.Color rengaColor = new Renga.Color() { Red = color.R, Green = color.G, Blue = color.B, Alpha = color.A };
-            string colorStr = $"#{color.R:X2}{color.G:X2}{color.B:X2}";
+            string colorStr = TextSettingsConfig.ToHex(color);
             Guid[] propsId = new Guid[] { ParametersTextColoring.TextColorId };
 
             var rengaModel = PluginData.GetModel();

@@ -57,7 +57,12 @@ namespace RengaBri4kaKernel.AuxFunctions
             CalcSide(Point1, Point3, out Slope3, out Angle3);
             double[] slopesTmp = new double[] { Slope1, Slope2, Slope3 };
             double[] anglesTmp = new double[] { Angle1, Angle2, Angle3 };
-
+#if DEBUG
+            string ncCommand =
+                $"point {Point1[0]},{Point1[1]},{Point1[2]}\n" +
+                $"point {Point2[0]},{Point2[1]},{Point2[2]}\n" +
+                $"point {Point3[0]},{Point3[1]},{Point3[2]}\n";
+#endif
 
             int index = Array.FindIndex(slopesTmp, w => w == slopesTmp.Max());
 
