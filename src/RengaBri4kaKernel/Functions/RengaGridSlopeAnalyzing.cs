@@ -157,9 +157,9 @@ namespace RengaBri4kaKernel.Functions
             Renga.IModel rengaModel = PluginData.Project.Model;
 
             // Создаем уровень для результатов
-            Renga.IModelObject? levelResult = rengaModel.CreateLevel(zMax);
+            //Renga.IModelObject? levelResult = rengaModel.CreateLevel(zMax);
             int levelId = -1;
-            if (levelResult != null) levelId = levelResult.Id;
+            //if (levelResult != null) levelId = levelResult.Id;
 
             //Вычисляемые типы из конфига
 #if DEBUG
