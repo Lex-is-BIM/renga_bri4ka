@@ -1,0 +1,156 @@
+using Renga;
+using RengaBri4kaKernel.Configs;
+using RengaBri4kaKernel.RengaInternalResources;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+
+namespace RengaBri4kaKernel.Extensions
+{
+    public enum TextOffsetMode
+    {
+        NoTransform,
+        Center,
+        TopLeftCorner
+    }
+    public enum TextObjectType
+    {
+        ModelText,
+        DrawingText
+    }
+    internal static class ModelExtension
+    {
+        /// <summary>
+        /// Создает тектовый объект в пространстве модели или чертежа с заданными настройками и применяет к тексту смещение, если необходимо
+        /// </summary>
+        /// <param name="rengaModel">Оболочка модели или пространства чертежа</param>
+        /// <param name="Position">Точка вставки текста в мм</param>
+        /// <param name="text">Значение текста</param>
+        /// <param name="textType">Тип текста (модельный или чертежный)</param>
+        /// <param name="angleRadians">Угол поворота текста относительно точки начала</param>
+        /// <param name="mode">Тип пост-трансформации координат</param>
+        /// <param name="textStyle">Стиль текста</param>
+        /// <returns></returns>
+        public static Renga.IModelObject? CreateText(
+            this Renga.IModel rengaModel,
+            double[] Position,
+            string text,
+            TextObjectType textType = TextObjectType.ModelText,
+            double angleRadians = 0.0,
+            TextOffsetMode mode = TextOffsetMode.NoTransform,
+            TextSettingsConfig? textStyle = null)
+        {
+            if (PluginData.Project == null) return null;
+            var editOperation = PluginData.Project.CreateOperation();
+            editOperation.Start();
+
+            Renga.INewEntityArgs creationParams = rengaModel.CreateNewEntityArgs();
+            creationParams.TypeId = Renga.ObjectTypes.ModelText;
+            double cos = Math.Cos(angleRadians);
+            double sin = Math.Sin(angleRadians);
+
+            double x = 1 * cos - 0 * sin;
+            double y = 1 * sin + 0 * cos;
+
+            creationParams.Placement3D = new Renga.Placement3D()
+            {
+                Origin = new Renga.Point3D() { X = Position[0], Y = Position[1], Z = Position[2] },
+                xAxis = new Renga.Vector3D() { X = x, Y = y, Z = 0 },
+                zAxis = new Renga.Vector3D() { X = 0, Y = 0, Z = 1}
+            };
+            if (textType == TextObjectType.DrawingText)
+            {
+                creationParams.TypeId = Renga.ObjectTypes.DrawingText;
+                creationParams.Placement2D = new Renga.Placement2D()
+                {
+                    Origin = new Renga.Point2D() { X = Position[0], Y = Position[1]},
+                    xAxis = new Renga.Vector2D() { X = x, Y = y }
+                };
+            }
+
+            var textObjectRaw = rengaModel.CreateObject(creationParams);
+            if (textObjectRaw == null)
+            {
+                editOperation.Rollback();
+                return null;
+            }
+            Renga.ITextObject? textObject = textObjectRaw as Renga.ITextObject;
+            if (textObject == null) 
+            {
+                editOperation.Rollback();
+                return null;
+            }
+
+            // Переходим к заданю текста для заданого стиля
+            if (textStyle == null) textStyle = new TextSettingsConfig();
+            Renga.IRichTextDocument textData = textObject.GetRichTextDocument();
+            RichTextToken slopeInfo = new RichTextToken()
+            {
+                FontFamily = textStyle.FontName,
+                FontCapSize = textStyle.FontCapSize,
+                FontColor = textStyle.ToRengaFontColor(),
+                FontStyle = textStyle.GetFontStyle(),
+                Text = text
+            };
+            Array tokens = new RichTextToken[] { slopeInfo };
+            IRichTextParagraph? textParagraph = textData.AppendParagraph(tokens);
+
+            if (mode != TextOffsetMode.NoTransform)
+            {
+                var textRectangleSize = textObject.BoundRect;
+                double x2 = 0, y2 = 0;
+                if (mode == TextOffsetMode.Center)
+                {
+                    x2 = textRectangleSize.Top / 2 * cos - textRectangleSize.Right / 2 * sin;
+                    y2 = textRectangleSize.Top / 2 * sin + textRectangleSize.Right / 2 * cos;
+                }
+                else if (mode == TextOffsetMode.TopLeftCorner)
+                {
+                    x2 = 0 * cos + textRectangleSize.Right * sin;
+                    y2 = 0 * sin - textRectangleSize.Right * cos;
+                }
+
+                //У Renga в textRectangleSize заполнены только свойства Top и Right почему-то
+                if (textType == TextObjectType.ModelText)
+                {
+                    Renga.ILevelObject? textObjectOnLevel = textObjectRaw as Renga.ILevelObject;
+                    if (textObjectOnLevel != null)
+                    {
+                        var pl = textObjectOnLevel.GetPlacement();
+                        //Сначала сдвигаем на середину ограничивающей рамки текста
+                        pl.Move(new Vector3D()
+                        {
+                            X = x2,
+                            Y = y2,
+                            Z = 0
+                        });
+                        textObjectOnLevel.SetPlacement(pl);
+                    }
+                }
+                else if (textType == TextObjectType.DrawingText)
+                {
+                    Renga.IPlacement2DObject? textObjectOnDrawing = textObjectRaw as Renga.IPlacement2DObject;
+                    if (textObjectOnDrawing != null)
+                    {
+                        var pl = textObjectOnDrawing.GetPlacement();
+                        //Сначала сдвигаем на середину ограничивающей рамки текста
+                        pl.Move(new Vector2D()
+                        {
+                            X = x2,
+                            Y = y2
+                        });
+                        textObjectOnDrawing.SetPlacement(pl);
+                    }
+                }
+            }
+
+            editOperation.Apply();
+
+            Renga.IModelObject? textAsModelObject = textObject as Renga.IModelObject;
+            return textAsModelObject;
+        }
+    }
+}

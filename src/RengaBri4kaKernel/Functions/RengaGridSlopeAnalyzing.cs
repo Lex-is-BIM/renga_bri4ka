@@ -89,7 +89,16 @@ namespace RengaBri4kaKernel.Functions
                     for (int rengaGridCounter = 0; rengaGridCounter < mesh.GridCount; rengaGridCounter++)
                     {
                         Renga.IGrid grid = mesh.GetGrid(rengaGridCounter);
-                        if (rengaObject.ObjectType == RengaObjectTypes.Roof && grid.GridType != (int)RoofGridType.Top) continue;
+
+                        if (rengaObject.ObjectType == RengaObjectTypes.Roof)
+                        {
+                            RoofGridType roofGType = (RoofGridType)grid.GridType;
+                            if (roofGType == RoofGridType.Top || roofGType == RoofGridType.OpeningTop)
+                            {
+
+                            }
+                            else continue;
+                        }
                         if (rengaObject.ObjectType == RengaObjectTypes.Ramp && grid.GridType != (int)RampGridTypes.Top) continue;
                         //TODO: другие типы сеток для других объектов? + реализовать их также в Enum
 
@@ -175,86 +184,29 @@ namespace RengaBri4kaKernel.Functions
                 editOperation.Apply();
             }
 
-            editOperation = PluginData.Project.CreateOperationWithUndo(rengaModel.Id);
-            editOperation.Start();
+            //editOperation = PluginData.Project.CreateOperationWithUndo(rengaModel.Id);
+            //editOperation.Start();
+
+            //Вычисляемые типы из конфига
+#if DEBUG
+            mConfig.TextStyle = new TextSettingsConfig()
+            {
+                FontCapSize = 2,
+                FontColorHex = "#79B258"
+            };
+#endif
 
             foreach (SlopeMarkInfo slopeMark in slopeMarks)
             {
-                var args = rengaModel.CreateNewEntityArgs();
-                args.TypeId = RengaObjectTypes.ModelText;
-                var pl3d = new Placement3D();
-                pl3d.Origin = new Point3D { X = slopeMark.Position[0], Y = slopeMark.Position[1], Z = 0 };
-                pl3d.xAxis = new Vector3D() { X = 1, Y = 0, Z = 0 };
-                pl3d.xAxis = new Vector3D { X = Math.Cos(slopeMark.Angle), Y = Math.Sin(slopeMark.Angle), Z = 0 };
-                pl3d.zAxis = new Vector3D { X = 0, Y = 0, Z = 1 };
-                args.Placement3D = pl3d;
-                //args.HostObjectId = hostObjectId;
+                Renga.IModelObject? textObjectAsModel = rengaModel.CreateText(new double[] { slopeMark.Position[0], slopeMark.Position[1], 0 }, slopeMark.Slope + "→", TextObjectType.ModelText, slopeMark.Angle, TextOffsetMode.TopLeftCorner, mConfig.TextStyle);
 
-                //В рамках новой транзакци создаем метки
-                var textObjectRaw = rengaModel.CreateObject(args);
-
-                if (textObjectRaw == null) continue;
-                Renga.ITextObject? textObject = textObjectRaw as Renga.ITextObject;
-                if (textObject == null) continue;
-
-                Renga.IRichTextDocument textData = textObject.GetRichTextDocument();
-                RichTextToken slopeInfo = new RichTextToken()
+                if (textObjectAsModel != null)
                 {
-                    FontFamily = "Arial",
-                    FontCapSize = 3,
-                    FontColor = new Renga.Color() { Red = 51, Green = 102, Blue = 0, Alpha = 255 },
-                    //FontStyle = new FontStyle() { },
-                    Text = slopeMark.Slope + "→"
-                };
-                Array tokens = new RichTextToken[] { slopeInfo };
-                IRichTextParagraph? testParagraph = textData.AppendParagraph(tokens);
-
-                //Нужно сдвинуть текст на величину огран. рамки
-                
-                Renga.ILevelObject? textObjectOnLevel = textObjectRaw as Renga.ILevelObject;
-                if (textObjectOnLevel != null)
-                {
-                    var rect = textObject.BoundRect;
-                    var pl = textObjectOnLevel.GetPlacement();
-                    //Сначала сдвигаем на середину ограничивающей рамки текста
-                    pl.Move(new Vector3D()
-                    {
-                        X = 0,
-                        Y = -rect.Right,//- rect.Right,
-                        Z = 0
-                    });
-                    //Затем поворачиваем относительно сдвинутого центра на нужный угол
-                    //textObjectOnLevel.SetPlacement(pl);
-
-                    //pl = textObjectOnLevel.GetPlacement();
-
-                    /*
-                    pl.Rotate2(new Point3D()
-                    {
-                        X = pl.Origin.X,
-                        Y = pl.Origin.Y + rect.Right,
-                        Z = pl.Origin.Z
-                    },
-                    new Vector3D() { X = 1, Y = 0, Z = 0 }, slopeMark.Angle / Math.PI * 180.0);
-                    */
-
-                    //pl.Rotate(new Vector3D() { X = 1, Y = 0, Z = 0 }, slopeMark.Angle);
-
-                    //pl.Move(new Vector3D() { X = - rect.Right/2 * Math.Cos(slopeMark.Angle), Y = - rect.Top/2* Math.Sin(slopeMark.Angle), Z = 0 });
-                    //textObjectOnLevel.SetPlacement(pl);
-
-                    Renga.IModelObject? textObjectAsModel = textObject as Renga.IModelObject;
-                    if (textObjectAsModel != null)
-                    {
-                        textObjectAsModel.SetObjectsProperties(propIds_Text, new object[] { slopeMark.ModelObjectId });
-                    }
-
-                    //break;
-                }
-                
+                    textObjectAsModel.SetObjectsProperties(propIds_Text, new object[] { slopeMark.ModelObjectId });
+                }  
             }
 
-            editOperation.Apply();
+            //editOperation.Apply();
             //TimerUtils.CreateInstance().Stop();
         }
 

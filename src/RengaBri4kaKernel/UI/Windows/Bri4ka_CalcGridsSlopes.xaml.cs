@@ -29,6 +29,7 @@ namespace RengaBri4kaKernel.UI.Windows
             InitializeComponent();
             this.SizeToContent = SizeToContent.WidthAndHeight;
             pActions = new RengaGridSlopeAnalyzing();
+            SetConfigToUi(new GridSlopeAnalyzingConfig());
         }
 
         #region Handlers
@@ -57,10 +58,10 @@ namespace RengaBri4kaKernel.UI.Windows
             GridSlopeAnalyzingConfig config = new GridSlopeAnalyzingConfig();
             //TODO: read...
             config.IgnoreTrianglesSquareMore = this.CheckBox_IgnoreTrianglesSquareMore.IsChecked ?? false;
-            config.IgnoringTrianglesSquareMore = double.Parse(this.TextBox_IgnoreValuesMore.Text, CultureInfo.InvariantCulture);
+            config.IgnoringTrianglesSquareMore = double.Parse(this.TextBox_TrianglesSquareMore.Text, CultureInfo.InvariantCulture);
 
             config.IgnoreTrianglesSquareLess = this.CheckBox_IgnoreTrianglesSquareLess.IsChecked ?? false;
-            config.IgnoringTrianglesSquareLess = double.Parse(this.TextBox_IgnoreValuesLess.Text, CultureInfo.InvariantCulture);
+            config.IgnoringTrianglesSquareLess = double.Parse(this.TextBox_TrianglesSquareLess.Text, CultureInfo.InvariantCulture);
 
             config.IgnoreValuesMore = this.CheckBox_IgnoreValuesMore.IsChecked ?? false;
             config.IgnoringValuesMore = double.Parse(this.TextBox_IgnoreValuesMore.Text, CultureInfo.InvariantCulture);
@@ -88,10 +89,10 @@ namespace RengaBri4kaKernel.UI.Windows
             }
 
             this.CheckBox_IgnoreTrianglesSquareMore.IsChecked = config.IgnoreTrianglesSquareMore;
-            this.TextBox_IgnoreValuesMore.Text = config.IgnoringTrianglesSquareMore.ToString();
+            this.TextBox_TrianglesSquareMore.Text = config.IgnoringTrianglesSquareMore.ToString();
 
             this.CheckBox_IgnoreTrianglesSquareLess.IsChecked = config.IgnoreTrianglesSquareLess;
-            this.TextBox_IgnoreValuesLess.Text = config.IgnoringTrianglesSquareLess.ToString();
+            this.TextBox_TrianglesSquareLess.Text = config.IgnoringTrianglesSquareLess.ToString();
 
             this.CheckBox_IgnoreValuesMore.IsChecked = config.IgnoreValuesMore;
             this.TextBox_IgnoreValuesMore.Text = config.IgnoringValuesMore.ToString();

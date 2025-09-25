@@ -65,9 +65,18 @@ namespace RengaBri4kaKernel.AuxFunctions
 #endif
 
             int index = Array.FindIndex(slopesTmp, w => w == slopesTmp.Max());
-
             Angle = anglesTmp[index];
             Slope = slopesTmp[index];
+
+            // Нужно проверить, имеются ли 2 сходных уклона
+            if (Slope1 == Slope2) Angle = CalculateAngleBetweenVectors(1, 0,
+                Point2[0] - GetCenter(Point1, Point3)[0], Point2[1] - GetCenter(Point1, Point3)[1]);
+            else if (Slope2 == Slope3) Angle = CalculateAngleBetweenVectors(1, 0,
+                Point3[0] - GetCenter(Point1, Point2)[0], Point3[1] - GetCenter(Point1, Point2)[1]);
+            else if (Slope1 == Slope3) Angle = CalculateAngleBetweenVectors(1, 0,
+                Point1[0] - GetCenter(Point3, Point2)[0], Point1[1] - GetCenter(Point3, Point2)[1]);
+
+            Angle += Math.PI;
 
             if (SlopeType == SlopeResultUnitsVariant.Degree | SlopeType == SlopeResultUnitsVariant.Radians)
             {

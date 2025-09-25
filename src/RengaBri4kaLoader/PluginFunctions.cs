@@ -73,8 +73,10 @@ namespace RengaBri4kaLoader
                     {
 #if DEBUG
                         RengaGridSlopeAnalyzing slopeAnal = new RengaBri4kaKernel.Functions.RengaGridSlopeAnalyzing();
-                        slopeAnal.SetInputData(new int[] { 100107 }, new GridSlopeAnalyzingConfig() { Units = SlopeResultUnitsVariant.Degree});
+                        slopeAnal.SetInputData(new int[] { 100106, 100107, 100108, 100109}, new GridSlopeAnalyzingConfig() { Units = SlopeResultUnitsVariant.Degree});
                         slopeAnal.Calculate();
+                        //Bri4ka_CalcGridsSlopes slopesAnalUi = new Bri4ka_CalcGridsSlopes();
+                        //slopesAnalUi.ShowDialog();
 #else
                         Bri4ka_CalcGridsSlopes slopesAnalUi = new Bri4ka_CalcGridsSlopes();
                         slopesAnalUi.ShowDialog();       

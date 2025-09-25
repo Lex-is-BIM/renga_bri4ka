@@ -10,9 +10,14 @@ namespace RengaBri4kaKernel.Configs
 {
     public class TextSettingsConfig : ConfigIO
     {
-        public int FontCapSize { get; set; } = 12;
+        public int FontCapSize { get; set; } = 4;
         [XmlIgnore]
         public System.Windows.Media.Color FontColor { get; set; } = System.Windows.Media.Color.FromArgb(255, 0, 0, 0);
+
+        public Renga.Color ToRengaFontColor()
+        {
+            return new Renga.Color() { Red = FontColor.R, Green = FontColor.G, Blue = FontColor.B, Alpha = FontColor.A };
+        }
 
         [XmlElement("FontColor")]
         public string FontColorHex
@@ -29,12 +34,22 @@ namespace RengaBri4kaKernel.Configs
         public static System.Windows.Media.Color FromHex(string hex)
         {
             hex = hex.Replace("#", "");
-            byte a = byte.Parse(new string(hex[3], 2), NumberStyles.HexNumber);
-            byte r = byte.Parse(new string(hex[0], 2), NumberStyles.HexNumber);
-            byte g = byte.Parse(new string(hex[1], 2), NumberStyles.HexNumber);
-            byte b = byte.Parse(new string(hex[2], 2), NumberStyles.HexNumber);
-
-            return System.Windows.Media.Color.FromArgb(a, r, g, b);
+            if (hex.Length == 4) // RGBA format (each character doubled)
+            {
+                byte a = byte.Parse(new string(hex[3], 2), NumberStyles.HexNumber);
+                byte r = byte.Parse(new string(hex[0], 2), NumberStyles.HexNumber);
+                byte g = byte.Parse(new string(hex[1], 2), NumberStyles.HexNumber);
+                byte b = byte.Parse(new string(hex[2], 2), NumberStyles.HexNumber);
+                return System.Windows.Media.Color.FromArgb(a, r, g, b);
+            }
+            else if (hex.Length == 3) // RGB format (each character doubled)
+            {
+                byte r = byte.Parse(new string(hex[0], 2), NumberStyles.HexNumber);
+                byte g = byte.Parse(new string(hex[1], 2), NumberStyles.HexNumber);
+                byte b = byte.Parse(new string(hex[2], 2), NumberStyles.HexNumber);
+                return System.Windows.Media.Color.FromArgb(255, r, g, b);
+            }
+            else return System.Windows.Media.Color.FromArgb(255, 0, 0, 0);
         }
 
         public static string ToHex(System.Windows.Media.Color color)
@@ -46,5 +61,18 @@ namespace RengaBri4kaKernel.Configs
         public bool IsBold { get; set; } = false;
         public bool IsItalic { get; set; } = false;
         public bool IsUnderline { get; set; } = false;
+
+        public Renga.FontStyle GetFontStyle()
+        {
+            sbyte b = 0;
+            sbyte i = 0;
+            sbyte u = 0;
+            if (IsBold) b = 1;
+            if (IsItalic) i = 1;
+            if (IsUnderline) u = 1;
+            return new Renga.FontStyle() { Bold = b, Italic = i, Underline = u };
+        }
+
+        public static TextSettingsConfig Default() => new TextSettingsConfig();
     }
 }
