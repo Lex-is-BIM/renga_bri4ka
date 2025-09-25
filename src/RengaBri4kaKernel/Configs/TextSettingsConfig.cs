@@ -10,7 +10,7 @@ namespace RengaBri4kaKernel.Configs
 {
     public class TextSettingsConfig : ConfigIO
     {
-        public int FontCapSize { get; set; } = 4;
+        public int FontCapSize { get; set; } = 2;
         [XmlIgnore]
         public System.Windows.Media.Color FontColor { get; set; } = System.Windows.Media.Color.FromArgb(255, 0, 0, 0);
 

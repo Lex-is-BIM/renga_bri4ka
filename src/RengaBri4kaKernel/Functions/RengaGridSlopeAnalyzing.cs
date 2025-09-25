@@ -198,7 +198,16 @@ namespace RengaBri4kaKernel.Functions
 
             foreach (SlopeMarkInfo slopeMark in slopeMarks)
             {
-                Renga.IModelObject? textObjectAsModel = rengaModel.CreateText(new double[] { slopeMark.Position[0], slopeMark.Position[1], 0 }, slopeMark.Slope + "→", TextObjectType.ModelText, slopeMark.Angle, TextOffsetMode.TopLeftCorner, mConfig.TextStyle);
+                string slopeMarkText = slopeMark.Slope + "→";
+
+                if (slopeMark.Angle < 0) slopeMark.Angle += 2 * Math.PI;
+                if (slopeMark.Angle > Math.PI / 2 && slopeMark.Angle <= 3 * Math.PI / 2)
+                {
+                    slopeMark.Angle -= Math.PI;
+                    slopeMarkText = "←" + slopeMark.Slope;
+                }
+
+                Renga.IModelObject? textObjectAsModel = rengaModel.CreateText(new double[] { slopeMark.Position[0], slopeMark.Position[1], 0 }, slopeMarkText, TextObjectType.ModelText, slopeMark.Angle, TextOffsetMode.TopLeftCorner, mConfig.TextStyle);
 
                 if (textObjectAsModel != null)
                 {
