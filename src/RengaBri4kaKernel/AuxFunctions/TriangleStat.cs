@@ -68,15 +68,34 @@ namespace RengaBri4kaKernel.AuxFunctions
             Angle = anglesTmp[index];
             Slope = slopesTmp[index];
 
-            // Нужно проверить, имеются ли 2 сходных уклона
-            if (Slope1 == Slope2) Angle = CalculateAngleBetweenVectors(1, 0,
-                Point2[0] - GetCenter(Point1, Point3)[0], Point2[1] - GetCenter(Point1, Point3)[1]);
-            else if (Slope2 == Slope3) Angle = CalculateAngleBetweenVectors(1, 0,
-                Point3[0] - GetCenter(Point1, Point2)[0], Point3[1] - GetCenter(Point1, Point2)[1]);
-            else if (Slope1 == Slope3) Angle = CalculateAngleBetweenVectors(1, 0,
-                Point1[0] - GetCenter(Point3, Point2)[0], Point1[1] - GetCenter(Point3, Point2)[1]);
+            // Нужно проверить, имеются ли 2 сходных уклона, и если да -- то угол направить на серединку их противолежащей стороны
+            int roundVal = 2;
+            if (Math.Round(Slope1, roundVal) == Math.Round(Slope2, roundVal)) 
+            {
+                Angle = CalculateAngleBetweenVectors(1, 0,
+                GetCenter(Point1, Point3)[0] - Point2[0], GetCenter(Point1, Point3)[1] - Point2[1]);
+                //if (Point2[2] > Point1[2]) Angle += Math.PI;
+            }
+            else if (Math.Round(Slope2, roundVal) == Math.Round(Slope3, roundVal))
+            {
+                Angle = CalculateAngleBetweenVectors(1, 0,
+                GetCenter(Point1, Point2)[0] - Point3[0], GetCenter(Point1, Point2)[1] - Point3[1]);
+                //if (Point3[2] > Point1[2]) Angle += Math.PI;
+            }
+            else if (Math.Round(Slope1, roundVal) == Math.Round(Slope3, roundVal))
+            {
+                Angle = CalculateAngleBetweenVectors(1, 0,
+                GetCenter(Point2, Point3)[0] - Point1[0], GetCenter(Point2, Point3)[1] - Point1[1]);
+                //if (Point1[2] > Point2[2]) Angle += Math.PI;
+            }
+            else
+            {
+                //
+            }
 
-            Angle += Math.PI;
+            //if (Angle <= Math.PI && Angle >= 0) Angle += Math.PI;
+
+            //Angle += Math.PI;
 
             if (SlopeType == SlopeResultUnitsVariant.Degree | SlopeType == SlopeResultUnitsVariant.Radians)
             {
@@ -124,7 +143,7 @@ namespace RengaBri4kaKernel.AuxFunctions
                     pMin = p1;
                 }
 
-                Angle = CalculateAngleBetweenVectors(1, 0, pMax[0] - pMin[0], pMax[1] - pMin[1]);
+                Angle = CalculateAngleBetweenVectors(1, 0, pMin[0] - pMax[0], pMin[1] - pMax[1]);
 
                 double l = CalculateDistance(pMin, new double[] { pMax[0], pMax[1], pMin[2] });
                 Slope = dZ / l;
@@ -151,6 +170,18 @@ namespace RengaBri4kaKernel.AuxFunctions
 
         private double CalculateAngleBetweenVectors(double v1x, double v1y, double v2x, double v2y)
         {
+            // Atan2 returns angle in radians between -π and π
+            double angleRadians = Math.Atan2(v2y, v2x);
+
+            // Convert to degrees if desired (0° to 360°)
+            double angleDegrees = angleRadians * 180.0 / Math.PI;
+
+            // Normalize to 0-360 range
+            if (angleDegrees < 0)
+                angleDegrees += 360;
+
+            return angleDegrees * Math.PI / 180.0;
+
             // Alternative method that takes vector components directly
             double dotProduct = v1x * v2x + v1y * v2y;
             double magnitude1 = Math.Sqrt(v1x * v1x + v1y * v1y);
@@ -162,7 +193,7 @@ namespace RengaBri4kaKernel.AuxFunctions
             }
 
             double cosTheta = dotProduct / (magnitude1 * magnitude2);
-            cosTheta = Math.Max(-1.0, Math.Min(1.0, cosTheta));
+            //cosTheta = Math.Max(-1.0, Math.Min(1.0, cosTheta));
 
             return Math.Acos(cosTheta);
         }

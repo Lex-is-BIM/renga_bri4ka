@@ -119,10 +119,10 @@ namespace RengaBri4kaKernel.Functions
                         {
                             Renga.Triangle tr = grid.GetTriangle(rengaFaceCounter);
                             TriangleStat trStat = new TriangleStat(vertices[(int)tr.V0], vertices[(int)tr.V1], vertices[(int)tr.V2], mConfig.Units);
+
+                            trStat.Calculate();
                             //Перерводим в м2 для сравнения с полями
                             double trArea = trStat.Area / 1000.0 / 1000.0;
-                            
-                            trStat.Calculate();
                             if (mConfig.IgnoreTrianglesSquareMore == true && trArea > mConfig.IgnoringTrianglesSquareMore) continue;
                             if (mConfig.IgnoreTrianglesSquareLess == true && trArea < mConfig.IgnoringTrianglesSquareLess) continue;
                             if (mConfig.IgnoreValuesMore == true && trStat.Slope > mConfig.IgnoringValuesMore) continue;
@@ -139,7 +139,7 @@ namespace RengaBri4kaKernel.Functions
                                 Position = trStat.Center,
                                 Angle = trStat.Angle,
                                 ModelObjectId = id,
-                                Slope = trStat.SlopeStr
+                                Slope = trStat.SlopeStr + $"\n({Math.Round(trArea, 2)} m²)"
                             });
                         }
                     }
@@ -191,7 +191,7 @@ namespace RengaBri4kaKernel.Functions
 #if DEBUG
             mConfig.TextStyle = new TextSettingsConfig()
             {
-                FontCapSize = 2,
+                FontCapSize = 1,
                 FontColorHex = "#79B258"
             };
 #endif
