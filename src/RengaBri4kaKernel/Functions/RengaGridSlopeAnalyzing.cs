@@ -154,46 +154,10 @@ namespace RengaBri4kaKernel.Functions
             // Создаем текстовые объекты для меток
             Renga.IModel rengaModel = PluginData.Project.Model;
 
-            int hostObjectId = -1;
-            if (mConfig.CreateNewLevelForResults)
-            {
-                //Для создания уровня нужна транзакция
-                editOperation = PluginData.Project.CreateOperationWithUndo(rengaModel.Id);
-                editOperation.Start();
-
-                
-                var args = rengaModel.CreateNewEntityArgs();
-                var pl3d = new Placement3D();
-                pl3d.Init(0, 0, zMax);
-                args.TypeId = RengaObjectTypes.Level;
-                args.Placement3D = pl3d;
-
-                Renga.IModelObject? levelObjectRaw = rengaModel.CreateObject(args);
-                
-                if (levelObjectRaw != null)
-                {
-                    hostObjectId = levelObjectRaw.Id;
-                    Renga.ILevel? levelObject = levelObjectRaw as Renga.ILevel;
-                    if (levelObject != null)
-                    {
-                        levelObject.Placement.Move(new Vector3D() { X = 0, Y = 0, Z = zMax });
-                        //levelObject.LevelName = "";
-                        //levelObject.Elevation = maxZ * 1000;
-                    }
-                }
-                editOperation.Apply();
-            }
-
-            //editOperation = PluginData.Project.CreateOperationWithUndo(rengaModel.Id);
-            //editOperation.Start();
-
             //Вычисляемые типы из конфига
 #if DEBUG
-            mConfig.TextStyle = new TextSettingsConfig()
-            {
-                FontCapSize = 1,
-                FontColorHex = "#79B258"
-            };
+            //mConfig.TextStyle.FontColorHex = "#79B258";
+            //mConfig.TextStyle.FontCapSize = 1;
 #endif
 
             foreach (SlopeMarkInfo slopeMark in slopeMarks)

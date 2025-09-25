@@ -28,8 +28,12 @@ namespace RengaBri4kaKernel.UI.Windows
         {
             InitializeComponent();
             this.SizeToContent = SizeToContent.WidthAndHeight;
+
+            GridSlopeAnalyzingConfig? config = (GridSlopeAnalyzingConfig?)ConfigIO.LoadFrom<GridSlopeAnalyzingConfig>(ConfigIO.GetDefaultPath<GridSlopeAnalyzingConfig>());
+            if (config == null) config = new GridSlopeAnalyzingConfig();
+
             pActions = new RengaGridSlopeAnalyzing();
-            SetConfigToUi(new GridSlopeAnalyzingConfig());
+            SetConfigToUi(config);
         }
 
         #region Handlers
@@ -45,8 +49,10 @@ namespace RengaBri4kaKernel.UI.Windows
         private void Button_Start_Click(object sender, RoutedEventArgs e)
         {
             pActions.mConfig = this.GetConfigFromUI();
+            ConfigIO.SaveTo<GridSlopeAnalyzingConfig>(ConfigIO.GetDefaultPath<GridSlopeAnalyzingConfig>(), pActions.mConfig);
             pActions.mObjectIds = UserInput.GetSelectedObjects();
             pActions.Calculate();
+            this.DialogResult = true;
             this.Close();
         }
         #endregion
@@ -56,7 +62,7 @@ namespace RengaBri4kaKernel.UI.Windows
         public GridSlopeAnalyzingConfig GetConfigFromUI()
         {
             GridSlopeAnalyzingConfig config = new GridSlopeAnalyzingConfig();
-            //TODO: read...
+
             config.IgnoreTrianglesSquareMore = this.CheckBox_IgnoreTrianglesSquareMore.IsChecked ?? false;
             config.IgnoringTrianglesSquareMore = double.Parse(this.TextBox_TrianglesSquareMore.Text, CultureInfo.InvariantCulture);
 
@@ -70,6 +76,7 @@ namespace RengaBri4kaKernel.UI.Windows
             config.IgnoringValuesLess = double.Parse(this.TextBox_IgnoreValuesLess.Text, CultureInfo.InvariantCulture);
 
             config.SaveExtremeResultsToProperties = this.CheckBox_SaveResultsMinMax.IsChecked ?? false;
+            config.AddTriangleAres = this.CheckBox_AddSquare.IsChecked ?? false;
 
             if (this.RadioButton_ResultAsPercent.IsChecked == true) config.Units = SlopeResultUnitsVariant.Percent;
             else if (this.RadioButton_ResultAsPromille.IsChecked == true) config.Units = SlopeResultUnitsVariant.Promille;
@@ -101,6 +108,7 @@ namespace RengaBri4kaKernel.UI.Windows
             this.TextBox_IgnoreValuesLess.Text = config.IgnoringValuesLess.ToString();
 
             this.CheckBox_SaveResultsMinMax.IsChecked = config.SaveExtremeResultsToProperties;
+            this.CheckBox_AddSquare.IsChecked = config.AddTriangleAres;
 
             if (config.Units == SlopeResultUnitsVariant.Percent) this.RadioButton_ResultAsPercent.IsChecked = true;
             else if (config.Units == SlopeResultUnitsVariant.Promille) this.RadioButton_ResultAsPromille.IsChecked = true;

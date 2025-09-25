@@ -23,8 +23,8 @@
                 </StackPanel>
             </GroupBox>
             <Separator Margin="5,5,5,5"></Separator>
-            <Button x:Name="Button_SaveSettingsToFile" Margin="5,0,0,5" Content="Сохранить настройки в файл" Click="Button_SaveSettingsToFile_Click"></Button>
-            <Button x:Name="Button_LoadSettingsFromFile" Margin="5,0,0,5" Content="Загрузить настройки из файла" Click="Button_LoadSettingsFromFile_Click"></Button>
+            <Button x:Name="Button_SaveSettingsToFile" Margin="5,0,0,5" Content="Сохранить настройки в файл" Click="Button_SaveSettingsToFile_Click" IsEnabled="False"></Button>
+            <Button x:Name="Button_LoadSettingsFromFile" Margin="5,0,0,5" Content="Загрузить настройки из файла" Click="Button_LoadSettingsFromFile_Click" IsEnabled="False"></Button>
             <Separator Margin="5,5,5,5"></Separator>
             <Button x:Name="Buton_OK" Margin="5,0,5,0" Content="Применить" Click="Button_OK_Click"></Button>
         </StackPanel>

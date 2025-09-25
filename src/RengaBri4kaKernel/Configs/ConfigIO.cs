@@ -22,7 +22,8 @@ namespace RengaBri4kaKernel.Configs
                 using (var stream = File.OpenRead(path))
                 {
                     var serializer = new XmlSerializer(typeof(ConfigType));
-                    return serializer.Deserialize(stream);
+                    object? serResult = serializer.Deserialize(stream);
+                    return serResult;
                 }
             }
             return null;
@@ -70,6 +71,11 @@ namespace RengaBri4kaKernel.Configs
             {
                 SaveTo(saveFileDialog.FileName, objectData);
             }
+        }
+
+        public static string GetDefaultPath<ConfigType>()
+        {
+            return Path.Combine(PluginConfig.GetDirectoryPath(), "Configs", typeof(ConfigType).Name, "Default.xml");
         }
     }
 }

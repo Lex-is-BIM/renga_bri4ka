@@ -42,12 +42,13 @@ namespace RengaBri4kaKernel.UI.Windows
             if (form.ShowDialog() == true)
             {
                 this.pColorSelected = form.CreatedColor;
+                UpdateColorBorder();
             }
         }
 
         public void Button_OK_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            this.DialogResult = true;
         }
         #endregion
         #region Config

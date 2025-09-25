@@ -127,7 +127,8 @@ namespace RengaBri4kaKernel.UI.Windows
                 RengaTextColoring func = new RengaTextColoring();
                 func.SetColor(CreatedColor);
             }
-            this.Close();
+            this.DialogResult = true;
+            //this.Close();
         }
 
         private ColoringFunctionMode pMode;

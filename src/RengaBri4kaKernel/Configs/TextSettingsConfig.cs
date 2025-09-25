@@ -34,7 +34,22 @@ namespace RengaBri4kaKernel.Configs
         public static System.Windows.Media.Color FromHex(string hex)
         {
             hex = hex.Replace("#", "");
-            if (hex.Length == 4) // RGBA format (each character doubled)
+            if (hex.Length == 8) // RRGGBBAA format
+            {
+                byte a = byte.Parse(hex.Substring(6, 2), NumberStyles.HexNumber);
+                byte r = byte.Parse(hex.Substring(0, 2), NumberStyles.HexNumber);
+                byte g = byte.Parse(hex.Substring(2, 2), NumberStyles.HexNumber);
+                byte b = byte.Parse(hex.Substring(4, 2), NumberStyles.HexNumber);
+                return System.Windows.Media.Color.FromArgb(a, r, g, b);
+            }
+            else if (hex.Length == 6) // RRGGBB format (assume fully opaque)
+            {
+                byte r = byte.Parse(hex.Substring(0, 2), NumberStyles.HexNumber);
+                byte g = byte.Parse(hex.Substring(2, 2), NumberStyles.HexNumber);
+                byte b = byte.Parse(hex.Substring(4, 2), NumberStyles.HexNumber);
+                return System.Windows.Media.Color.FromArgb(255, r, g, b);
+            }
+            else if (hex.Length == 4) // RGBA format (each character doubled)
             {
                 byte a = byte.Parse(new string(hex[3], 2), NumberStyles.HexNumber);
                 byte r = byte.Parse(new string(hex[0], 2), NumberStyles.HexNumber);

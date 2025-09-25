@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RengaBri4kaKernel.UI.Windows"
         mc:Ignorable="d"
-        Title="Настройка расчета уклонов сеток" d:DesignHeight="600" d:DesignWidth="500">
+        Title="Настройка расчета уклонов сеток" d:DesignHeight="450" d:DesignWidth="500">
     <Grid>
         <StackPanel Orientation="Vertical" Margin="5,5,5,5">
             <GroupBox Header="Настройки анализа">
@@ -36,18 +36,11 @@
                     <RadioButton x:Name="RadioButton_ResultAsRadians" Margin="0,5,0,0" Content="В радианах" ></RadioButton>
                 </StackPanel>
             </GroupBox>
-            <GroupBox Header="Уровень для сохранения результатов" Margin="0,5,0,0" IsEnabled="False">
-                <StackPanel Orientation="Vertical">
-                    <RadioButton x:Name="RadioButton_LevelNewTop" Margin="0,5,0,0" Content="Новый уровень на максимальной отметке поверхности объекта"></RadioButton>
-                    <RadioButton x:Name="RadioButton_LeveExisted" Margin="0,5,0,0" Content="Уровень из списка" IsEnabled="False"></RadioButton>
-                    <ListBox x:Name="LixtBox_RengaLevels" Margin="0,5,0,0" Height="70" ScrollViewer.VerticalScrollBarVisibility="Visible" IsEnabled="False"></ListBox>
-
-                </StackPanel>
-            </GroupBox>
-            <GroupBox Header="Прочие настройки">
+			<GroupBox Header="Прочие настройки">
                 <StackPanel Orientation="Vertical">
                     <CheckBox x:Name="CheckBox_SaveResultsMinMax" Margin="0,5,0,0" Content="Сохранять в параметры объектов минимальное и максимальное значения" IsChecked="True"></CheckBox>
-                    <CheckBox x:Name="CheckBox_DeletePreviousMarksFor_Objects" Margin="0,5,0,0" Content="Удалять ранние метки для анализируемых объектов" IsEnabled="False"></CheckBox>
+                    <CheckBox x:Name="CheckBox_AddSquare" Margin="0,5,0,0" Content="Проставлять ниже площадь граней"></CheckBox>
+                    <CheckBox x:Name="CheckBox_DeletePreviousMarksFor_Objects" Margin="0,5,0,0" Content="Удалять ранние метки для анализируемых объектов"  IsEnabled="False"></CheckBox>
                     <Button x:Name="Button_FontSettingsShow" Margin="0,5,0,0" Content="Настройки отображения текста" Click="Button_FontSettingsShow_Click"></Button>
                 </StackPanel>
             </GroupBox>
