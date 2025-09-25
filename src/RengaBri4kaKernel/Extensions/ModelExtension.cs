@@ -31,6 +31,7 @@ namespace RengaBri4kaKernel.Extensions
         /// <param name="text">Значение текста</param>
         /// <param name="textType">Тип текста (модельный или чертежный)</param>
         /// <param name="angleRadians">Угол поворота текста относительно точки начала</param>
+        /// <param name="LevelId">ВНутренний идентификатор уровня Renga (для текста модели)</param>
         /// <param name="mode">Тип пост-трансформации координат</param>
         /// <param name="textStyle">Стиль текста</param>
         /// <returns></returns>
@@ -39,12 +40,13 @@ namespace RengaBri4kaKernel.Extensions
             double[] Position,
             string text,
             TextObjectType textType = TextObjectType.ModelText,
+            int LevelId = -1,
             double angleRadians = 0.0,
             TextOffsetMode mode = TextOffsetMode.NoTransform,
             TextSettingsConfig? textStyle = null)
         {
             if (PluginData.Project == null) return null;
-            var editOperation = PluginData.Project.CreateOperation();
+            Renga.IOperation editOperation = PluginData.Project.CreateOperation();
             editOperation.Start();
 
             Renga.INewEntityArgs creationParams = rengaModel.CreateNewEntityArgs();
@@ -71,6 +73,12 @@ namespace RengaBri4kaKernel.Extensions
                 };
             }
 
+            if (LevelId != -1 && textType == TextObjectType.ModelText)
+            {
+                //Пока прячем на 8.9. Это баг АПИ
+                if (PluginData.RengaVersion.CompareTo(new Version("8.9")) > 0) creationParams.HostObjectId = LevelId;
+            }
+
             var textObjectRaw = rengaModel.CreateObject(creationParams);
             if (textObjectRaw == null)
             {
@@ -84,7 +92,7 @@ namespace RengaBri4kaKernel.Extensions
                 return null;
             }
 
-            // Переходим к заданю текста для заданого стиля
+            // Переходим к заданию текста для заданого стиля
             if (textStyle == null) textStyle = new TextSettingsConfig();
             Renga.IRichTextDocument textData = textObject.GetRichTextDocument();
             RichTextToken slopeInfo = new RichTextToken()
@@ -151,6 +159,41 @@ namespace RengaBri4kaKernel.Extensions
 
             Renga.IModelObject? textAsModelObject = textObject as Renga.IModelObject;
             return textAsModelObject;
+        }
+
+        public static Renga.IModelObject? CreateLevel(this Renga.IModel rengaModel, double elevation)
+        {
+            if (PluginData.Project == null) return null;
+            var editOperation = PluginData.Project.CreateOperation();
+            editOperation.Start();
+
+            Renga.INewEntityArgs creationParams = rengaModel.CreateNewEntityArgs();
+            creationParams.TypeId = Renga.ObjectTypes.Level;
+            creationParams.Placement3D = new Renga.Placement3D()
+            {
+                Origin = new Renga.Point3D() { X = 0, Y = 0, Z = elevation },
+                xAxis = new Renga.Vector3D() { X = 1, Y = 0, Z = 0 },
+                zAxis = new Renga.Vector3D() { X = 0, Y = 0, Z = 1 }
+            };
+
+            var levelObjectRaw = rengaModel.CreateObject(creationParams);
+            if (levelObjectRaw == null)
+            {
+                editOperation.Rollback();
+                return null;
+            }
+
+            Renga.ILevel? levelObject = levelObjectRaw as Renga.ILevel;
+            if (levelObject == null)
+            {
+                editOperation.Rollback();
+                return null;
+            }
+            levelObject.Placement.Move(new Vector3D() { X = 0, Y = 0, Z = elevation });
+            editOperation.Apply();
+
+            Renga.IModelObject? levelAsModelObject = levelObject as Renga.IModelObject;
+            return levelAsModelObject;
         }
     }
 }

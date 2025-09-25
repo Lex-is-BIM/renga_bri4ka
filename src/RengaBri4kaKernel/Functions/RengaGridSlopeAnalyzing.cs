@@ -151,13 +151,20 @@ namespace RengaBri4kaKernel.Functions
 
             zMax += 100;
 
+            
+
             // Создаем текстовые объекты для меток
             Renga.IModel rengaModel = PluginData.Project.Model;
 
+            // Создаем уровень для результатов
+            Renga.IModelObject? levelResult = rengaModel.CreateLevel(zMax);
+            int levelId = -1;
+            if (levelResult != null) levelId = levelResult.Id;
+
             //Вычисляемые типы из конфига
 #if DEBUG
-            //mConfig.TextStyle.FontColorHex = "#79B258";
-            //mConfig.TextStyle.FontCapSize = 1;
+                //mConfig.TextStyle.FontColorHex = "#79B258";
+                //mConfig.TextStyle.FontCapSize = 1;
 #endif
 
             foreach (SlopeMarkInfo slopeMark in slopeMarks)
@@ -171,7 +178,7 @@ namespace RengaBri4kaKernel.Functions
                     slopeMarkText = "←" + slopeMark.Slope;
                 }
 
-                Renga.IModelObject? textObjectAsModel = rengaModel.CreateText(new double[] { slopeMark.Position[0], slopeMark.Position[1], 0 }, slopeMarkText, TextObjectType.ModelText, slopeMark.Angle, TextOffsetMode.TopLeftCorner, mConfig.TextStyle);
+                Renga.IModelObject? textObjectAsModel = rengaModel.CreateText(new double[] { slopeMark.Position[0], slopeMark.Position[1], 0 }, slopeMarkText, TextObjectType.ModelText, levelId, slopeMark.Angle, TextOffsetMode.TopLeftCorner, mConfig.TextStyle);
 
                 if (textObjectAsModel != null)
                 {
