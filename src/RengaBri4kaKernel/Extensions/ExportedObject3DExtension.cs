@@ -32,35 +32,36 @@ namespace RengaBri4kaKernel.Extensions
             }
         }
 
-        public static BRepContainsLineChecker.BRepSolid[] ToFacetedBRep2(this Renga.IExportedObject3D geometry)
+        public static BRepSolidChecker.BRepSolid[] ToFacetedBRep2(this Renga.IExportedObject3D geometry)
         {
-            BRepContainsLineChecker.BRepSolid[] result = new BRepContainsLineChecker.BRepSolid[geometry.MeshCount];
+            BRepSolidChecker.BRepSolid[] result = new BRepSolidChecker.BRepSolid[geometry.MeshCount];
             for (int rengaMeshCounter = 0; rengaMeshCounter < geometry.MeshCount; rengaMeshCounter++)
             {
                 Renga.IMesh mesh = geometry.GetMesh(rengaMeshCounter);
-                
-                List<BRepContainsLineChecker.Face> faces = new List<BRepContainsLineChecker.Face>();
+
+                BRepSolidChecker.BRepSolid brepMesh = new BRepSolidChecker.BRepSolid();
+                List<BRepSolidChecker.Face> faces = new List<BRepSolidChecker.Face>();
 
                 for (int rengaGridCounter = 0; rengaGridCounter < mesh.GridCount; rengaGridCounter++)
                 {
                     Renga.IGrid grid = mesh.GetGrid(rengaGridCounter);
 
-                    Dictionary<int, BRepContainsLineChecker.Point3D> verticesIndexMap = new Dictionary<int, BRepContainsLineChecker.Point3D>();
+                    Dictionary<int, int> verticesIndexMap = new Dictionary<int, int>();
                     for (int rengaVertexCounter = 0; rengaVertexCounter < grid.VertexCount; rengaVertexCounter++)
                     {
                         Renga.FloatPoint3D p = grid.GetVertex(rengaVertexCounter);
-                        verticesIndexMap.Add(rengaVertexCounter, new BRepContainsLineChecker.Point3D(p.X, p.Y, p.Z));
+                        verticesIndexMap.Add(rengaVertexCounter, brepMesh.AddPoint(new BRepSolidChecker.Point3D(p.X, p.Y, p.Z)));
 
                     }
                     for (int rengaFaceCounter = 0; rengaFaceCounter < grid.TriangleCount; rengaFaceCounter++)
                     {
                         Renga.Triangle tr = grid.GetTriangle(rengaFaceCounter);
-                        BRepContainsLineChecker.Face f = new BRepContainsLineChecker.Face(new List<BRepContainsLineChecker.Point3D> {
-                        verticesIndexMap[(int)tr.V0], verticesIndexMap[(int)tr.V1], verticesIndexMap[(int)tr.V2]});
-                        faces.Add(f);
+                        BRepSolidChecker.Face f = new BRepSolidChecker.Face(brepMesh);
+                        f.Vertices = new List<int>() { verticesIndexMap[(int)tr.V0], verticesIndexMap[(int)tr.V1], verticesIndexMap[(int)tr.V2] };
+                        f.CalculateNormal();
+                        brepMesh.AddFace(f);
                     }
                 }
-                BRepContainsLineChecker.BRepSolid brepMesh = new BRepContainsLineChecker.BRepSolid(faces);
                 result[rengaMeshCounter] = brepMesh;
             }
             return result;

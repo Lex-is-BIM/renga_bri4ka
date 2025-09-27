@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace RengaBri4kaKernel.Geometry
 {
-    public class BRepContainsLineChecker
+    public class BRepSolidChecker
     {
-        // Basic geometric structures
-        public struct Point3D
+        // Basic geometric classures
+        public class Point3D
         {
             public double X, Y, Z;
             public Point3D(double x, double y, double z) { X = x; Y = y; Z = z; }
-
+            public Point3D() { X = 0.0; Y = 0.0; Z = 0.0; }
             public static Point3D operator -(Point3D a, Point3D b) => new Point3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
             public static Point3D operator +(Point3D a, Point3D b) => new Point3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
             public static Point3D operator *(Point3D a, double scalar) => new Point3D(a.X * scalar, a.Y * scalar, a.Z * scalar);
@@ -27,22 +27,29 @@ namespace RengaBri4kaKernel.Geometry
             public Point3D Normalize() => this * (1.0 / Length());
         }
 
-        public struct Line2D
+        public class Line2D
         {
             public Point3D Start;
             public Point3D End;
             public Line2D(Point3D start, Point3D end) { Start = start; End = end; }
         }
 
-        public struct Face
+        public class Face
         {
-            public List<Point3D> Vertices;
-            public Point3D Normal;
+            public List<int> Vertices { get; set; }
+            public Point3D Normal { get; private set; }
+            public readonly BRepSolid Owner;
 
-            public Face(List<Point3D> vertices)
+            public Face(BRepSolid owner)
             {
-                Vertices = vertices;
-                Normal = CalculateNormal(vertices);
+                Owner = owner;
+                Vertices = new List<int>();
+                Normal = new Point3D();
+            }
+
+            public void CalculateNormal()
+            {
+                Normal = CalculateNormal(Owner.GetPoints(Vertices));
             }
 
             private static Point3D CalculateNormal(List<Point3D> vertices)
@@ -72,13 +79,13 @@ namespace RengaBri4kaKernel.Geometry
                     return false;
 
                 // Use point-in-polygon test with ray casting
-                return IsPointInPolygon(point, Vertices, Normal);
+                return IsPointInPolygon(point, Owner.GetPoints(Vertices), Normal);
             }
 
             private double DistanceToPlane(Point3D point)
             {
                 // Plane equation: (point - vertices[0]) · normal = 0
-                return (point - Vertices[0]).Dot(Normal);
+                return (point - Owner.Points[Vertices[0]]).Dot(Normal);
             }
 
             private bool IsPointInPolygon(Point3D point, List<Point3D> polygon, Point3D normal)
@@ -137,19 +144,51 @@ namespace RengaBri4kaKernel.Geometry
             }
         }
 
-        public struct Point2D
+        public class Point2D
         {
             public double X, Y;
             public Point2D(double x, double y) { X = x; Y = y; }
         }
 
-        public struct BRepSolid
+        public class BRepSolid
         {
-            public List<Face> Faces;
+            public Dictionary<int, Point3D> Points { get; private set; }
 
-            public BRepSolid(List<Face> faces)
+            public List<Face> Faces { get; private set; }
+
+            public BoundingBox? BBox { get; private set; }
+
+            public BRepSolid()
             {
-                Faces = faces;
+                Points = new Dictionary<int, Point3D>();
+                Faces = new List<Face>();
+            }
+
+            public int AddPoint(Point3D point3d)
+            {
+                Points.Add(Points.Count, point3d);
+                return Points.Count - 1;
+            }
+
+            public void AddFace(Face face)
+            {
+                Faces.Add(face);
+            }
+
+            public List<Point3D> GetPoints(IEnumerable<int> indexes)
+            {
+                List<Point3D> ps = new List<Point3D>();
+                foreach (int index in indexes)
+                {
+                    ps.Add(Points[index]);
+                }
+                return ps;
+            }
+
+            public BoundingBox GetBBox()
+            {
+                if (this.BBox == null) this.BBox = CalculateBoundingBox(this);
+                return this.BBox;
             }
         }
 
@@ -183,7 +222,7 @@ namespace RengaBri4kaKernel.Geometry
             if (Math.Abs(denom) < tolerance)
                 return false; // Ray parallel to plane
 
-            Point3D p0 = face.Vertices[0];
+            Point3D p0 = face.Owner.Points[face.Vertices[0]];
             double t = (p0 - rayOrigin).Dot(face.Normal) / denom;
 
             if (t < tolerance)
@@ -238,7 +277,7 @@ namespace RengaBri4kaKernel.Geometry
             // Check if all vertices of solidB are inside solidA
             foreach (var face in solidB.Faces)
             {
-                foreach (var vertex in face.Vertices)
+                foreach (var vertex in face.Owner.GetPoints(face.Vertices))
                 {
                     if (!IsPointInsideSolid(solidA, vertex, tolerance))
                         return false;
@@ -251,8 +290,8 @@ namespace RengaBri4kaKernel.Geometry
                 int vertexCount = face.Vertices.Count;
                 for (int i = 0; i < vertexCount; i++)
                 {
-                    Point3D start = face.Vertices[i];
-                    Point3D end = face.Vertices[(i + 1) % vertexCount];
+                    Point3D start = face.Owner.Points[face.Vertices[i]];
+                    Point3D end = face.Owner.Points[face.Vertices[(i + 1) % vertexCount]];
 
                     // Sample points along the edge
                     for (int j = 1; j < 5; j++) // Sample 3 points along each edge
@@ -283,10 +322,10 @@ namespace RengaBri4kaKernel.Geometry
 
             // Check if any vertex of solidA is inside solidB and vice versa
             bool vertexAInsideB = solidA.Faces.Any(face =>
-                face.Vertices.Any(vertex => IsPointInsideSolid(solidB, vertex, tolerance)));
+                face.Vertices.Any(vertex => IsPointInsideSolid(solidB, face.Owner.Points[vertex], tolerance)));
 
             bool vertexBInsideA = solidB.Faces.Any(face =>
-                face.Vertices.Any(vertex => IsPointInsideSolid(solidA, vertex, tolerance)));
+                face.Vertices.Any(vertex => IsPointInsideSolid(solidA, face.Owner.Points[vertex], tolerance)));
 
             return vertexAInsideB || vertexBInsideA;
         }
@@ -303,9 +342,9 @@ namespace RengaBri4kaKernel.Geometry
                     {
                         // Ensure no penetration by checking vertices
                         bool penetration = solidA.Faces.Any(face =>
-                            face.Vertices.Any(vertex => IsPointInsideSolid(solidB, vertex, tolerance))) ||
+                            face.Vertices.Any(vertex => IsPointInsideSolid(solidB, face.Owner.Points[vertex], tolerance))) ||
                                           solidB.Faces.Any(face =>
-                            face.Vertices.Any(vertex => IsPointInsideSolid(solidA, vertex, tolerance)));
+                            face.Vertices.Any(vertex => IsPointInsideSolid(solidA, face.Owner.Points[vertex], tolerance)));
 
                         if (!penetration)
                             return true;
@@ -332,8 +371,8 @@ namespace RengaBri4kaKernel.Geometry
             int vertexCount = faceA.Vertices.Count;
             for (int i = 0; i < vertexCount; i++)
             {
-                Point3D start = faceA.Vertices[i];
-                Point3D end = faceA.Vertices[(i + 1) % vertexCount];
+                Point3D start = faceA.Owner.Points[faceA.Vertices[i]];
+                Point3D end = faceA.Owner.Points[faceA.Vertices[(i + 1) % vertexCount]];
 
                 if (EdgeIntersectsFace(start, end, faceB, tolerance))
                     return true;
@@ -352,7 +391,7 @@ namespace RengaBri4kaKernel.Geometry
             if (Math.Abs(denom) < tolerance)
                 return false; // Edge parallel to face plane
 
-            Point3D p0 = face.Vertices[0];
+            Point3D p0 = face.Owner.Points[face.Vertices[0]];
             double t = (p0 - start).Dot(face.Normal) / denom;
 
             if (t < -tolerance || t > edgeLength + tolerance)
@@ -372,8 +411,8 @@ namespace RengaBri4kaKernel.Geometry
                 return false;
 
             // Check if any vertex of faceA lies on faceB or vice versa
-            bool touching = faceA.Vertices.Any(vertex => faceB.IsPointOnFace(vertex, tolerance)) ||
-                           faceB.Vertices.Any(vertex => faceA.IsPointOnFace(vertex, tolerance));
+            bool touching = faceA.Vertices.Any(vertex => faceB.IsPointOnFace(faceB.Owner.Points[vertex], tolerance)) ||
+                           faceB.Vertices.Any(vertex => faceA.IsPointOnFace(faceA.Owner.Points[vertex], tolerance));
 
             if (!touching)
                 return false;
@@ -391,16 +430,16 @@ namespace RengaBri4kaKernel.Geometry
                 return false;
 
             // Check if a point from faceB lies on faceA's plane
-            Point3D testPoint = faceB.Vertices[0];
-            double distance = Math.Abs((testPoint - faceA.Vertices[0]).Dot(faceA.Normal));
+            Point3D testPoint = faceB.Owner.Points[faceB.Vertices[0]];
+            double distance = Math.Abs((testPoint - faceA.Owner.Points[faceB.Vertices[0]]).Dot(faceA.Normal));
             return distance < tolerance;
         }
 
         // Bounding box check for early rejection
         private static bool BoundingBoxesIntersect(BRepSolid solidA, BRepSolid solidB, double tolerance)
         {
-            var bboxA = CalculateBoundingBox(solidA);
-            var bboxB = CalculateBoundingBox(solidB);
+            var bboxA = solidA.GetBBox();
+            var bboxB = solidB.GetBBox();
 
             // Check for separation along any axis
             if (bboxA.MaxX < bboxB.MinX - tolerance || bboxA.MinX > bboxB.MaxX + tolerance)
@@ -413,14 +452,15 @@ namespace RengaBri4kaKernel.Geometry
             return true;
         }
 
-        private struct BoundingBox
+        public class BoundingBox
         {
             public double MinX, MaxX, MinY, MaxY, MinZ, MaxZ;
         }
 
+
         private static BoundingBox CalculateBoundingBox(BRepSolid solid)
         {
-            var allVertices = solid.Faces.SelectMany(face => face.Vertices).ToList();
+            var allVertices = solid.Points.Select(p => p.Value).ToList();
 
             return new BoundingBox
             {
@@ -468,57 +508,6 @@ namespace RengaBri4kaKernel.Geometry
             }
 
             return intersections;
-        }
-
-        // Example usage with comprehensive testing
-        public static void Example()
-        {
-            // Create two cube B-Reps
-            var cube1 = CreateCube(new Point3D(0, 0, 0), 1.0);
-            var cube2 = CreateCube(new Point3D(0.5, 0.5, 0.5), 1.0); // Overlapping cube
-
-            // Check relationship
-            var relationship = CheckSolidRelationship(cube1, cube2);
-
-            Console.WriteLine($"Solid relationship: {relationship}");
-
-            // Test specific conditions
-            bool contains = ContainsSolid(cube1, cube2);
-            bool intersects = SolidsIntersect(cube1, cube2);
-
-            Console.WriteLine($"Cube1 contains Cube2: {contains}");
-            Console.WriteLine($"Cubes intersect: {intersects}");
-        }
-
-        // Helper method to create a cube B-Rep
-        private static BRepSolid CreateCube(Point3D center, double size)
-        {
-            double halfSize = size / 2;
-            List<Face> faces = new List<Face>();
-
-            // Define cube faces (simplified - you'd want to complete all 6 faces)
-            // Front face
-            faces.Add(new Face(new List<Point3D>
-        {
-            new Point3D(center.X - halfSize, center.Y - halfSize, center.Z - halfSize),
-            new Point3D(center.X + halfSize, center.Y - halfSize, center.Z - halfSize),
-            new Point3D(center.X + halfSize, center.Y + halfSize, center.Z - halfSize),
-            new Point3D(center.X - halfSize, center.Y + halfSize, center.Z - halfSize)
-        }));
-
-            // Back face
-            faces.Add(new Face(new List<Point3D>
-        {
-            new Point3D(center.X - halfSize, center.Y - halfSize, center.Z + halfSize),
-            new Point3D(center.X + halfSize, center.Y - halfSize, center.Z + halfSize),
-            new Point3D(center.X + halfSize, center.Y + halfSize, center.Z + halfSize),
-            new Point3D(center.X - halfSize, center.Y + halfSize, center.Z + halfSize)
-        }));
-
-            // Add other 4 faces for complete cube...
-            // Left, Right, Top, Bottom faces would be added here
-
-            return new BRepSolid(faces);
         }
     }
 

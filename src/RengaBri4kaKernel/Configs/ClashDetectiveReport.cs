@@ -16,7 +16,9 @@ namespace RengaBri4kaKernel.Configs
         public string NameObject2 { get; set; }
         public Guid ObjectId2 { get; set; }
         public string CategoryObject2 { get; set; }
+
         public SolidRelationship Relation { get; set; }
+        public double[] Centroid { get; set; }
 
     }
     public class ClashDetectiveReport

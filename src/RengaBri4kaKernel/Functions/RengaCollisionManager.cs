@@ -39,7 +39,7 @@ namespace RengaBri4kaKernel.Functions
             if (pConfig.ClashSettings.Equal) needRelationsRaw.Add(SolidRelationship.Equal);
             SolidRelationship[] needRelations = needRelationsRaw.ToArray();
 
-            Dictionary<int, BRepContainsLineChecker.BRepSolid[]> objectsGeometryConverted = new Dictionary<int, BRepContainsLineChecker.BRepSolid[]>();
+            Dictionary<int, BRepSolidChecker.BRepSolid[]> objectsGeometryConverted = new Dictionary<int, BRepSolidChecker.BRepSolid[]>();
 
             if (group1 == null || group2 == null) return;
 
@@ -64,6 +64,7 @@ namespace RengaBri4kaKernel.Functions
                         NameObject2 = object2.Name,
                         ObjectId2 = object2.UniqueId,
                         CategoryObject2 = oTypes.Where(t => t.Id == object2.ObjectType).First().Name,
+
                     };
 
                     if (!objectsGeometryConverted.ContainsKey(object2.Id)) objectsGeometryConverted.Add(object2.Id, object2Geometry.ToFacetedBRep2());
@@ -76,7 +77,7 @@ namespace RengaBri4kaKernel.Functions
                         if (isAtLeastOne) break;
                         foreach (var object2GeometryPart in objectsGeometryConverted[object2.Id])
                         {
-                            SolidRelationship rel = BRepContainsLineChecker.CheckSolidRelationship(object1GeometryPart, object2GeometryPart);
+                            SolidRelationship rel = BRepSolidChecker.CheckSolidRelationship(object1GeometryPart, object2GeometryPart);
                             if (needRelations.Contains(rel))
                             {
                                 relResult = rel;
