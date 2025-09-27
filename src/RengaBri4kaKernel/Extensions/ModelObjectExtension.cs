@@ -9,7 +9,42 @@ namespace RengaBri4kaKernel.Extensions
 {
     internal static class ModelObjectExtension
     {
-        public static void SetObjectsProperties(this Renga.IModelObject rengaObject, Guid[]? propsId, object[]? propsData)
+        public static void CopyPropertiesFromOtherObjects(this Renga.IModelObject rengaObject, Renga.IModelObject otherObject, Guid[]? propIds)
+        {
+            if (PluginData.Project == null) return;
+            if (propIds == null) return;
+            Renga.IPropertyManager propsManagerProject = PluginData.Project.PropertyManager;
+
+            // Добавляем в объект определения свойств
+            //Renga.IOperation editOperation = PluginData.Project.CreateOperation();
+            //editOperation.Start();
+
+            List<Guid> idCollection = new List<Guid>();
+            List<object?> dataCollection = new List<object?>();
+
+            //var propsManagerThis = rengaObject.GetProperties();
+            var propsManager = otherObject.GetProperties();
+            Renga.IGuidCollection props = propsManager.GetIds();
+            for (int propCounter = 0; propCounter < props.Count; propCounter++)
+            {
+                Guid propId = props.Get(propCounter);
+                if (propIds.Contains(propId))
+                {
+                    if (!propsManagerProject.IsPropertyAssignedToType(propId, rengaObject.ObjectType))
+                    {
+                        propsManagerProject.AssignPropertyToType(propId, rengaObject.ObjectType);
+                    }
+                    idCollection.Add(propId);
+                    dataCollection.Add(propsManager.Get(propId).GetPropertyValue());
+                }
+            }
+
+            if (idCollection.Any()) rengaObject.SetObjectsProperties(idCollection.ToArray(), dataCollection.ToArray());
+
+            //editOperation.Apply();
+        }
+
+        public static void SetObjectsProperties(this Renga.IModelObject rengaObject, Guid[]? propsId, object?[]? propsData)
         {
             if (propsId == null || propsData == null) return;
             if (PluginData.Project == null) return;
@@ -22,87 +57,13 @@ namespace RengaBri4kaKernel.Extensions
             for (int propCounter = 0; propCounter < propsId.Length; propCounter++)
             {
                 Guid propId = propsId[propCounter];
-                object propData = propsData[propCounter];
+                object? propData = propsData[propCounter];
                 var propDef = PluginData.Project.PropertyManager.GetPropertyDescription(propId);
 
                 if (propsManager.Contains(propId) && propData != null)
                 {
                     Renga.IProperty? propInfo = propsManager.Get(propId);
-
-                    if (propInfo == null) continue;
-                    switch (propDef.Type)
-                    {
-                        case Renga.PropertyType.PropertyType_Double:
-                        case Renga.PropertyType.PropertyType_Angle:
-                        case Renga.PropertyType.PropertyType_Length:
-                        case Renga.PropertyType.PropertyType_Mass:
-                        case Renga.PropertyType.PropertyType_Volume:
-                            {
-                                double? propDataDouble = propData as double?;
-                                if (propDataDouble != null)
-                                {
-
-                                    switch (propDef.Type)
-                                    {
-                                        case Renga.PropertyType.PropertyType_Double:
-                                            propInfo.SetDoubleValue((double)propDataDouble);
-                                            break;
-                                        case Renga.PropertyType.PropertyType_Angle:
-                                            propInfo.SetAngleValue((double)propDataDouble, Renga.AngleUnit.AngleUnit_Degrees);
-                                            break;
-                                        case Renga.PropertyType.PropertyType_Length:
-                                            propInfo.SetLengthValue((double)propDataDouble, Renga.LengthUnit.LengthUnit_Meters);
-                                            break;
-                                        case Renga.PropertyType.PropertyType_Mass:
-                                            propInfo.SetMassValue((double)propDataDouble, Renga.MassUnit.MassUnit_Kilograms);
-                                            break;
-                                        case Renga.PropertyType.PropertyType_Volume:
-                                            propInfo.SetVolumeValue((double)propDataDouble, Renga.VolumeUnit.VolumeUnit_Meters3);
-                                            break;
-                                    }
-                                }
-                                break;
-                            }
-                        case Renga.PropertyType.PropertyType_Boolean:
-                        case Renga.PropertyType.PropertyType_Logical:
-                            {
-                                bool? propDataBoolean = propData as bool?;
-                                if (propDataBoolean == null)
-                                {
-                                    if (propDef.Type == Renga.PropertyType.PropertyType_Logical) propInfo.SetLogicalValue(Renga.Logical.Logical_Indeterminate); 
-                                }
-                                else
-                                {
-                                    if (propDef.Type == Renga.PropertyType.PropertyType_Logical)
-                                    {
-                                        if (propDataBoolean == true) propInfo.SetLogicalValue(Renga.Logical.Logical_True);
-                                        else propInfo.SetLogicalValue(Renga.Logical.Logical_False);
-                                    }
-                                    else propInfo.SetBooleanValue((bool)propDataBoolean);
-                                }
-                                break;
-                            }
-                        case Renga.PropertyType.PropertyType_Integer:
-                            {
-                                int? propDataInteger = propData as int?;
-                                if (propDataInteger !=null)
-                                {
-                                    propInfo.SetIntegerValue((int)propDataInteger);
-                                }
-                            }
-                            break;
-                        case Renga.PropertyType.PropertyType_String:
-                        case Renga.PropertyType.PropertyType_Enumeration:
-                            {
-                                string? propDataString = propData as string;
-                                if (propDataString != null)
-                                {
-                                    if (propDef.Type == Renga.PropertyType.PropertyType_String) propInfo.SetStringValue((string)propDataString);
-                                    else propInfo.SetEnumerationValue((string)propDataString);
-                                }
-                            }
-                            break;
-                    }
+                    propInfo.SetPropertyValue(propData);
                 }
             }
         }

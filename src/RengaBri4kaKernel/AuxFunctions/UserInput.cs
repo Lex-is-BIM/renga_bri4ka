@@ -32,5 +32,9 @@ namespace RengaBri4kaKernel.AuxFunctions
             }
             return result;
         }
+
+        
+
+
     }
 }

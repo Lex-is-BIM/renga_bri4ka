@@ -34,18 +34,18 @@ namespace RengaBri4kaKernel.Functions
         public RengaGeometryStat()
         {
             //зарегистрировать параметры, если ониотсутствуют
-            RengaUtils.RegisterPropertyIfNotReg(ParametersGeometryStat.MeshesCountId, ParametersGeometryStat.MeshesCount, PropertyType.PropertyType_Integer);
-            RengaUtils.RegisterPropertyIfNotReg(ParametersGeometryStat.GridsCountId, ParametersGeometryStat.GridsCount, PropertyType.PropertyType_Integer);
-            RengaUtils.RegisterPropertyIfNotReg(ParametersGeometryStat.VerticesCountId, ParametersGeometryStat.VerticesCount, PropertyType.PropertyType_Integer);
-            RengaUtils.RegisterPropertyIfNotReg(ParametersGeometryStat.TrianglesCountId, ParametersGeometryStat.TrianglesCount, PropertyType.PropertyType_Integer);
-            RengaUtils.RegisterPropertyIfNotReg(ParametersGeometryStat.NormalsCountId, ParametersGeometryStat.NormalsCount, PropertyType.PropertyType_Integer);
+            RengaPropertiesUtils.RegisterPropertyIfNotReg(ParametersGeometryStat.MeshesCountId, ParametersGeometryStat.MeshesCount, PropertyType.PropertyType_Integer);
+            RengaPropertiesUtils.RegisterPropertyIfNotReg(ParametersGeometryStat.GridsCountId, ParametersGeometryStat.GridsCount, PropertyType.PropertyType_Integer);
+            RengaPropertiesUtils.RegisterPropertyIfNotReg(ParametersGeometryStat.VerticesCountId, ParametersGeometryStat.VerticesCount, PropertyType.PropertyType_Integer);
+            RengaPropertiesUtils.RegisterPropertyIfNotReg(ParametersGeometryStat.TrianglesCountId, ParametersGeometryStat.TrianglesCount, PropertyType.PropertyType_Integer);
+            RengaPropertiesUtils.RegisterPropertyIfNotReg(ParametersGeometryStat.NormalsCountId, ParametersGeometryStat.NormalsCount, PropertyType.PropertyType_Integer);
 
             //TODO: создавать только для объектов, имеющих 3D-представление
-            RengaUtils.AssignPropertiesToTypes(ParametersGeometryStat.MeshesCountId, null);
-            RengaUtils.AssignPropertiesToTypes(ParametersGeometryStat.GridsCountId, null);
-            RengaUtils.AssignPropertiesToTypes(ParametersGeometryStat.VerticesCountId, null);
-            RengaUtils.AssignPropertiesToTypes(ParametersGeometryStat.TrianglesCountId, null);
-            RengaUtils.AssignPropertiesToTypes(ParametersGeometryStat.NormalsCountId, null);
+            RengaPropertiesUtils.AssignPropertiesToTypes(ParametersGeometryStat.MeshesCountId, null);
+            RengaPropertiesUtils.AssignPropertiesToTypes(ParametersGeometryStat.GridsCountId, null);
+            RengaPropertiesUtils.AssignPropertiesToTypes(ParametersGeometryStat.VerticesCountId, null);
+            RengaPropertiesUtils.AssignPropertiesToTypes(ParametersGeometryStat.TrianglesCountId, null);
+            RengaPropertiesUtils.AssignPropertiesToTypes(ParametersGeometryStat.NormalsCountId, null);
         }
 
         public void Calculate()

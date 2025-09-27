@@ -29,14 +29,16 @@ namespace RengaBri4kaKernel.Configs
             return null;
         }
 
-        public static object? LoadFromWithDialogue<ConfigType>()
+        public static object? LoadFromWithDialogue<ConfigType>(string? initialDir = null)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Title = "Выбор конфигурационного файла";
             openFileDialog.Multiselect = false;
             openFileDialog.Filter = "Конфиграционный файл (*.XML, *.xml) | *.XML;*.xml";
 
-            openFileDialog.InitialDirectory = Path.Combine(PluginConfig.GetDirectoryPath(), "Configs", typeof(ConfigType).Name);
+            if (initialDir != null && Directory.Exists(initialDir)) openFileDialog.InitialDirectory = initialDir;
+            else openFileDialog.InitialDirectory = Path.Combine(PluginConfig.GetDirectoryPath(), "Configs", typeof(ConfigType).Name);
+
             if (!Directory.Exists(openFileDialog.InitialDirectory)) Directory.CreateDirectory(openFileDialog.InitialDirectory);
 
             if (openFileDialog.ShowDialog() == true && File.Exists(openFileDialog.FileName))

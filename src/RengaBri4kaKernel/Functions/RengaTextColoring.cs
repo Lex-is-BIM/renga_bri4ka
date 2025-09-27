@@ -22,9 +22,9 @@ namespace RengaBri4kaKernel.Functions
 
         public RengaTextColoring()
         {
-            RengaUtils.RegisterPropertyIfNotReg(ParametersTextColoring.TextColorId, ParametersTextColoring.TextColor, PropertyType.PropertyType_String);
+            RengaPropertiesUtils.RegisterPropertyIfNotReg(ParametersTextColoring.TextColorId, ParametersTextColoring.TextColor, PropertyType.PropertyType_String);
 
-            RengaUtils.AssignPropertiesToTypes(ParametersTextColoring.TextColorId, new Guid[] {RengaObjectTypes.ModelText, RengaObjectTypes.DrawingText});
+            RengaPropertiesUtils.AssignPropertiesToTypes(ParametersTextColoring.TextColorId, new Guid[] {RengaObjectTypes.ModelText, RengaObjectTypes.DrawingText});
         }
 
         public void SetColor(System.Windows.Media.Color color)

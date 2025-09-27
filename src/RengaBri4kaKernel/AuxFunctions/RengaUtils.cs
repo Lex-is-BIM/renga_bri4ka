@@ -11,35 +11,6 @@ namespace RengaBri4kaKernel.AuxFunctions
 {
     internal class RengaUtils
     {
-        public static void RegisterPropertyIfNotReg(Guid propId, string propName, Renga.PropertyType propType = Renga.PropertyType.PropertyType_Double)
-        {
-            if (PluginData.Project == null) return;
-            if (!PluginData.Project.PropertyManager.IsPropertyRegistered(propId))
-            {
-                Renga.PropertyDescription propDescr = new Renga.PropertyDescription() { Name = propName, Type = propType };
-                PluginData.Project.PropertyManager.RegisterProperty(propId, propDescr);
-            }
-        }
-
-        public static void AssignPropertiesToTypes(Guid propId, Guid[]? objectTypes)
-        {
-            if (PluginData.Project == null) return;
-            var project = PluginData.Project;
-
-            if (!project.PropertyManager.IsPropertyRegistered(propId)) return;
-
-            if (objectTypes == null) objectTypes = RengaObjectTypes.GetAll();
-
-            foreach (var type in objectTypes)
-            {
-                try
-                {
-                    project.PropertyManager.AssignPropertyToType(propId, type);
-                }
-                catch (Exception ex) { }
-            }
-        }
-
         public static RengaTypeInfo[] GetRengaObjectTypes()
         {
             var ids = typeof(Renga.ObjectTypes).GetRuntimeFields();
@@ -52,6 +23,75 @@ namespace RengaBri4kaKernel.AuxFunctions
                 rengaTypesInfo[i] = new RengaTypeInfo() { Id = (Guid)field.GetValue(null)!, Name = field.Name.Substring(startIdx + 1, endIdx - 1) };
             }
             return rengaTypesInfo;
+        }
+
+        public static int[]? ConvertUniqueIdsToId(Guid[]? objectsUniqId)
+        {
+            if (PluginData.Project == null) return null;
+            if (objectsUniqId == null) return null;
+            List<int> ids = new List<int>();
+
+            Renga.IModel model = PluginData.Project.Model;
+            Renga.IModelObjectCollection objects = model.GetObjects();
+
+            for (int i = 0; i < objects.Count; i++)
+            {
+                Renga.IModelObject o = objects.GetByIndex(i);
+                if (objectsUniqId.Contains(o.UniqueId)) ids.Add(o.Id);
+            }
+            return ids.ToArray();
+        }
+
+        public static void EditVisibility(int[]? BesideIt)
+        {
+            var view = PluginData.rengaApplication.ActiveView;
+            var modelView = view as Renga.IModelView;
+            if (modelView == null) return;
+
+            List<int> idToHide = new List<int>();
+            List<int> idToShow = new List<int>();
+            Renga.IModel model = PluginData.Project.Model;
+            Renga.IModelObjectCollection objects = model.GetObjects();
+
+            for (int i = 0; i < objects.Count; i++)
+            {
+                Renga.IModelObject o = objects.GetByIndex(i);
+                idToHide.Add(o.Id);
+
+                if (BesideIt != null && BesideIt.Contains(o.Id)) idToShow.Add(o.Id);
+            }
+            modelView.SetObjectsVisibility(idToHide.ToArray(), false);
+            if (idToShow.Any()) modelView.SetObjectsVisibility(idToShow.ToArray(), true);
+        }
+
+        public static void SetObjectsSelected(int[]? objectsUniqIdToSelect)
+        {
+            if (objectsUniqIdToSelect == null) return;
+
+            Renga.IModel model = PluginData.Project.Model;
+            PluginData.rengaApplication.Selection.SetSelectedObjects(objectsUniqIdToSelect);
+        }
+        public static void SetObjectsSelected(Guid[]? objectsUniqIdToSelect)
+        {
+            if (objectsUniqIdToSelect == null) return;
+            int[]? ids = ConvertUniqueIdsToId(objectsUniqIdToSelect);
+            SetObjectsSelected(ids);
+        }
+
+        public static void LookTo(double[] pos, double[] focusPoint)
+        {
+            Renga.IView view = PluginData.rengaApplication.ActiveView as Renga.IView;
+            if (view.Type != Renga.ViewType.ViewType_View3D) return;
+            Renga.IModelView? viewModel = view as Renga.IModelView;
+            if (viewModel == null) return;
+            Renga.IView3DParams? viewModelParams = viewModel as Renga.IView3DParams;
+            if (viewModelParams == null) return;
+
+            Renga.ICamera3D camera = viewModelParams.Camera;
+            camera.LookAt(
+                new Renga.FloatPoint3D() { X = (float)focusPoint[0], Y = (float)focusPoint[1], Z = (float)focusPoint[2] },
+                new Renga.FloatPoint3D() { X = (float)pos[0], Y = (float)pos[1], Z = (float)pos[2] },
+                new Renga.FloatVector3D() { X = 0, Y = 0, Z = 1 });
         }
 
     }

@@ -37,8 +37,8 @@ namespace RengaBri4kaKernel.Functions
             mObjectIds = new int[] { };
             mConfig = new GridSlopeAnalyzingConfig();
 
-            RengaUtils.RegisterPropertyIfNotReg(ParametersSlopeAnalyzing.SlopeText2ObjectId, ParametersSlopeAnalyzing.SlopeText2Object, PropertyType.PropertyType_Integer);
-            RengaUtils.AssignPropertiesToTypes(ParametersSlopeAnalyzing.SlopeText2ObjectId, new Guid[] {RengaObjectTypes.TextObject});
+            RengaPropertiesUtils.RegisterPropertyIfNotReg(ParametersSlopeAnalyzing.SlopeText2ObjectId, ParametersSlopeAnalyzing.SlopeText2Object, PropertyType.PropertyType_Integer);
+            RengaPropertiesUtils.AssignPropertiesToTypes(ParametersSlopeAnalyzing.SlopeText2ObjectId, new Guid[] {RengaObjectTypes.TextObject});
         }
 
         public void SetInputData(int[] ids, GridSlopeAnalyzingConfig config)
@@ -49,11 +49,11 @@ namespace RengaBri4kaKernel.Functions
 
         private void RegisterPropertiesToObjects()
         {
-            RengaUtils.RegisterPropertyIfNotReg(ParametersSlopeAnalyzing.SlopeMinValueId, ParametersSlopeAnalyzing.SlopeMinValue, PropertyType.PropertyType_Double);
-            RengaUtils.RegisterPropertyIfNotReg(ParametersSlopeAnalyzing.SlopeMaxValueId, ParametersSlopeAnalyzing.SlopeMaxValue, PropertyType.PropertyType_Double);
+            RengaPropertiesUtils.RegisterPropertyIfNotReg(ParametersSlopeAnalyzing.SlopeMinValueId, ParametersSlopeAnalyzing.SlopeMinValue, PropertyType.PropertyType_Double);
+            RengaPropertiesUtils.RegisterPropertyIfNotReg(ParametersSlopeAnalyzing.SlopeMaxValueId, ParametersSlopeAnalyzing.SlopeMaxValue, PropertyType.PropertyType_Double);
 
-            RengaUtils.AssignPropertiesToTypes(ParametersSlopeAnalyzing.SlopeMinValueId, null);
-            RengaUtils.AssignPropertiesToTypes(ParametersSlopeAnalyzing.SlopeMaxValueId, null);
+            RengaPropertiesUtils.AssignPropertiesToTypes(ParametersSlopeAnalyzing.SlopeMinValueId, null);
+            RengaPropertiesUtils.AssignPropertiesToTypes(ParametersSlopeAnalyzing.SlopeMaxValueId, null);
         }
 
         public void Calculate()

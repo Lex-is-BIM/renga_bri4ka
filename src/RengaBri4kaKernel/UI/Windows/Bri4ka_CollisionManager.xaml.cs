@@ -64,6 +64,28 @@ namespace RengaBri4kaKernel.UI.Windows
             }
         }
 
+        private void UpdatePropertiesForGroup1()
+        {
+            if (this.ListBox_Group1.SelectedItems.Count == 0) return;
+            var selectedTypes = getSelectedObjectTypes(this.ListBox_Group1);
+
+            // Для заданных типов объектов нужно показать свойства
+            var relevantProps = RengaPropertiesUtils.GetPropertiesInfoByTypes(selectedTypes);
+            if (relevantProps == null) return;
+            if (!relevantProps.Any()) return;
+
+            this.ListBox_ParametersGroup1.Items.Clear();
+
+            foreach (PropertyInfo prop in relevantProps)
+            {
+                ListViewItem item = new ListViewItem();
+                item.Tag = prop.Id;
+                item.Content = prop.Name;
+                item.IsSelected = false;
+                this.ListBox_ParametersGroup1.Items.Add(item);
+            }
+        }
+
         #region Handlers
         private void Button_Start_Click(object sender, RoutedEventArgs e)
         {
@@ -85,6 +107,11 @@ namespace RengaBri4kaKernel.UI.Windows
             this.DialogResult = true;
             this.Close();
         }
+        private void ListBox_Group1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdatePropertiesForGroup1();
+            
+        }
         #endregion
 
         #region Config
@@ -97,7 +124,6 @@ namespace RengaBri4kaKernel.UI.Windows
                 Guid itemGuid = (Guid)item.Tag;
                 if (ids.Contains(itemGuid)) item.IsSelected = true;
                 else item.IsSelected = false;
-
             }
         }
 
@@ -110,9 +136,6 @@ namespace RengaBri4kaKernel.UI.Windows
             config.Group1 = getSelectedObjectTypes(this.ListBox_Group1);
             config.Group2 = getSelectedObjectTypes(this.ListBox_Group2);
 
-            config.CreateReport = this.CheckBox_CreateReport.IsChecked ?? false;
-            config.IncludePhotosToReport = this.CheckBox_IncludePhotosToReport.IsChecked ?? false;
-
             //config.ClashSettings.Separate = this.CheckBox_GeomMode_Separate.IsChecked ?? false;
             config.ClashSettings.Touching = this.CheckBox_GeomMode_Touching.IsChecked ?? false;
             config.ClashSettings.Intersecting = this.CheckBox_GeomMode_Intersecting.IsChecked ?? false;
@@ -120,6 +143,20 @@ namespace RengaBri4kaKernel.UI.Windows
             config.ClashSettings.ContainedBy = this.CheckBox_GeomMode_ContainedBy.IsChecked ?? false;
             config.ClashSettings.Equal = this.CheckBox_GeomMode_Equal.IsChecked ?? false;
 
+            config.AnalyzeBaseLinesOnly = this.CheckBox_UseBaselines.IsChecked ?? false;
+            config.AddPropertyToObject2By1 = this.CheckBox_InsertParameterTo2.IsChecked ?? false;
+
+            // Типы свойств
+            if (this.ListBox_ParametersGroup1.Items.Count > 0 && this.ListBox_ParametersGroup1.SelectedItems.Count > 0)
+            {
+                List<Guid> propIds = new List<Guid>();
+                foreach (ListViewItem item in this.ListBox_ParametersGroup1.Items)
+                {
+                    Guid itemGuid = (Guid)item.Tag;
+                    if (item.IsSelected) propIds.Add(itemGuid);
+                }
+                if (propIds.Any()) config.PropertiesToCopy = propIds.ToArray();
+            }
             return config;
         }
 
@@ -141,6 +178,9 @@ namespace RengaBri4kaKernel.UI.Windows
             this.CheckBox_GeomMode_Contains.IsChecked = config.ClashSettings.Contains;
             this.CheckBox_GeomMode_ContainedBy.IsChecked = config.ClashSettings.ContainedBy;
             this.CheckBox_GeomMode_Equal.IsChecked = config.ClashSettings.Equal;
+
+            this.CheckBox_InsertParameterTo2.IsChecked = config.AddPropertyToObject2By1;
+            this.CheckBox_UseBaselines.IsChecked = config.AnalyzeBaseLinesOnly;
         }
         public void Button_SaveSettingsToFile_Click(object sender, RoutedEventArgs e)
         {

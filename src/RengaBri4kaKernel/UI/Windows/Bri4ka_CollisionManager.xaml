@@ -21,12 +21,13 @@
                     <ColumnDefinition Width="300"/>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Row="0" Grid.Column="0" Content="Объекты первой группы:"></Label>
-                <ListBox x:Name="ListBox_Group1" Grid.Row="1" Grid.Column="0" Height="200" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionMode="Multiple"></ListBox>
+                <ListBox x:Name="ListBox_Group1" Grid.Row="1" Grid.Column="0" Height="200" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionMode="Multiple" SelectionChanged="ListBox_Group1_SelectionChanged"></ListBox>
                 <Label Grid.Row="0" Grid.Column="2" Content="Объекты второй группы:"></Label>
                 <ListBox x:Name="ListBox_Group2" Grid.Row="1" Grid.Column="2" Height="200" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionMode="Multiple"></ListBox>
             </Grid>
             <Separator Margin="0,5,0,5"></Separator>
-            <CheckBox x:Name="CheckBox_UseBaselines" Content="Анализировать только базовые линии (при наличии)"></CheckBox>
+            <CheckBox x:Name="CheckBox_UseBaselines" Content="Анализировать только базовые линии (при наличии)" IsEnabled="False"></CheckBox>
+            <CheckBox x:Name="CheckBox_InsertParameterTo2" Margin="0,5,0,0" Content="Добавлять свойство к объекту второй группы о связи с объектом первой группы" IsChecked="True"></CheckBox>
             <GroupBox Header="Критерии проверки геометрии">
                 <StackPanel Orientation="Vertical">
                     <CheckBox x:Name="CheckBox_GeomMode_Touching" Margin="0,5,0,0" Content="Тела касаются друг друга" IsChecked="True"></CheckBox>
@@ -36,9 +37,13 @@
                     <CheckBox x:Name="CheckBox_GeomMode_Equal" Margin="0,5,0,0" Content="Тела идентичны" IsChecked="True"></CheckBox>
                 </StackPanel>
             </GroupBox>
-            <CheckBox x:Name="CheckBox_CreateReport" Margin="0,5,0,0" Content="Создать отчет о коллизиях" IsEnabled="False"></CheckBox>
-            <CheckBox x:Name="CheckBox_IncludePhotosToReport" Margin="0,5,0,0" Content="Включить в отчет о коллизиях снимки коллизий" IsEnabled="False"></CheckBox>
-            <Separator Margin="0,5,0,5"></Separator>
+            <GroupBox Header="Настройки передачи параметров от первого объекта ко второму">
+                <StackPanel Orientation="Vertical">
+                    <Label Content="Перечень параметров первой группы объектов"></Label>
+                    <ListBox x:Name="ListBox_ParametersGroup1" Height="100" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionMode="Multiple"></ListBox>
+                </StackPanel>
+            </GroupBox>
+			<Separator Margin="0,5,0,5"></Separator>
             <Button x:Name="Button_SaveSettingsToFile" Margin="0,5,0,0" Content="Сохранить настройки в файл" Click="Button_SaveSettingsToFile_Click"></Button>
             <Button x:Name="Button_LoadSettingsFromFile" Margin="0,5,0,0" Content="Загрузить настройки из файла" Click="Button_LoadSettingsFromFile_Click"></Button>
             <Separator Margin="0,5,0,5"></Separator>

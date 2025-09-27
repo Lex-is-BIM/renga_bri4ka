@@ -111,6 +111,11 @@ namespace RengaBri4kaLoader
                     Bri4ka_ClashDetective collisionUI = new Bri4ka_ClashDetective();
                     collisionUI.ShowDialog();
                     break;
+                case PluginFunctionVariant.RENGA_BRI4KA_COLLISIONSVIEWER:
+                    Bri4ka_CollisionsReportViewer collisionViewerUI = new Bri4ka_CollisionsReportViewer();
+                    //System.Windows.Application.Current.Run(collisionViewerUI);
+                    collisionViewerUI.Show();
+                    break;
 
                 //Настройки
                 case PluginFunctionVariant.RENGA_BRI4KA_PLUGINVERSION:

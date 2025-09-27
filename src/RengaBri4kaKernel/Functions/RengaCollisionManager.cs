@@ -9,6 +9,7 @@ using RengaBri4kaKernel.AuxFunctions;
 using RengaBri4kaKernel.Configs;
 using RengaBri4kaKernel.Extensions;
 using RengaBri4kaKernel.Geometry;
+using Renga;
 
 namespace RengaBri4kaKernel.Functions
 {
@@ -22,6 +23,11 @@ namespace RengaBri4kaKernel.Functions
         public void Start(ClashDetectiveConfig? config)
         {
             if (config == null) return;
+            TimerUtils.CreateInstance().Start();
+
+            Renga.IOperation editOperation = PluginData.Project.CreateOperation();
+            editOperation.Start();
+
             pConfig = config;
             // Выбрать объекты первой группы
             IEnumerable<Renga.IModelObject>? group1 = UserInput.GetModelObjectsByTypes(pConfig.Group1);
@@ -31,7 +37,7 @@ namespace RengaBri4kaKernel.Functions
             var oTypes = RengaUtils.GetRengaObjectTypes();
 
             List<SolidRelationship> needRelationsRaw = new List<SolidRelationship>();
-            if (pConfig.ClashSettings.Separate) needRelationsRaw.Add(SolidRelationship.Separate);
+            //if (pConfig.ClashSettings.Separate) needRelationsRaw.Add(SolidRelationship.Separate);
             if (pConfig.ClashSettings.Touching) needRelationsRaw.Add(SolidRelationship.Touching);
             if (pConfig.ClashSettings.Intersecting) needRelationsRaw.Add(SolidRelationship.Intersecting);
             if (pConfig.ClashSettings.Contains) needRelationsRaw.Add(SolidRelationship.Contains);
@@ -44,7 +50,8 @@ namespace RengaBri4kaKernel.Functions
             if (group1 == null || group2 == null) return;
 
             ClashDetectiveReport report = new ClashDetectiveReport();
-            foreach(Renga.IModelObject object1 in group1)
+            report.Settings = config;
+            foreach (Renga.IModelObject object1 in group1)
             {
                 Renga.IExportedObject3D? object1Geometry = object1.GetExportedObject3D();
                
@@ -64,6 +71,7 @@ namespace RengaBri4kaKernel.Functions
                         NameObject2 = object2.Name,
                         ObjectId2 = object2.UniqueId,
                         CategoryObject2 = oTypes.Where(t => t.Id == object2.ObjectType).First().Name,
+                        
 
                     };
 
@@ -77,7 +85,7 @@ namespace RengaBri4kaKernel.Functions
                         if (isAtLeastOne) break;
                         foreach (var object2GeometryPart in objectsGeometryConverted[object2.Id])
                         {
-                            SolidRelationship rel = FacetedBRepSolid.CheckSolidRelationship(object1GeometryPart, object2GeometryPart);
+                            SolidRelationship rel = FacetedBRepSolidChecker.CheckSolidRelationship(object1GeometryPart, object2GeometryPart);
                             if (needRelations.Contains(rel))
                             {
                                 relResult = rel;
@@ -89,14 +97,27 @@ namespace RengaBri4kaKernel.Functions
                     if (isAtLeastOne)
                     {
                         clashInfo.Relation = relResult;
+                        var totalBBox = BoundingBox.GetBBoxFrom(objectsGeometryConverted[object1.Id].Select(mesh => mesh.GetBBox()).Concat(
+                                objectsGeometryConverted[object2.Id].Select(mesh => mesh.GetBBox())));
+                        clashInfo.BBoxMin = totalBBox.GetMinPoint();
+                        clashInfo.BBoxMax = totalBBox.GetMaxPoint();
                     }
 
-                    if (clashInfo.Relation != SolidRelationship.Separate) report.Items.Add(clashInfo);
+                    if (clashInfo.Relation != SolidRelationship.Separate)
+                    {
+                        report.Items.Add(clashInfo);
+                        object2.CopyPropertiesFromOtherObjects(object1, config.PropertiesToCopy);
+                    }
                 }
             }
-
+            editOperation.Apply();
             // Сохранить отчет.
-            ConfigIO.SaveTo<ClashDetectiveReport>(Path.Combine(PluginConfig.GetDirectoryPath(), "CollisionReports", $"Report_{Guid.NewGuid().ToString("N")}.xml"), report);
+            ConfigIO.SaveTo<ClashDetectiveReport>(Path.Combine(ClashDetectiveReport.GetSavePath(), Path.Combine($"Report_{Guid.NewGuid().ToString("N")}.xml")), report);
+
+            
+            TimerUtils.CreateInstance().Stop();
+
+
         }
 
         private ClashDetectiveConfig pConfig;
