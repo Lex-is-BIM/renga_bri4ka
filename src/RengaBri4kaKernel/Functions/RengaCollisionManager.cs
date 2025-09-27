@@ -30,7 +30,7 @@ namespace RengaBri4kaKernel.Functions
 
             var oTypes = RengaUtils.GetRengaObjectTypes();
 
-            List< SolidRelationship> needRelationsRaw = new List< SolidRelationship>();
+            List<SolidRelationship> needRelationsRaw = new List<SolidRelationship>();
             if (pConfig.ClashSettings.Separate) needRelationsRaw.Add(SolidRelationship.Separate);
             if (pConfig.ClashSettings.Touching) needRelationsRaw.Add(SolidRelationship.Touching);
             if (pConfig.ClashSettings.Intersecting) needRelationsRaw.Add(SolidRelationship.Intersecting);
@@ -39,7 +39,7 @@ namespace RengaBri4kaKernel.Functions
             if (pConfig.ClashSettings.Equal) needRelationsRaw.Add(SolidRelationship.Equal);
             SolidRelationship[] needRelations = needRelationsRaw.ToArray();
 
-            Dictionary<int, FacetedBRepSolid[]> objectsGeometryConverted = new Dictionary<int, FacetedBRepSolid[]>();
+            Dictionary<int, BRepContainsLineChecker.BRepSolid[]> objectsGeometryConverted = new Dictionary<int, BRepContainsLineChecker.BRepSolid[]>();
 
             if (group1 == null || group2 == null) return;
 
@@ -49,7 +49,7 @@ namespace RengaBri4kaKernel.Functions
                 Renga.IExportedObject3D? object1Geometry = object1.GetExportedObject3D();
                
                 if (object1Geometry == null) continue;
-                if (!objectsGeometryConverted.ContainsKey(object1.Id)) objectsGeometryConverted.Add(object1.Id, object1Geometry.ToFacetedBRep());
+                if (!objectsGeometryConverted.ContainsKey(object1.Id)) objectsGeometryConverted.Add(object1.Id, object1Geometry.ToFacetedBRep2());
 
                 foreach (Renga.IModelObject object2 in group2)
                 {
@@ -66,7 +66,7 @@ namespace RengaBri4kaKernel.Functions
                         CategoryObject2 = oTypes.Where(t => t.Id == object2.ObjectType).First().Name,
                     };
 
-                    if (!objectsGeometryConverted.ContainsKey(object2.Id)) objectsGeometryConverted.Add(object2.Id, object2Geometry.ToFacetedBRep());
+                    if (!objectsGeometryConverted.ContainsKey(object2.Id)) objectsGeometryConverted.Add(object2.Id, object2Geometry.ToFacetedBRep2());
 
                     // проверка
                     bool isAtLeastOne = false;
@@ -76,9 +76,10 @@ namespace RengaBri4kaKernel.Functions
                         if (isAtLeastOne) break;
                         foreach (var object2GeometryPart in objectsGeometryConverted[object2.Id])
                         {
-                            SolidRelationship rel = object1GeometryPart.CheckSolidRelationship(object2GeometryPart);
+                            SolidRelationship rel = BRepContainsLineChecker.CheckSolidRelationship(object1GeometryPart, object2GeometryPart);
                             if (needRelations.Contains(rel))
                             {
+                                relResult = rel;
                                 isAtLeastOne = true;
                                 break;
                             }
@@ -94,7 +95,7 @@ namespace RengaBri4kaKernel.Functions
             }
 
             // Сохранить отчет.
-            ConfigIO.SaveTo<ClashDetectiveReport>(Path.Combine(PluginConfig.GetDirectoryPath(), "CollisionReports", $"Report_{Guid.NewGuid().ToString("N")}"), report);
+            ConfigIO.SaveTo<ClashDetectiveReport>(Path.Combine(PluginConfig.GetDirectoryPath(), "CollisionReports", $"Report_{Guid.NewGuid().ToString("N")}.xml"), report);
         }
 
         private ClashDetectiveConfig pConfig;
