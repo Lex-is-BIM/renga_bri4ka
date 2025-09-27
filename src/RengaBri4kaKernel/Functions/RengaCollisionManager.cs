@@ -39,7 +39,7 @@ namespace RengaBri4kaKernel.Functions
             if (pConfig.ClashSettings.Equal) needRelationsRaw.Add(SolidRelationship.Equal);
             SolidRelationship[] needRelations = needRelationsRaw.ToArray();
 
-            Dictionary<int, BRepSolidChecker.BRepSolid[]> objectsGeometryConverted = new Dictionary<int, BRepSolidChecker.BRepSolid[]>();
+            Dictionary<int, FacetedBRepSolid[]> objectsGeometryConverted = new Dictionary<int, FacetedBRepSolid[]>();
 
             if (group1 == null || group2 == null) return;
 
@@ -49,7 +49,7 @@ namespace RengaBri4kaKernel.Functions
                 Renga.IExportedObject3D? object1Geometry = object1.GetExportedObject3D();
                
                 if (object1Geometry == null) continue;
-                if (!objectsGeometryConverted.ContainsKey(object1.Id)) objectsGeometryConverted.Add(object1.Id, object1Geometry.ToFacetedBRep2());
+                if (!objectsGeometryConverted.ContainsKey(object1.Id)) objectsGeometryConverted.Add(object1.Id, object1Geometry.ToFacetedBRep());
 
                 foreach (Renga.IModelObject object2 in group2)
                 {
@@ -67,7 +67,7 @@ namespace RengaBri4kaKernel.Functions
 
                     };
 
-                    if (!objectsGeometryConverted.ContainsKey(object2.Id)) objectsGeometryConverted.Add(object2.Id, object2Geometry.ToFacetedBRep2());
+                    if (!objectsGeometryConverted.ContainsKey(object2.Id)) objectsGeometryConverted.Add(object2.Id, object2Geometry.ToFacetedBRep());
 
                     // проверка
                     bool isAtLeastOne = false;
@@ -77,7 +77,7 @@ namespace RengaBri4kaKernel.Functions
                         if (isAtLeastOne) break;
                         foreach (var object2GeometryPart in objectsGeometryConverted[object2.Id])
                         {
-                            SolidRelationship rel = BRepSolidChecker.CheckSolidRelationship(object1GeometryPart, object2GeometryPart);
+                            SolidRelationship rel = FacetedBRepSolid.CheckSolidRelationship(object1GeometryPart, object2GeometryPart);
                             if (needRelations.Contains(rel))
                             {
                                 relResult = rel;

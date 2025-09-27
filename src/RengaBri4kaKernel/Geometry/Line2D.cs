@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RengaBri4kaKernel.Geometry
 {
-    internal class Line2D
+    public class Line2D
     {
         public Point3D Start;
         public Point3D End;

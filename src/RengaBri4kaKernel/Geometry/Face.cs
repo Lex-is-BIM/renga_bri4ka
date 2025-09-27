@@ -9,15 +9,23 @@ namespace RengaBri4kaKernel.Geometry
 {
     public class Face
     {
-        public int[] Vertices { get; set; }
-        public Point3D Normal { get; set; }
+        public List<int> Vertices { get; set; }
+        public Point3D Normal { get; private set; }
+        public readonly FacetedBRepSolid Owner;
 
-        public Face(int[] indexes)
+        public Face(FacetedBRepSolid owner)
         {
-            Vertices = indexes;
+            Owner = owner;
+            Vertices = new List<int>();
+            Normal = new Point3D();
         }
 
-        public static Point3D CalculateNormal(List<Point3D> vertices)
+        public void CalculateNormal()
+        {
+            Normal = CalculateNormal(Owner.GetPoints(Vertices));
+        }
+
+        private static Point3D CalculateNormal(List<Point3D> vertices)
         {
             if (vertices.Count < 3)
                 throw new ArgumentException("Face needs at least 3 vertices");
@@ -37,7 +45,23 @@ namespace RengaBri4kaKernel.Geometry
             return normal.Normalize();
         }
 
-        public static bool IsPointInPolygon(Point3D point, List<Point3D> polygon, Point3D normal)
+        public bool IsPointOnFace(Point3D point, double tolerance = 1e-10)
+        {
+            // Check if point is coplanar with the face
+            if (Math.Abs(DistanceToPlane(point)) > tolerance)
+                return false;
+
+            // Use point-in-polygon test with ray casting
+            return IsPointInPolygon(point, Owner.GetPoints(Vertices), Normal);
+        }
+
+        private double DistanceToPlane(Point3D point)
+        {
+            // Plane equation: (point - vertices[0]) · normal = 0
+            return (point - Owner.Points[Vertices[0]]).Dot(Normal);
+        }
+
+        private bool IsPointInPolygon(Point3D point, List<Point3D> polygon, Point3D normal)
         {
             // Project polygon and point to 2D
             var (projectedPoint, projectedPolygon) = ProjectTo2D(point, polygon, normal);
@@ -58,7 +82,7 @@ namespace RengaBri4kaKernel.Geometry
             return crossings % 2 == 1;
         }
 
-        private static (Point2D, List<Point2D>) ProjectTo2D(Point3D point, List<Point3D> polygon, Point3D normal)
+        private (Point2D, List<Point2D>) ProjectTo2D(Point3D point, List<Point3D> polygon, Point3D normal)
         {
             // Find dominant axis for projection
             Point3D axis = new Point3D(Math.Abs(normal.X), Math.Abs(normal.Y), Math.Abs(normal.Z));
@@ -79,7 +103,7 @@ namespace RengaBri4kaKernel.Geometry
             ), projected);
         }
 
-        private static bool RayCrossesSegment(Point2D point, Point2D a, Point2D b)
+        private bool RayCrossesSegment(Point2D point, Point2D a, Point2D b)
         {
             // Check if ray from point to right crosses segment ab
             if ((a.Y > point.Y) == (b.Y > point.Y))

@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace RengaBri4kaKernel.Geometry
 {
-    public class Point2D
+    public class BoundingBox
     {
-        public double X, Y;
-        public Point2D(double x, double y) { X = x; Y = y; }
+        public double MinX, MaxX, MinY, MaxY, MinZ, MaxZ;
     }
 }

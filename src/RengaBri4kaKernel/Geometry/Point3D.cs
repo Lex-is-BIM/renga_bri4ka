@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace RengaBri4kaKernel.Geometry
 {
+    // Basic geometric classures
     public class Point3D
     {
         public double X, Y, Z;
         public Point3D(double x, double y, double z) { X = x; Y = y; Z = z; }
-
+        public Point3D() { X = 0.0; Y = 0.0; Z = 0.0; }
         public static Point3D operator -(Point3D a, Point3D b) => new Point3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
         public static Point3D operator +(Point3D a, Point3D b) => new Point3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
         public static Point3D operator *(Point3D a, double scalar) => new Point3D(a.X * scalar, a.Y * scalar, a.Z * scalar);
