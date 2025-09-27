@@ -17,5 +17,20 @@ namespace RengaBri4kaKernel.AuxFunctions
             if (objects.Length > 0) return objects.Cast<int>().ToArray();
             return null;
         }
+
+        public static IEnumerable<Renga.IModelObject>? GetModelObjectsByTypes(Guid[] types)
+        {
+            if (PluginData.Project == null) return null;
+
+            List<Renga.IModelObject> result = new List<Renga.IModelObject>();
+            Renga.IModel model = PluginData.Project.Model;
+            Renga.IModelObjectCollection objects = model.GetObjects();
+            for (int i = 0; i < objects.Count; i++)
+            {
+                Renga.IModelObject o = objects.GetByIndex(i);
+                if (types.Contains(o.ObjectType)) result.Add(o);
+            }
+            return result;
+        }
     }
 }

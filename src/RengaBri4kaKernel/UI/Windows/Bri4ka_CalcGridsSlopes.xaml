@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RengaBri4kaKernel.UI.Windows"
         mc:Ignorable="d"
-        Title="Настройка расчета уклонов сеток" d:DesignHeight="450" d:DesignWidth="500">
+        Title="Настройка расчета уклонов сеток" >
     <Grid>
         <StackPanel Orientation="Vertical" Margin="5,5,5,5">
             <GroupBox Header="Настройки анализа">

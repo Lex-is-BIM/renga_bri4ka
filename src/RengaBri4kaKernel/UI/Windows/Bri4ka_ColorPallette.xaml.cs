@@ -26,7 +26,7 @@ namespace RengaBri4kaKernel.UI.Windows
             pMode = mode;
             InitializeComponent();
             UpdateColorPreview();
-            //this.SizeToContent = SizeToContent.WidthAndHeight;
+            this.SizeToContent = SizeToContent.WidthAndHeight;
         }
 
         public Color CreatedColor { get; set; }

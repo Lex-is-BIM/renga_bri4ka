@@ -3,6 +3,7 @@ using RengaBri4kaKernel.RengaInternalResources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -39,5 +40,25 @@ namespace RengaBri4kaKernel.AuxFunctions
             }
         }
 
+        public static RengaTypeInfo[] GetRengaObjectTypes()
+        {
+            var ids = typeof(Renga.ObjectTypes).GetRuntimeFields();
+            RengaTypeInfo[] rengaTypesInfo = new RengaTypeInfo[ids.Count()];
+            for (int i = 0; i < ids.Count(); i++)
+            {
+                FieldInfo field = ids.ElementAt(i);
+                var startIdx = field.Name.IndexOf('<');
+                var endIdx = field.Name.IndexOf('>');
+                rengaTypesInfo[i] = new RengaTypeInfo() { Id = (Guid)field.GetValue(null)!, Name = field.Name.Substring(startIdx + 1, endIdx - 1) };
+            }
+            return rengaTypesInfo;
+        }
+
+    }
+
+    internal class RengaTypeInfo
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
     }
 }

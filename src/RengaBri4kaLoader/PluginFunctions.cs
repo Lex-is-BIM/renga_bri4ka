@@ -24,6 +24,8 @@ namespace RengaBri4kaLoader
         RENGA_BRI4KA_FILEMETADATA,
         RENGA_BRI4KA_LEVEL2STAT,
         RENGA_BRI4KA_TEXTCOLORING,
+        RENGA_BRI4KA_COLLISIONSMANAGER,
+        RENGA_BRI4KA_COLLISIONSVIEWER,
         RENGA_BRI4KA_PLUGINVERSION,
         RENGA_BRI4KA_PLUGINHELP
     }
@@ -104,6 +106,12 @@ namespace RengaBri4kaLoader
                     textColoringUi.ShowDialog();
                     break;
 
+                //Утилиты
+                case PluginFunctionVariant.RENGA_BRI4KA_COLLISIONSMANAGER:
+                    Bri4ka_ClashDetective collisionUI = new Bri4ka_ClashDetective();
+                    collisionUI.ShowDialog();
+                    break;
+
                 //Настройки
                 case PluginFunctionVariant.RENGA_BRI4KA_PLUGINVERSION:
                     {
@@ -116,7 +124,12 @@ namespace RengaBri4kaLoader
                         string pdfGuidePath = Path.Combine(PluginData.PluginFolder, "Bri4kaGuide.pdf");
                         if (File.Exists(pdfGuidePath))
                         {
-                            Process.Start("explorer.exe", pdfGuidePath);
+                            using Process fileopener = new Process();
+                            fileopener.StartInfo.FileName = "explorer";
+                            fileopener.StartInfo.Arguments = "\"" + pdfGuidePath + "\"";
+
+                            fileopener.Start();
+                            //Process.Start("explorer.exe", pdfGuidePath);
                         }
                         
                     }

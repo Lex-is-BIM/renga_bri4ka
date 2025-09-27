@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RengaBri4kaKernel.UI.Windows"
         mc:Ignorable="d"
-        Title="Настройки создания текста" d:DesignHeight="450" d:DesignWidth="300">
+        Title="Настройки создания текста" Width="300">
     <Grid>
         <StackPanel Orientation="Vertical" Margin="5,5,5,5">
             <Label Content="Размер шрифта"></Label>

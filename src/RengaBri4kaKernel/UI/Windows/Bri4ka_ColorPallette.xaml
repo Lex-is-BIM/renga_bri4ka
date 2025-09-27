@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RengaBri4kaKernel.UI.Windows"
         mc:Ignorable="d"
-        Title="Выбор цвета RGB" Height="450" Width="400">
+        Title="Выбор цвета RGB" d:DesignHeight="450" d:DesignWidth="400">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

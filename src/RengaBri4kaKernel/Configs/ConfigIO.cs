@@ -47,8 +47,11 @@ namespace RengaBri4kaKernel.Configs
         }
 
 
-        public static void SaveTo<ConfigType>(string path, ConfigType objectData)
+        public static void SaveTo<ConfigType>(string? path, ConfigType objectData)
         {
+            if (path == null) path = GetDefaultPath<ConfigType>();
+            string dir = Path.GetDirectoryName(path);
+            if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
             using (var writer = new StreamWriter(path))
             {
                 var serializer = new XmlSerializer(typeof(ConfigType));

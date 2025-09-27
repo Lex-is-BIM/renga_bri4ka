@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RengaBri4kaKernel.UI.Windows"
         mc:Ignorable="d"
-        Title="Выдача текстовых данных" d:DesignHeight="300" d:DesignWidth="400">
+        Title="Выдача текстовых данных" >
     <Grid>
         <StackPanel Orientation="Vertical">
-            <TextBox x:Name="TextBox_TextField" Margin="10,10,10,0" Height="100" VerticalScrollBarVisibility="Visible" IsReadOnly="True"></TextBox>
+            <TextBox x:Name="TextBox_TextField" Margin="10,10,10,0" Height="100" Width="300" VerticalScrollBarVisibility="Visible" IsReadOnly="True"></TextBox>
             <Button x:Name="Button_CopyToClipboard" Margin="10,10,10,0" Content="Копировать в буфер обмена" Click="Button_CopyToClipboard_Click"></Button>
             <Button x:Name="Button_OK" Margin="10,5,10,10" Content="ОК" Click="Button_OK_Click"></Button>
         </StackPanel>
