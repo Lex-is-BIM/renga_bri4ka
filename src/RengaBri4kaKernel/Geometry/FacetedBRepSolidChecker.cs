@@ -9,25 +9,16 @@ namespace RengaBri4kaKernel.Geometry
     public class FacetedBRepSolidChecker
     {
         // Main method to check if line is contained in B-Rep solid
-        public static bool ContainsLine(FacetedBRepSolid solid, Line2D line, double tolerance = 1e-10)
+        public static SolidRelationship ContainsLine(FacetedBRepSolid solid, Line3D? line, double tolerance = 1e-10)
         {
+            if (line == null) return SolidRelationship._Error;
             // Check if both endpoints are inside the solid
-            if (!IsPointInsideSolid(solid, line.Start, tolerance) ||
-                !IsPointInsideSolid(solid, line.End, tolerance))
-                return false;
-
-            // Check if the entire line segment is inside by sampling multiple points
-            int samples = 10; // Increase for more accuracy
-            for (int i = 1; i < samples - 1; i++)
+            foreach (var point in line.Points)
             {
-                double t = (double)i / (samples - 1);
-                Point3D samplePoint = Interpolate(line.Start, line.End, t);
-
-                if (!IsPointInsideSolid(solid, samplePoint, tolerance))
-                    return false;
+                if (!IsPointInsideSolid(solid, point, tolerance)) return SolidRelationship.Contains;
             }
 
-            return true;
+            return SolidRelationship.Separate;
         }
 
 
@@ -60,8 +51,11 @@ namespace RengaBri4kaKernel.Geometry
         }
 
         // Main method to check relationship between two solids
-        public static SolidRelationship CheckSolidRelationship(FacetedBRepSolid solidA, FacetedBRepSolid solidB, double tolerance = 1e-10)
+        public static SolidRelationship CheckSolidRelationship(FacetedBRepSolid? solidA, FacetedBRepSolid? solidB, double tolerance = 1e-10)
         {
+            if (solidA == null) return SolidRelationship._Error;
+            if (solidB == null) return SolidRelationship._Error;
+
             // Quick bounding box check for early rejection
             if (!BoundingBoxesIntersect(solidA, solidB, tolerance))
                 return SolidRelationship.Separate;

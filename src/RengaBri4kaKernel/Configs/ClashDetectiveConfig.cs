@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace RengaBri4kaKernel.Configs
 {
@@ -30,10 +31,17 @@ namespace RengaBri4kaKernel.Configs
     }
     public class ClashDetectiveConfig : ConfigIO
     {
+        [XmlIgnore]
+        public const double ToleranceDefault = 1e-10;
+        [XmlIgnore]
+        public const int SegmentationDefault = 10;
+
         public string Name { get; set; }
         public Guid[] Group1 { get; set; }
         public Guid[] Group2 { get; set; }
-        public bool AnalyzeBaseLinesOnly { get; set; } = false;
+        public bool? AnalyzeBaseLinesOnly { get; set; } = false;
+        public double? Tolerance { get; set; } = 1e-10;
+        public int? Segmentation { get; set; } = 10;
         //public bool AddPropertyToObject2By1 { get; set; } = true;
         public ClashModes ClashSettings { get; set; } = new ClashModes();
 

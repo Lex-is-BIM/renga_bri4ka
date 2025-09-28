@@ -46,26 +46,40 @@ namespace RengaBri4kaKernel.Functions
             if (pConfig.ClashSettings.Equal) needRelationsRaw.Add(SolidRelationship.Equal);
             SolidRelationship[] needRelations = needRelationsRaw.ToArray();
 
-            Dictionary<int, FacetedBRepSolid[]> objectsGeometryConverted = new Dictionary<int, FacetedBRepSolid[]>();
+            Dictionary<int, IGeometryInstance[]> objectsGeometryConverted = new Dictionary<int, IGeometryInstance[]>();
 
             // Если среди выбранных к анализу объектов имеются помещения и текущая редакция Renga == Professional, то сделаем частичный экспорт в IFC для получения геометрий
             // TODO: реализовать, если надо ...
 
+            
+
+            void Set_objectsGeometryConverted(IEnumerable<Renga.IModelObject> objects)
+            {
+                foreach (Renga.IModelObject oneObject in objects)
+                {
+                    if (!objectsGeometryConverted.ContainsKey(oneObject.Id))
+                    {
+                        IGeometryInstance[]? geom = null;
+                        Renga.IExportedObject3D? object1Geometry = oneObject.GetExportedObject3D();
+                        Line3D? objectAsLine = oneObject.GetLineGeometry(config.Segmentation ?? ClashDetectiveConfig.SegmentationDefault);
+                        if ((config.AnalyzeBaseLinesOnly ?? false) && objectAsLine != null) geom = new IGeometryInstance[] { objectAsLine };
+                        else if (object1Geometry != null) geom = object1Geometry.ToFacetedBRep();
+
+                        if (geom != null) objectsGeometryConverted.Add(oneObject.Id, geom);
+                    }
+                }
+            }
+
+            Set_objectsGeometryConverted(group1);
+            Set_objectsGeometryConverted(group2);
 
             ClashDetectiveReport report = new ClashDetectiveReport();
             report.Settings = config;
+
             foreach (Renga.IModelObject object1 in group1)
             {
-                Renga.IExportedObject3D? object1Geometry = object1.GetExportedObject3D();
-               
-                if (object1Geometry == null) continue;
-                if (!objectsGeometryConverted.ContainsKey(object1.Id)) objectsGeometryConverted.Add(object1.Id, object1Geometry.ToFacetedBRep());
-
                 foreach (Renga.IModelObject object2 in group2)
                 {
-                    Renga.IExportedObject3D? object2Geometry = object2.GetExportedObject3D();
-                    if (object2Geometry == null) continue;
-
                     ClashDetectiveReportItem clashInfo = new ClashDetectiveReportItem()
                     {
                         NameObject1 = object1.Name,
@@ -74,11 +88,9 @@ namespace RengaBri4kaKernel.Functions
                         NameObject2 = object2.Name,
                         ObjectId2 = object2.UniqueId,
                         CategoryObject2 = oTypes.Where(t => t.Id == object2.ObjectType).First().Name,
-                        
-
                     };
 
-                    if (!objectsGeometryConverted.ContainsKey(object2.Id)) objectsGeometryConverted.Add(object2.Id, object2Geometry.ToFacetedBRep());
+                    
 
                     // проверка
                     bool isAtLeastOne = false;
@@ -86,9 +98,23 @@ namespace RengaBri4kaKernel.Functions
                     foreach (var object1GeometryPart in objectsGeometryConverted[object1.Id])
                     {
                         if (isAtLeastOne) break;
+                        //Могут проверяться только солиды с прочей геометрией, не наоборот
+                        if (object1GeometryPart.GetGeometryType() != GeometryMode.FacetedBRepSolid) continue;
+                        FacetedBRepSolid? object1GeometryPart_Solid = object1GeometryPart as FacetedBRepSolid;
+                        if (object1GeometryPart_Solid == null) continue;
+
                         foreach (var object2GeometryPart in objectsGeometryConverted[object2.Id])
                         {
-                            SolidRelationship rel = FacetedBRepSolidChecker.CheckSolidRelationship(object1GeometryPart, object2GeometryPart);
+                            SolidRelationship rel = SolidRelationship._Error;
+                            if (object2GeometryPart.GetGeometryType() == GeometryMode.FacetedBRepSolid)
+                            {
+                                rel = FacetedBRepSolidChecker.CheckSolidRelationship(object1GeometryPart_Solid, object2GeometryPart as FacetedBRepSolid, config.Tolerance ?? ClashDetectiveConfig.ToleranceDefault);
+                            }
+                            else if (object2GeometryPart.GetGeometryType() == GeometryMode.Curve3d)
+                            {
+                                rel = FacetedBRepSolidChecker.ContainsLine(object1GeometryPart_Solid, object2GeometryPart as Line3D, config.Tolerance ?? ClashDetectiveConfig.ToleranceDefault);
+                            }
+
                             if (needRelations.Contains(rel))
                             {
                                 relResult = rel;
@@ -100,7 +126,7 @@ namespace RengaBri4kaKernel.Functions
                     if (isAtLeastOne)
                     {
                         clashInfo.Relation = relResult;
-                        var totalBBox = BoundingBox.GetBBoxFrom(objectsGeometryConverted[object1.Id].Select(mesh => mesh.GetBBox()).Concat(
+                        var totalBBox = BoundingBox.GetBBoxFrom(objectsGeometryConverted[object1.Id].Select(geom => geom.GetBBox()).Concat(
                                 objectsGeometryConverted[object2.Id].Select(mesh => mesh.GetBBox())));
                         clashInfo.BBoxMin = totalBBox.GetMinPoint();
                         clashInfo.BBoxMax = totalBBox.GetMaxPoint();

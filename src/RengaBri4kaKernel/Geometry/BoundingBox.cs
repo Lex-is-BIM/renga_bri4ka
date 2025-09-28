@@ -22,7 +22,20 @@ namespace RengaBri4kaKernel.Geometry
             return new double[] { (MinX + MaxX) / 2, (MinY + MaxY) / 2, (MinZ + MaxZ) / 2 };
         }
 
-        
+        public static BoundingBox CalculateFromPoints(IEnumerable<Point3D> points)
+        {
+            return new BoundingBox
+            {
+                MinX = points.Min(v => v.X),
+                MaxX = points.Max(v => v.X),
+                MinY = points.Min(v => v.Y),
+                MaxY = points.Max(v => v.Y),
+                MinZ = points.Min(v => v.Z),
+                MaxZ = points.Max(v => v.Z)
+            };
+        }
+
+
         public static BoundingBox GetBBoxFrom(IEnumerable<BoundingBox> bboxes)
         {
 

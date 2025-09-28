@@ -9,6 +9,7 @@ namespace RengaBri4kaKernel.Geometry
 {
     public enum SolidRelationship
     {
+        _Error,
         Separate,      // Solids don't touch or intersect
         Touching,      // Solids touch but don't penetrate
         Intersecting,  // Solids cross each other
@@ -17,7 +18,9 @@ namespace RengaBri4kaKernel.Geometry
         Equal          // Solids are identical (within tolerance)
     }
 
-    public class FacetedBRepSolid
+
+
+    public class FacetedBRepSolid : IGeometryInstance
     {
         public Dictionary<int, Point3D> Points { get; private set; }
 
@@ -52,9 +55,9 @@ namespace RengaBri4kaKernel.Geometry
             return ps;
         }
 
-        public BoundingBox GetBBox()
+        public override BoundingBox GetBBox()
         {
-            if (this.BBox == null) this.BBox = CalculateBoundingBox(this);
+            if (this.BBox == null) this.BBox = BoundingBox.CalculateFromPoints(this.Points.Select(p => p.Value));
             return this.BBox;
         }
 
@@ -63,22 +66,10 @@ namespace RengaBri4kaKernel.Geometry
             //TODO: Заменить кучу граней на каноническое описание Faceted BRep (соседние грани в одной плоскости --> плоскость)
         }
 
-        public static BoundingBox CalculateBoundingBox(FacetedBRepSolid solid)
+        public override GeometryMode GetGeometryType()
         {
-            var allVertices = solid.Points.Select(p => p.Value).ToList();
-
-            return new BoundingBox
-            {
-                MinX = allVertices.Min(v => v.X),
-                MaxX = allVertices.Max(v => v.X),
-                MinY = allVertices.Min(v => v.Y),
-                MaxY = allVertices.Max(v => v.Y),
-                MinZ = allVertices.Min(v => v.Z),
-                MaxZ = allVertices.Max(v => v.Z)
-            };
+            return GeometryMode.FacetedBRepSolid;
         }
-
-
 
     }
 }

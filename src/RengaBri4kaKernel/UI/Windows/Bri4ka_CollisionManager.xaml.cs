@@ -154,6 +154,8 @@ namespace RengaBri4kaKernel.UI.Windows
 
             config.AnalyzeBaseLinesOnly = this.CheckBox_UseBaselines.IsChecked ?? false;
             //config.AddPropertyToObject2By1 = this.CheckBox_InsertParameterTo2.IsChecked ?? false;
+            config.Tolerance = double.Parse(this.TextBox_Tolerance.Text, CultureInfo.InvariantCulture);
+            config.Segmentation = int.Parse(this.TextBox_Segmentation.Text, CultureInfo.InvariantCulture);
 
             // Типы свойств
             if (this.ListBox_ParametersGroup1.Items.Count > 0 && this.ListBox_ParametersGroup1.SelectedItems.Count > 0)
@@ -190,6 +192,8 @@ namespace RengaBri4kaKernel.UI.Windows
 
             //this.CheckBox_InsertParameterTo2.IsChecked = config.AddPropertyToObject2By1;
             this.CheckBox_UseBaselines.IsChecked = config.AnalyzeBaseLinesOnly;
+            this.TextBox_Tolerance.Text = config.Tolerance.ToString();
+            this.TextBox_Segmentation.Text = config.Segmentation.ToString();
         }
         public void Button_SaveSettingsToFile_Click(object sender, RoutedEventArgs e)
         {

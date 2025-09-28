@@ -27,7 +27,11 @@
             </Grid>
             <Button x:Name="Button_ReverseChoosing12" Margin="0,5,0,0" Content="Обратить выбор между группами" Click="Button_ReverseChoosing12_Click"></Button>
             <Separator Margin="0,5,0,5"></Separator>
-            <CheckBox x:Name="CheckBox_UseBaselines" Content="Анализировать только базовые линии (при наличии)" IsEnabled="False"></CheckBox>
+            <CheckBox x:Name="CheckBox_UseBaselines" Content="Анализировать только базовые линии (при наличии)" ></CheckBox>
+            <Label Content="Допуск на проверку геометрии:"></Label>
+            <TextBox x:Name="TextBox_Tolerance"></TextBox>
+            <Label Content="Частота сегментации вырожденных линейных объектов:"></Label>
+            <TextBox x:Name="TextBox_Segmentation"></TextBox>
 			<GroupBox Header="Критерии проверки геометрии">
                 <StackPanel Orientation="Vertical">
                     <CheckBox x:Name="CheckBox_GeomMode_Touching" Margin="0,5,0,0" Content="Тела касаются друг друга" IsChecked="True"></CheckBox>
