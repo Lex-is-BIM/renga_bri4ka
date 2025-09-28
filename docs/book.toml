@@ -3,7 +3,7 @@ authors = ["Cu4er"]
 language = "en"
 multilingual = false
 src = "src"
-title = "Справочное руководство к плагину Bri4ka"
+title = "Bri4kaGuide"
 
 [output.html]
 
