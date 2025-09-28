@@ -1,0 +1,9 @@
+<RengaPlugin>
+    <Name>Bri4ka - набор утилит для Renga</Name>
+    <Version>1.0</Version>
+    <Copyright>-</Copyright>
+    <RequiredAPIVersion>2.37</RequiredAPIVersion>
+    <PluginType>Net8</PluginType>
+    <PluginFilename>RengaBri4kaLoader.dll</PluginFilename>
+    <Vendor>-</Vendor>
+</RengaPlugin>

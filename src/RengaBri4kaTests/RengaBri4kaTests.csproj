@@ -13,8 +13,4 @@
         <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     </PropertyGroup>
 
-   <ItemGroup>
-     <ProjectReference Include="..\RengaBri4kaKernel\RengaBri4kaKernel.csproj" />
-   </ItemGroup>
-
 </Project>

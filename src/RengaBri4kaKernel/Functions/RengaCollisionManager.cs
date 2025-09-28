@@ -28,8 +28,6 @@ namespace RengaBri4kaKernel.Functions
             Renga.IOperation editOperation = PluginData.Project.CreateOperation();
             editOperation.Start();
 
-
-
             pConfig = config;
             // Выбрать объекты первой группы
             IEnumerable<Renga.IModelObject>? group1 = UserInput.GetModelObjectsByTypes(pConfig.Group1);
