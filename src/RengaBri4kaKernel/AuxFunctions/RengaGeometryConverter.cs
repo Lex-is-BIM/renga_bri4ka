@@ -17,7 +17,7 @@ namespace RengaBri4kaKernel.AuxFunctions
 
             for (int i = 0; i < segmentation; i++)
             {
-                var p = curve3d.GetPointOn(curve3d.MinParameter + dParam / segmentation);
+                var p = curve3d.GetPointOn(curve3d.MinParameter + dParam * (i / segmentation));
                 line.Points.Add(new Point3D(p.X, p.Y, p.Z));
             }
             return line;
@@ -31,7 +31,7 @@ namespace RengaBri4kaKernel.AuxFunctions
 
             for (int i = 0; i < segmentation; i++)
             {
-                var p = curve2d.GetPointOn(curve2d.MinParameter + dParam / segmentation);
+                var p = curve2d.GetPointOn(curve2d.MinParameter + dParam * (i / segmentation));
                 line.Points.Add(new Point3D(p.X, p.Y, 0));
             }
             return line;
