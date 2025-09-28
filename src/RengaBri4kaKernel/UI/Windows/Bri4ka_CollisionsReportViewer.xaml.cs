@@ -43,14 +43,7 @@ namespace RengaBri4kaKernel.UI.Windows
             }    
         }
 
-        #region Handlers
-        private void Button_LoadReport_Click(object sender, RoutedEventArgs e)
-        {
-            ClashDetectiveReport? config = (ClashDetectiveReport?)ConfigIO.LoadFromWithDialogue<ClashDetectiveReport>(ClashDetectiveReport.GetSavePath());
-            SetConfigToUi(config);
-        }
-
-        private void DataGrid_Collisions_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnSelectCollision()
         {
             ClashDetectiveReportItem? selItem = this.DataGrid_Collisions.SelectedItem as ClashDetectiveReportItem;
             if (selItem == null) return;
@@ -70,6 +63,29 @@ namespace RengaBri4kaKernel.UI.Windows
                 RengaUtils.SetObjectsSelected(ids2);
                 //RengaUtils.LookTo(selItem.BBoxMin, selItem.BBoxMin);
             }
+        }
+
+        #region Handlers
+        private void Button_LoadReport_Click(object sender, RoutedEventArgs e)
+        {
+            ClashDetectiveReport? config = (ClashDetectiveReport?)ConfigIO.LoadFromWithDialogue<ClashDetectiveReport>(ClashDetectiveReport.GetSavePath());
+            SetConfigToUi(config);
+        }
+        //
+        private void CheckBox_GoToObjects_Checked(object sender, RoutedEventArgs e)
+        {
+            OnSelectCollision();
+        }
+
+        private void CheckBox_HideAllOtherObjects_Checked(object sender, RoutedEventArgs e)
+        {
+            OnSelectCollision();
+        }
+
+
+        private void DataGrid_Collisions_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            OnSelectCollision();
         }
 
         private void Button_SaveToHTML_Click(object sender, RoutedEventArgs e)

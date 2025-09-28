@@ -25,8 +25,8 @@
                 </DataGrid.Columns>
             </DataGrid>
             <TextBox x:Name="TextBox_ItemInfo" Margin="0,5,0,0" IsReadOnly="true" Height="100" ScrollViewer.VerticalScrollBarVisibility="Visible"></TextBox>
-            <CheckBox x:Name="CheckBox_GoToObjects" Margin="0,5,0,0" Content="Переходить к объектам при выборе коллизии в таблице"></CheckBox>
-            <CheckBox x:Name="CheckBox_HideAllOtherObjects" Margin="0,5,0,0" Content="Скрывать все остальные объекты модели, кроме коллизирующих"></CheckBox>
+            <CheckBox x:Name="CheckBox_GoToObjects" Margin="0,5,0,0" Content="Переходить к объектам при выборе коллизии в таблице" Checked="CheckBox_GoToObjects_Checked"></CheckBox>
+            <CheckBox x:Name="CheckBox_HideAllOtherObjects" Margin="0,5,0,0" Content="Скрывать все остальные объекты модели, кроме коллизирующих" Checked="CheckBox_HideAllOtherObjects_Checked"></CheckBox>
             <CheckBox x:Name="CheckBox_CreateCollisionPhotos" Margin="0,5,0,0" Content="Создавать снимки коллизий (для отчета)" IsEnabled="False"></CheckBox>
             <Button x:Name="Button_SaveToHTML" Margin="0,5,0,0" Content="Сохранить отчет о коллизиях в HTML" IsEnabled="False" Grid.Row="4"></Button>
         </StackPanel>
