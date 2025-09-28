@@ -34,7 +34,7 @@ namespace RengaBri4kaKernel.Configs
         public Guid[] Group1 { get; set; }
         public Guid[] Group2 { get; set; }
         public bool AnalyzeBaseLinesOnly { get; set; } = false;
-        public bool AddPropertyToObject2By1 { get; set; } = true;
+        //public bool AddPropertyToObject2By1 { get; set; } = true;
         public ClashModes ClashSettings { get; set; } = new ClashModes();
 
         /// <summary>

@@ -28,12 +28,15 @@ namespace RengaBri4kaKernel.Functions
             Renga.IOperation editOperation = PluginData.Project.CreateOperation();
             editOperation.Start();
 
+
+
             pConfig = config;
             // Выбрать объекты первой группы
             IEnumerable<Renga.IModelObject>? group1 = UserInput.GetModelObjectsByTypes(pConfig.Group1);
             // Выбрать объекты второй группы
             IEnumerable<Renga.IModelObject>? group2 = UserInput.GetModelObjectsByTypes(pConfig.Group2);
 
+            if (group1 == null || group2 == null) return;
             var oTypes = RengaUtils.GetRengaObjectTypes();
 
             List<SolidRelationship> needRelationsRaw = new List<SolidRelationship>();
@@ -47,7 +50,9 @@ namespace RengaBri4kaKernel.Functions
 
             Dictionary<int, FacetedBRepSolid[]> objectsGeometryConverted = new Dictionary<int, FacetedBRepSolid[]>();
 
-            if (group1 == null || group2 == null) return;
+            // Если среди выбранных к анализу объектов имеются помещения и текущая редакция Renga == Professional, то сделаем частичный экспорт в IFC для получения геометрий
+            // TODO: реализовать, если надо ...
+
 
             ClashDetectiveReport report = new ClashDetectiveReport();
             report.Settings = config;

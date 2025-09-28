@@ -112,6 +112,15 @@ namespace RengaBri4kaKernel.UI.Windows
             UpdatePropertiesForGroup1();
             
         }
+
+        private void Button_ReverseChoosing12_Click(object sender, RoutedEventArgs e)
+        {
+            var gr1 = getSelectedObjectTypes(this.ListBox_Group1);
+            var gr2 = getSelectedObjectTypes(this.ListBox_Group2);
+
+            setObjectTypesSelected(this.ListBox_Group1, gr2);
+            setObjectTypesSelected(this.ListBox_Group2, gr1);
+        }
         #endregion
 
         #region Config
@@ -144,7 +153,7 @@ namespace RengaBri4kaKernel.UI.Windows
             config.ClashSettings.Equal = this.CheckBox_GeomMode_Equal.IsChecked ?? false;
 
             config.AnalyzeBaseLinesOnly = this.CheckBox_UseBaselines.IsChecked ?? false;
-            config.AddPropertyToObject2By1 = this.CheckBox_InsertParameterTo2.IsChecked ?? false;
+            //config.AddPropertyToObject2By1 = this.CheckBox_InsertParameterTo2.IsChecked ?? false;
 
             // Типы свойств
             if (this.ListBox_ParametersGroup1.Items.Count > 0 && this.ListBox_ParametersGroup1.SelectedItems.Count > 0)
@@ -179,7 +188,7 @@ namespace RengaBri4kaKernel.UI.Windows
             this.CheckBox_GeomMode_ContainedBy.IsChecked = config.ClashSettings.ContainedBy;
             this.CheckBox_GeomMode_Equal.IsChecked = config.ClashSettings.Equal;
 
-            this.CheckBox_InsertParameterTo2.IsChecked = config.AddPropertyToObject2By1;
+            //this.CheckBox_InsertParameterTo2.IsChecked = config.AddPropertyToObject2By1;
             this.CheckBox_UseBaselines.IsChecked = config.AnalyzeBaseLinesOnly;
         }
         public void Button_SaveSettingsToFile_Click(object sender, RoutedEventArgs e)

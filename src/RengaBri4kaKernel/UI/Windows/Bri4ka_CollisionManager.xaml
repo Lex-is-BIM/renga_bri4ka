@@ -25,10 +25,10 @@
                 <Label Grid.Row="0" Grid.Column="2" Content="Объекты второй группы:"></Label>
                 <ListBox x:Name="ListBox_Group2" Grid.Row="1" Grid.Column="2" Height="200" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionMode="Multiple"></ListBox>
             </Grid>
+            <Button x:Name="Button_ReverseChoosing12" Margin="0,5,0,0" Content="Обратить выбор между группами" Click="Button_ReverseChoosing12_Click"></Button>
             <Separator Margin="0,5,0,5"></Separator>
             <CheckBox x:Name="CheckBox_UseBaselines" Content="Анализировать только базовые линии (при наличии)" IsEnabled="False"></CheckBox>
-            <CheckBox x:Name="CheckBox_InsertParameterTo2" Margin="0,5,0,0" Content="Добавлять свойство к объекту второй группы о связи с объектом первой группы" IsChecked="True"></CheckBox>
-            <GroupBox Header="Критерии проверки геометрии">
+			<GroupBox Header="Критерии проверки геометрии">
                 <StackPanel Orientation="Vertical">
                     <CheckBox x:Name="CheckBox_GeomMode_Touching" Margin="0,5,0,0" Content="Тела касаются друг друга" IsChecked="True"></CheckBox>
                     <CheckBox x:Name="CheckBox_GeomMode_Intersecting" Margin="0,5,0,0" Content="Тела пересекаются" IsChecked="True"></CheckBox>
