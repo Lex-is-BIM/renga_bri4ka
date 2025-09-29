@@ -92,7 +92,8 @@ namespace RengaBri4kaKernel.UI.Windows
         {
             if (config == null)
             {
-                throw new Exception("RengaBri4ka. Конфиг GridSlopeAnalyzingConfig не определен или равен null");
+                RengaUtils.ShowMessageBox("Конфиг GridSlopeAnalyzingConfig не определен");
+                return;
             }
 
             this.CheckBox_IgnoreTrianglesSquareMore.IsChecked = config.IgnoreTrianglesSquareMore;

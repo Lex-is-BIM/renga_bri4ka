@@ -56,7 +56,7 @@ namespace RengaBri4kaKernel.Functions
             RengaPropertiesUtils.AssignPropertiesToTypes(ParametersSlopeAnalyzing.SlopeMaxValueId, null);
         }
 
-        public void Calculate()
+        public void Calculate(bool useOldScerario = true)
         {
             if (mObjectIds == null) return;
             //
@@ -120,7 +120,7 @@ namespace RengaBri4kaKernel.Functions
                             Renga.Triangle tr = grid.GetTriangle(rengaFaceCounter);
                             TriangleStat trStat = new TriangleStat(vertices[(int)tr.V0], vertices[(int)tr.V1], vertices[(int)tr.V2], mConfig.Units);
 
-                            trStat.Calculate();
+                            trStat.Calculate(useOldScerario);
                             //Перерводим в м2 для сравнения с полями
                             double trArea = trStat.Area / 1000.0 / 1000.0;
                             if (mConfig.IgnoreTrianglesSquareMore == true && trArea > mConfig.IgnoringTrianglesSquareMore) continue;

@@ -1,3 +1,4 @@
+using RengaBri4kaKernel.AuxFunctions;
 using RengaBri4kaKernel.Configs;
 using System;
 using System.Collections.Generic;
@@ -69,7 +70,8 @@ namespace RengaBri4kaKernel.UI.Windows
         {
             if (config == null)
             {
-                throw new Exception("RengaBri4ka. Конфиг TextSettingsConfig не определен или равен null");
+                RengaUtils.ShowMessageBox("Конфиг TextSettingsConfig не определен");
+                return;
             }
 
             this.TextBox_FontCapSize.Text = config.FontCapSize.ToString();

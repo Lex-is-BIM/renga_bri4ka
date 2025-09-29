@@ -26,7 +26,7 @@ namespace RengaBri4kaKernel.AuxFunctions
         public double[] Point2 { get; set; }
         public double[] Point3 { get; set; }
 
-        public void Calculate(bool useOld = true)
+        public void Calculate(bool useOldScerario = true)
         {
             // Method using distance formula and Heron's formula
 
@@ -55,7 +55,7 @@ namespace RengaBri4kaKernel.AuxFunctions
                 $"point {Point2[0]},{Point2[1]},{Point2[2]}\n" +
                 $"point {Point3[0]},{Point3[1]},{Point3[2]}\n";
 #endif
-            if (!useOld)
+            if (!useOldScerario)
             {
                 var result = GetPlaneSlope(new List<Vector3>() {
                 new Vector3((float)Point1[0], (float)Point1[1], (float)Point1[2]),
@@ -199,7 +199,13 @@ namespace RengaBri4kaKernel.AuxFunctions
         public static (Vector3 normal, Vector3 slopeDirection, double slopeAngle) GetPlaneSlope(List<Vector3> points)
         {
             if (points.Count < 3)
-                throw new ArgumentException("At least 3 points are required");
+            {
+#if DEBUG
+                throw new ArgumentException("Face needs at least 3 vertices");
+#else
+                return (new Vector3(0, 0, 1), new Vector3(1, 0, 0), 0);
+#endif
+            }
 
             // Center the points
             Vector3 centroid = GetCentroid(points);

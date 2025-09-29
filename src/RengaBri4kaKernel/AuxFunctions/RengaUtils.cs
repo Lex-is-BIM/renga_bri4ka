@@ -94,6 +94,15 @@ namespace RengaBri4kaKernel.AuxFunctions
                 new Renga.FloatVector3D() { X = 0, Y = 0, Z = 1 });
         }
 
+        public static void ShowMessageBox(string text, bool prefix = true)
+        {
+            string prefixStr = "Bri4ka ";
+            if (!prefix) prefixStr = "";
+
+            string mess = prefixStr + text;
+            PluginData.rengaApplication.UI.ShowMessageBox(Renga.MessageIcon.MessageIcon_Warning, "Bri4ka Предупреждение", text);
+        }
+
     }
 
     internal class RengaTypeInfo

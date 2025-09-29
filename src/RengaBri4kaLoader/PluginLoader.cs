@@ -42,7 +42,7 @@ namespace RengaBri4kaLoader
 
             string PluginMenuFile = Path.Combine(pluginDir, "PluginMenu.tsv");
             Dictionary<string, List<PluginMenuItem>> CategorizedFunctions = new Dictionary<string, List<PluginMenuItem>>();
-            if (!File.Exists(PluginMenuFile)) throw new FileNotFoundException("RengaBri4ka. Путь к файлу с данными о командах не найден!");
+            if (!File.Exists(PluginMenuFile)) throw new FileNotFoundException("RengaBri4ka. Путь к файлу PluginMenu.tsv с данными о командах не найден!");
             foreach (string commandInfoStr in File.ReadAllLines(PluginMenuFile, System.Text.Encoding.UTF8).Skip(1))
             {
                 string[] commandInfoArray = commandInfoStr.Split('\t');

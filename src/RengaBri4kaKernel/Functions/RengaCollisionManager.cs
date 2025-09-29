@@ -132,7 +132,7 @@ namespace RengaBri4kaKernel.Functions
                         clashInfo.BBoxMax = totalBBox.GetMaxPoint();
                     }
 
-                    if (clashInfo.Relation != SolidRelationship.Separate)
+                    if (relResult != SolidRelationship._Error && relResult != SolidRelationship.Separate)
                     {
                         report.Items.Add(clashInfo);
                         object2.CopyPropertiesFromOtherObjects(object1, config.PropertiesToCopy);

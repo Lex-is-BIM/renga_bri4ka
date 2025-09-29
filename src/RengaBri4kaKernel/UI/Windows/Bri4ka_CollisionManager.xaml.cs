@@ -92,11 +92,13 @@ namespace RengaBri4kaKernel.UI.Windows
             ClashDetectiveConfig config = this.GetConfigFromUI();
             if (!config.Group1.Any())
             {
-                throw new Exception("RengaBri4ka. Не заданы объекты первой группы!");
+                RengaUtils.ShowMessageBox("Не заданы объекты первой группы!");
+                return;
             }
             if (!config.Group2.Any())
             {
-                throw new Exception("RengaBri4ka. Не заданы объекты второй группы!");
+                RengaUtils.ShowMessageBox("Не заданы объекты второй группы!");
+                return;
             }
 
             ConfigIO.SaveTo<ClashDetectiveConfig>(ConfigIO.GetDefaultPath<ClashDetectiveConfig>(), config);
@@ -175,7 +177,8 @@ namespace RengaBri4kaKernel.UI.Windows
         {
             if (config == null)
             {
-                throw new Exception("RengaBri4ka. Конфиг GridSlopeAnalyzingConfig не определен или равен null");
+                RengaUtils.ShowMessageBox("Конфиг ClashDetectiveConfig не определен");
+                return;
             }
 
             this.TextBox_ClashName.Text = config.Name;

@@ -28,7 +28,13 @@ namespace RengaBri4kaKernel.Geometry
         private static Point3D CalculateNormal(List<Point3D> vertices)
         {
             if (vertices.Count < 3)
+            {
+#if DEBUG
                 throw new ArgumentException("Face needs at least 3 vertices");
+#else
+                return new Point3D(0, 0, 1);
+#endif
+            }
 
             // Use Newell's method for robust normal calculation
             Point3D normal = new Point3D(0, 0, 0);
