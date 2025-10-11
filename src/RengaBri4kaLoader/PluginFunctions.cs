@@ -27,6 +27,7 @@ namespace RengaBri4kaLoader
         RENGA_BRI4KA_COLLISIONSMANAGER,
         RENGA_BRI4KA_COLLISIONSVIEWER,
         RENGA_BRI4KA_SOLARSHADOWANAL,
+        RENGA_BRI4KA_FLOORBYROOM,
         RENGA_BRI4KA_PLUGINVERSION,
         RENGA_BRI4KA_PLUGINHELP
     }
@@ -76,8 +77,8 @@ namespace RengaBri4kaLoader
                     {
 #if DEBUG
                         RengaGridSlopeAnalyzing slopeAnal = new RengaBri4kaKernel.Functions.RengaGridSlopeAnalyzing();
-                        slopeAnal.SetInputData(new int[] { 100106, 100107, 100108, 100109}, new GridSlopeAnalyzingConfig() { Units = SlopeResultUnitsVariant.Degree});
-                        slopeAnal.Calculate(false);
+                        //slopeAnal.SetInputData(new int[] { 100106, 100107, 100108, 100109}, new GridSlopeAnalyzingConfig() { Units = SlopeResultUnitsVariant.Degree});
+                        //slopeAnal.Calculate(false);
                         //Bri4ka_CalcGridsSlopes slopesAnalUi = new Bri4ka_CalcGridsSlopes();
                         //slopesAnalUi.ShowDialog();
 #else
@@ -119,10 +120,18 @@ namespace RengaBri4kaLoader
                     break;
                 case PluginFunctionVariant.RENGA_BRI4KA_SOLARSHADOWANAL:
 #if DEBUG
-                    RengaShadowsBySunCreator sunFunc = new RengaShadowsBySunCreator();
-                    sunFunc.SetSolarParameters(DateTime.Now, 55.0, 30.0);
-                    sunFunc.CalcFromObjects();
+                    //RengaShadowsBySunCreator sunFunc = new RengaShadowsBySunCreator();
+                    //sunFunc.Start(new ShadowCalcParametersConfig());
+                    Bri4ka_SolarCalcParameters sunFunc = new Bri4ka_SolarCalcParameters();
+                    sunFunc.ShowDialog();
+#else
+                    Bri4ka_SolarCalcParameters sunFunc = new Bri4ka_SolarCalcParameters();
+                    sunFunc.ShowDialog();
 #endif
+                    break;
+                case PluginFunctionVariant.RENGA_BRI4KA_FLOORBYROOM:
+                    RengaFloorByRoomsCreator floorByRoomsCreator = new RengaFloorByRoomsCreator();
+                    floorByRoomsCreator.Start();
                     break;
 
                 //Настройки

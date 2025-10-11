@@ -34,16 +34,16 @@ namespace RengaBri4kaKernel.Functions
     {
         public RengaGridSlopeAnalyzing()
         {
-            mObjectIds = new int[] { };
+            
             mConfig = new GridSlopeAnalyzingConfig();
 
             RengaPropertiesUtils.RegisterPropertyIfNotReg(ParametersSlopeAnalyzing.SlopeText2ObjectId, ParametersSlopeAnalyzing.SlopeText2Object, PropertyType.PropertyType_Integer);
             RengaPropertiesUtils.AssignPropertiesToTypes(ParametersSlopeAnalyzing.SlopeText2ObjectId, new Guid[] {RengaObjectTypes.TextObject});
         }
 
-        public void SetInputData(int[] ids, GridSlopeAnalyzingConfig config)
+        public void SetInputData(IEnumerable<Renga.IModelObject>? objects, GridSlopeAnalyzingConfig config)
         {
-            mObjectIds = ids;
+            mObjectToAnalyze = objects;
             mConfig = config;
         }
 
@@ -58,7 +58,7 @@ namespace RengaBri4kaKernel.Functions
 
         public void Calculate(bool useOldScerario = true)
         {
-            if (mObjectIds == null) return;
+            if (mObjectToAnalyze == null) return;
             //
             var editOperation = PluginData.Project.CreateOperation();
             editOperation.Start();
@@ -73,9 +73,8 @@ namespace RengaBri4kaKernel.Functions
             double zMax = -1000000.0;
             // Рассчитываем метки
             List<SlopeMarkInfo> slopeMarks = new List<SlopeMarkInfo>();
-            foreach (int id in mObjectIds)
+            foreach (Renga.IModelObject rengaObject in mObjectToAnalyze)
             {
-                Renga.IModelObject rengaObject = modelObjects.GetById(id);
                 Renga.IExportedObject3D? rengaObjectGeometry = rengaObject.GetExportedObject3D();
                 if (rengaObjectGeometry == null) continue;
 
@@ -138,7 +137,7 @@ namespace RengaBri4kaKernel.Functions
                             {
                                 Position = trStat.Center,
                                 Angle = trStat.Angle,
-                                ModelObjectId = id,
+                                ModelObjectId = rengaObject.Id,
                                 Slope = trStat.SlopeStr + $"\n({Math.Round(trArea, 2)} m²)"
                             });
                         }
@@ -190,7 +189,7 @@ namespace RengaBri4kaKernel.Functions
             //TimerUtils.CreateInstance().Stop();
         }
 
-        internal int[]? mObjectIds;
+        internal IEnumerable<Renga.IModelObject>? mObjectToAnalyze;
         internal GridSlopeAnalyzingConfig mConfig;
     }
 

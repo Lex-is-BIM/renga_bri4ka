@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using RengaBri4kaKernel.AuxFunctions;
 using RengaBri4kaKernel.Configs;
+using RengaBri4kaKernel.Extensions;
 using RengaBri4kaKernel.Functions;
 
 namespace RengaBri4kaKernel.UI.Windows
@@ -50,7 +51,7 @@ namespace RengaBri4kaKernel.UI.Windows
         {
             pActions.mConfig = this.GetConfigFromUI();
             ConfigIO.SaveTo<GridSlopeAnalyzingConfig>(ConfigIO.GetDefaultPath<GridSlopeAnalyzingConfig>(), pActions.mConfig);
-            pActions.mObjectIds = UserInput.GetSelectedObjects();
+            pActions.mObjectToAnalyze = PluginData.rengaApplication.Selection.GetSelectedObjects2(true);
             pActions.Calculate();
             this.DialogResult = true;
             this.Close();

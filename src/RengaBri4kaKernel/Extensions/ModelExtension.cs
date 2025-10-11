@@ -22,6 +22,13 @@ namespace RengaBri4kaKernel.Extensions
         ModelText,
         DrawingText
     }
+
+    public enum BaselineObjectType
+    {
+        Hatch,
+        Line3d,
+        Floor
+    }
     internal static class ModelExtension
     {
         /// <summary>
@@ -197,7 +204,7 @@ namespace RengaBri4kaKernel.Extensions
             return levelAsModelObject;
         }
 
-        public static Renga.IModelObject? CreateHatch(this Renga.IModel rengaModel, List<RengaBri4kaKernel.Geometry.Point3D> contour, bool isMeters = true)
+        public static Renga.IModelObject? CreateBaselineObject(this Renga.IModel rengaModel, BaselineObjectType objectType, List<RengaBri4kaKernel.Geometry.Point3D> contour, bool isMeters = true)
         {
             if (PluginData.Project == null) return null;
             if (contour.Count() < 3) return null;
@@ -208,7 +215,10 @@ namespace RengaBri4kaKernel.Extensions
             if (isMeters) numKoeff = 1000.0;
 
             Renga.INewEntityArgs creationParams = rengaModel.CreateNewEntityArgs();
-            creationParams.TypeId = Renga.ObjectTypes.Hatch;
+            if (objectType == BaselineObjectType.Hatch) creationParams.TypeId = Renga.ObjectTypes.Hatch;
+            else if (objectType == BaselineObjectType.Line3d) creationParams.TypeId = Renga.ObjectTypes.Line3D;
+            else if (objectType == BaselineObjectType.Floor) creationParams.TypeId = Renga.ObjectTypes.Floor;
+
 
             var hatchObjectRaw = rengaModel.CreateObject(creationParams);
             if (hatchObjectRaw == null)

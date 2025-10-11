@@ -1,0 +1,28 @@
+<Window x:Class="RengaBri4kaKernel.UI.Windows.Bri4ka_SolarCalcParameters"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RengaBri4kaKernel.UI.Windows"
+        mc:Ignorable="d"
+        Title="Настройка параметров местоположения для построения теней" >
+    <Grid>
+        <StackPanel Orientation="Vertical" Margin="5,5,5,5">
+            <Label Content="Наименование конфигурации"></Label>
+            <TextBox x:Name="TextBox_Name"></TextBox>
+            <Label Content="Географическая широта, градусы:"></Label>
+            <TextBox x:Name="TextBox_Latitude"></TextBox>
+            <Label Content="Географическая долгота, градусы:"></Label>
+            <TextBox x:Name="TextBox_Longitude"></TextBox>
+            <Label Content="Дата для анализа"></Label>
+            <TextBox x:Name="TextBox_DataAnalyze"></TextBox>
+            <Label Content="Отметка земли для проецирования теней, метры:"></Label>
+            <TextBox x:Name="TextBox_ElevationGround"></TextBox>
+            <Separator Margin="0,5,0,5"></Separator>
+            <Button x:Name="Button_SaveSettingsToFile" Margin="0,5,0,0" Content="Сохранить настройки в файл" Click="Button_SaveSettingsToFile_Click"></Button>
+            <Button x:Name="Button_LoadSettingsFromFile" Margin="0,5,0,0" Content="Загрузить настройки из файла" Click="Button_LoadSettingsFromFile_Click"></Button>
+            <Separator Margin="0,5,0,5"></Separator>
+            <Button x:Name="Button_Start" Margin="0,5,0,5" Content="Начать расчёт" Click="Button_Start_Click"></Button>
+        </StackPanel>
+    </Grid>
+</Window>

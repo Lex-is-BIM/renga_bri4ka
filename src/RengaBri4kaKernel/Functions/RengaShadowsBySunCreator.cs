@@ -11,6 +11,8 @@ using RengaBri4kaKernel.Functions.SolarCalc;
 using RengaBri4kaKernel.Geometry;
 using RengaBri4kaKernel.RengaInternalResources;
 
+using RengaBri4kaKernel.Configs;
+
 namespace RengaBri4kaKernel.Functions
 {
 
@@ -34,13 +36,10 @@ namespace RengaBri4kaKernel.Functions
             RengaPropertiesUtils.AssignPropertiesToTypes(ParametersShadowsBySunCreator.HourPerDayId, new Guid[] {RengaObjectTypes.Hatch});
         }
 
-        public void SetSolarParameters(DateTime dateTime, double latitude, double longitude, int timeZoneOffset = 0)
+        public void Start(ShadowCalcParametersConfig sunParameters)
         {
-            pSolarPositions = SunCalculator.GetSolarPositionsPerDay(dateTime, latitude, longitude, timeZoneOffset);
-        }
+            pSolarPositions = SunCalculator.GetSolarPositionsPerDay(sunParameters.Date, sunParameters.Latitude, sunParameters.Longitude, sunParameters.TimeZoneOffset);
 
-        public void CalcFromObjects()
-        {
             if (pSolarPositions == null) return;
             Guid[] propIds = new Guid[] { ParametersShadowsBySunCreator.HourPerDayId };
 
@@ -66,7 +65,7 @@ namespace RengaBri4kaKernel.Functions
 
                 Renga.ILevel? level = PluginData.Project.Model.GetLevel(objectOnLevel.LevelId);
                 if (level == null) continue;
-                double zPlus = level.Elevation / 1000.0 + objectOnLevel.ElevationAboveLevel / 1000.0;
+                double zPlus = level.Elevation / 1000.0 + objectOnLevel.ElevationAboveLevel / 1000.0 - sunParameters.GroundElevation;
 
                 for (int rengaMeshCounter = 0; rengaMeshCounter < rengaObjectGeometry.MeshCount; rengaMeshCounter++)
                 {
@@ -112,7 +111,7 @@ namespace RengaBri4kaKernel.Functions
                 List<ShadowResult> shadowResults = new List<ShadowResult>();
                 foreach (var shadowRawInfo in analyzedPoints)
                 {
-                    shadowResults.Add(ShadowCalculator.CalculateColumnShadow(shadowRawInfo, solarPoint));
+                    shadowResults.Add(ShadowCalculator.CalculateColumnShadow(shadowRawInfo, solarPoint, sunParameters.GroundElevation));
                 }
 
                 //Для построенных теней нужно сформировать внешнюю границу
@@ -123,7 +122,7 @@ namespace RengaBri4kaKernel.Functions
                 var extContour = DelaunayTriangulation.CalculateConvexHull(vertices);
                 var bbox = BoundingBox.CalculateFromPoints(vertices);
 
-                Renga.IModelObject? createdObject = PluginData.Project.Model.CreateHatch(extContour, false);
+                Renga.IModelObject? createdObject = PluginData.Project.Model.CreateBaselineObject(BaselineObjectType.Hatch, extContour, false);
                 if (createdObject != null)
                 {
                     PluginData.Project.Model.CreateText(bbox.GetCentroid(), $"Расчетный час: " + solarPoint.Hour.ToString());

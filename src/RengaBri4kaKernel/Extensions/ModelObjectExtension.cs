@@ -86,17 +86,22 @@ namespace RengaBri4kaKernel.Extensions
 
         public static Line3D? GetLineGeometry(this Renga.IModelObject rengaObject, int segmentation)
         {
-            Renga.IBaseline2DObject? rengaObjectAsBaseline2DObject = rengaObject as Renga.IBaseline2DObject;
+            Renga.IBaseline2DObject? rengaObjectAsBaseline2DObject = rengaObject.GetInterfaceByName("IBaseline2DObject") as Renga.IBaseline2DObject;
             if (rengaObjectAsBaseline2DObject != null)
             {
-                Renga.ICurve2D curve2d = rengaObjectAsBaseline2DObject.GetBaseline();
-                return RengaGeometryConverter.FromCurve2d(curve2d, segmentation);
+                Renga.ICurve2D curve2d = rengaObjectAsBaseline2DObject.GetBaselineInCS(
+                    new Renga.Placement2D()
+                    {
+                        Origin = new Renga.Point2D() { X = 0, Y = 0 },
+                        xAxis = new Renga.Vector2D() { X = 1, Y = 0 }
+                    });
+                return RengaGeometryConverter.FromCurve2d_2(curve2d);
             }
             
             if (rengaObject.ObjectType.Equals(Renga.ObjectTypes.Beam))
             {
                 Renga.IBeamParams? objAsBeam = rengaObject as Renga.IBeamParams;
-                if (objAsBeam != null) return RengaGeometryConverter.FromCurve3d(objAsBeam.GetBaseline(), segmentation);
+                if (objAsBeam != null) return RengaGeometryConverter.FromCurve3d_2(objAsBeam.GetBaseline());
             }
             if (rengaObject.ObjectType.Equals(Renga.ObjectTypes.Column))
             {
