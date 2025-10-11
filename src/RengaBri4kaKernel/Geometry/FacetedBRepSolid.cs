@@ -2,8 +2,10 @@ using Microsoft.SqlServer.Server;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace RengaBri4kaKernel.Geometry
 {
@@ -22,22 +24,17 @@ namespace RengaBri4kaKernel.Geometry
 
     public class FacetedBRepSolid : IGeometryInstance
     {
-        public Dictionary<int, Point3D> Points { get; private set; }
+        //public List<Vector3> Vertices { get; private set; }
 
         public List<Face> Faces { get; private set; }
 
+        [XmlIgnore]
         public BoundingBox? BBox { get; private set; }
 
         public FacetedBRepSolid()
         {
-            Points = new Dictionary<int, Point3D>();
+            //Vertices = new List<Vector3>();
             Faces = new List<Face>();
-        }
-
-        public int AddPoint(Point3D point3d)
-        {
-            Points.Add(Points.Count, point3d);
-            return Points.Count - 1;
         }
 
         public void AddFace(Face face)
@@ -45,30 +42,69 @@ namespace RengaBri4kaKernel.Geometry
             Faces.Add(face);
         }
 
-        public List<Point3D> GetPoints(IEnumerable<int> indexes)
-        {
-            List<Point3D> ps = new List<Point3D>();
-            foreach (int index in indexes)
-            {
-                ps.Add(Points[index]);
-            }
-            return ps;
-        }
+        //public List<Vector3> GetPoints(IEnumerable<int> indexes)
+        //{
+        //    List<Vector3> ps = new List<Vector3>();
+        //    foreach (int index in indexes)
+        //    {
+        //        ps.Add(Vertices[index]);
+        //    }
+        //    return ps;
+        //}
 
         public override BoundingBox GetBBox()
         {
-            if (this.BBox == null) this.BBox = BoundingBox.CalculateFromPoints(this.Points.Select(p => p.Value));
+            if (this.BBox == null) this.BBox = BoundingBox.CalculateFromPoints(this.Faces.SelectMany(f=>f.Vertices).ToArray());
             return this.BBox;
-        }
-
-        public void Optimize()
-        {
-            //TODO: Заменить кучу граней на каноническое описание Faceted BRep (соседние грани в одной плоскости --> плоскость)
         }
 
         public override GeometryMode GetGeometryType()
         {
             return GeometryMode.FacetedBRepSolid;
+        }
+
+
+
+        public void AddFace(List<Vector3> polygon, Vector3 normal)
+        {
+            if (polygon.Count < 3) return;
+            Face faceDef = new Face();
+
+            for (int i = 0; i < polygon.Count; i++)
+            {
+                faceDef.GetOrAddVertexIndex(polygon[i]);
+            }
+            faceDef.Normal = normal;
+
+            Faces.Add(faceDef);
+        }
+
+        public void AddTriangle(Triangle triangle)
+        {
+            var indices = new int[3];
+            Face faceDef = new Face();
+            faceDef.GetOrAddVertexIndex(triangle.V1);
+            faceDef.GetOrAddVertexIndex(triangle.V2);
+            faceDef.GetOrAddVertexIndex(triangle.V3);
+            faceDef.Normal = triangle.CalculateNormal();
+
+            Faces.Add(faceDef);
+        }
+
+        public void Merge(FacetedBRepSolid other)
+        {
+            // Add all faces with adjusted indices
+            foreach (var face in other.Faces)
+            {
+                Faces.Add(face);
+            }
+        }
+
+
+
+        public override string ToString()
+        {
+            return $"FacetedBrep: {Faces.Count} faces";
         }
 
     }

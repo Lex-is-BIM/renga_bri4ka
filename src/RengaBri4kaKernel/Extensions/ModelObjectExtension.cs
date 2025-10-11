@@ -103,10 +103,10 @@ namespace RengaBri4kaKernel.Extensions
                 Renga.IColumnParams? objAsColumn = rengaObject as Renga.IColumnParams;
                 if (objAsColumn != null) return new Line3D()
                 {
-                    Points = new List<Point3D>()
+                    Vertices = new List<Vector3>()
                     {
-                        new Point3D(objAsColumn.Position.X, objAsColumn.Position.Y, objAsColumn.Position.Z),
-                        new Point3D(objAsColumn.Position.X, objAsColumn.Position.Y, objAsColumn.Position.Z + objAsColumn.Height),
+                        new Vector3(objAsColumn.Position.X, objAsColumn.Position.Y, objAsColumn.Position.Z),
+                        new Vector3(objAsColumn.Position.X, objAsColumn.Position.Y, objAsColumn.Position.Z + objAsColumn.Height),
 
                     }
                 };

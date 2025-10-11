@@ -13,7 +13,7 @@ namespace RengaBri4kaKernel.Geometry
         {
             if (line == null) return SolidRelationship._Error;
             // Check if both endpoints are inside the solid
-            foreach (var point in line.Points)
+            foreach (var point in line.Vertices)
             {
                 if (!IsPointInsideSolid(solid, point, tolerance)) return SolidRelationship.Contains;
             }
@@ -22,28 +22,28 @@ namespace RengaBri4kaKernel.Geometry
         }
 
 
-        private static bool RayIntersectsFace(Point3D rayOrigin, Point3D rayDirection, Face face, double tolerance)
+        private static bool RayIntersectsFace(Vector3 rayOrigin, Vector3 rayDirection, Face face, double tolerance)
         {
             // Ray-plane intersection
             double denom = rayDirection.Dot(face.Normal);
             if (Math.Abs(denom) < tolerance)
                 return false; // Ray parallel to plane
 
-            Point3D p0 = face.Owner.Points[face.Vertices[0]];
+            Vector3 p0 = face.Vertices[0];
             double t = (p0 - rayOrigin).Dot(face.Normal) / denom;
 
             if (t < tolerance)
                 return false; // Intersection behind ray origin
 
-            Point3D intersection = rayOrigin + rayDirection * t;
+            Vector3 intersection = rayOrigin + rayDirection * t;
 
             // Check if intersection point is within the face polygon
             return face.IsPointOnFace(intersection, tolerance);
         }
 
-        private static Point3D Interpolate(Point3D a, Point3D b, double t)
+        private static Vector3 Interpolate(Vector3 a, Vector3 b, double t)
         {
-            return new Point3D(
+            return new Vector3(
                 a.X + (b.X - a.X) * t,
                 a.Y + (b.Y - a.Y) * t,
                 a.Z + (b.Z - a.Z) * t
@@ -87,7 +87,7 @@ namespace RengaBri4kaKernel.Geometry
             // Check if all vertices of solidB are inside solidA
             foreach (var face in solidB.Faces)
             {
-                foreach (var vertex in face.Owner.GetPoints(face.Vertices))
+                foreach (var vertex in face.Vertices)
                 {
                     if (!IsPointInsideSolid(solidA, vertex, tolerance))
                         return false;
@@ -100,14 +100,14 @@ namespace RengaBri4kaKernel.Geometry
                 int vertexCount = face.Vertices.Count;
                 for (int i = 0; i < vertexCount; i++)
                 {
-                    Point3D start = face.Owner.Points[face.Vertices[i]];
-                    Point3D end = face.Owner.Points[face.Vertices[(i + 1) % vertexCount]];
+                    Vector3 start = face.Vertices[i];
+                    Vector3 end = face.Vertices[(i + 1) % vertexCount];
 
                     // Sample points along the edge
                     for (int j = 1; j < 5; j++) // Sample 3 points along each edge
                     {
                         double t = j / 5.0;
-                        Point3D samplePoint = Interpolate(start, end, t);
+                        Vector3 samplePoint = Interpolate(start, end, t);
                         if (!IsPointInsideSolid(solidA, samplePoint, tolerance))
                             return false;
                     }
@@ -132,10 +132,10 @@ namespace RengaBri4kaKernel.Geometry
 
             // Check if any vertex of solidA is inside solidB and vice versa
             bool vertexAInsideB = solidA.Faces.Any(face =>
-                face.Vertices.Any(vertex => IsPointInsideSolid(solidB, face.Owner.Points[vertex], tolerance)));
+                face.Vertices.Any(vertex => IsPointInsideSolid(solidB, vertex, tolerance)));
 
             bool vertexBInsideA = solidB.Faces.Any(face =>
-                face.Vertices.Any(vertex => IsPointInsideSolid(solidA, face.Owner.Points[vertex], tolerance)));
+                face.Vertices.Any(vertex => IsPointInsideSolid(solidA, vertex, tolerance)));
 
             return vertexAInsideB || vertexBInsideA;
         }
@@ -152,9 +152,9 @@ namespace RengaBri4kaKernel.Geometry
                     {
                         // Ensure no penetration by checking vertices
                         bool penetration = solidA.Faces.Any(face =>
-                            face.Vertices.Any(vertex => IsPointInsideSolid(solidB, face.Owner.Points[vertex], tolerance))) ||
+                            face.Vertices.Any(vertex => IsPointInsideSolid(solidB, vertex, tolerance))) ||
                                           solidB.Faces.Any(face =>
-                            face.Vertices.Any(vertex => IsPointInsideSolid(solidA, face.Owner.Points[vertex], tolerance)));
+                            face.Vertices.Any(vertex => IsPointInsideSolid(solidA, vertex, tolerance)));
 
                         if (!penetration)
                             return true;
@@ -181,8 +181,8 @@ namespace RengaBri4kaKernel.Geometry
             int vertexCount = faceA.Vertices.Count;
             for (int i = 0; i < vertexCount; i++)
             {
-                Point3D start = faceA.Owner.Points[faceA.Vertices[i]];
-                Point3D end = faceA.Owner.Points[faceA.Vertices[(i + 1) % vertexCount]];
+                Vector3 start = faceA.Vertices[i];
+                Vector3 end = faceA.Vertices[(i + 1) % vertexCount];
 
                 if (EdgeIntersectsFace(start, end, faceB, tolerance))
                     return true;
@@ -191,23 +191,23 @@ namespace RengaBri4kaKernel.Geometry
         }
 
         // Check if an edge intersects a face
-        private static bool EdgeIntersectsFace(Point3D start, Point3D end, Face face, double tolerance)
+        private static bool EdgeIntersectsFace(Vector3 start, Vector3 end, Face face, double tolerance)
         {
-            Point3D edgeDirection = (end - start).Normalize();
-            double edgeLength = (end - start).Length();
+            Vector3 edgeDirection = (end - start).Normalized();
+            double edgeLength = (end - start).LengthSquared();
 
             // Ray-plane intersection
             double denom = edgeDirection.Dot(face.Normal);
             if (Math.Abs(denom) < tolerance)
                 return false; // Edge parallel to face plane
 
-            Point3D p0 = face.Owner.Points[face.Vertices[0]];
+            Vector3 p0 = face.Vertices[0];
             double t = (p0 - start).Dot(face.Normal) / denom;
 
             if (t < -tolerance || t > edgeLength + tolerance)
                 return false; // Intersection outside edge segment
 
-            Point3D intersection = start + edgeDirection * t;
+            Vector3 intersection = start + edgeDirection * t;
 
             // Check if intersection point is within the face polygon
             return face.IsPointOnFace(intersection, tolerance);
@@ -221,8 +221,8 @@ namespace RengaBri4kaKernel.Geometry
                 return false;
 
             // Check if any vertex of faceA lies on faceB or vice versa
-            bool touching = faceA.Vertices.Any(vertex => faceB.IsPointOnFace(faceA.Owner.Points[vertex], tolerance)) ||
-                           faceB.Vertices.Any(vertex => faceA.IsPointOnFace(faceB.Owner.Points[vertex], tolerance));
+            bool touching = faceA.Vertices.Any(vertex => faceB.IsPointOnFace(vertex, tolerance)) ||
+                           faceB.Vertices.Any(vertex => faceA.IsPointOnFace(vertex, tolerance));
 
             if (!touching)
                 return false;
@@ -240,8 +240,8 @@ namespace RengaBri4kaKernel.Geometry
                 return false;
 
             // Check if a point from faceB lies on faceA's plane
-            Point3D testPoint = faceB.Owner.Points[faceB.Vertices[0]];
-            double distance = Math.Abs((testPoint - faceA.Owner.Points[faceA.Vertices[0]]).Dot(faceA.Normal));
+            Vector3 testPoint = faceB.Vertices[0];
+            double distance = Math.Abs((testPoint - faceA.Vertices[0]).Dot(faceA.Normal));
             return distance < tolerance;
         }
 
@@ -267,15 +267,15 @@ namespace RengaBri4kaKernel.Geometry
         // ... (Previous methods: IsPointInsideSolid, RayIntersectsFace, Interpolate remain the same)
 
         // Enhanced version of IsPointInsideSolid from previous code
-        private static bool IsPointInsideSolid(FacetedBRepSolid solid, Point3D point, double tolerance)
+        private static bool IsPointInsideSolid(FacetedBRepSolid solid, Vector3 point, double tolerance)
         {
             // Use multiple rays in different directions for robustness
-            Point3D[] rayDirections = new Point3D[]
+            Vector3[] rayDirections = new Vector3[]
             {
-            new Point3D(1, 0, 0),
-            new Point3D(0, 1, 0),
-            new Point3D(0, 0, 1),
-            new Point3D(1, 1, 1).Normalize()
+            new Vector3(1, 0, 0),
+            new Vector3(0, 1, 0),
+            new Vector3(0, 0, 1),
+            new Vector3(1, 1, 1).Normalized()
             };
 
             foreach (var rayDir in rayDirections)
@@ -288,7 +288,7 @@ namespace RengaBri4kaKernel.Geometry
             return false;
         }
 
-        private static int CountRayIntersections(FacetedBRepSolid solid, Point3D rayOrigin, Point3D rayDirection, double tolerance)
+        private static int CountRayIntersections(FacetedBRepSolid solid, Vector3 rayOrigin, Vector3 rayDirection, double tolerance)
         {
             int intersections = 0;
 

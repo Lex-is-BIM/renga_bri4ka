@@ -87,6 +87,10 @@ namespace RengaBri4kaKernel.UI.Windows
         }
 
         #region Handlers
+        private void Button_DeleteGeometryCache_Click(object sender, RoutedEventArgs e)
+        {
+            RengaProjectGeometryExtractor.DeleteCache();
+        }
         private void Button_Start_Click(object sender, RoutedEventArgs e)
         {
             ClashDetectiveConfig config = this.GetConfigFromUI();

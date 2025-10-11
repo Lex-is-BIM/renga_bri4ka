@@ -4,70 +4,90 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace RengaBri4kaKernel.Geometry
 {
     public class Face
     {
-        public List<int> Vertices { get; set; }
-        public Point3D Normal { get; private set; }
-        public readonly FacetedBRepSolid Owner;
+        public List<Vector3> Vertices { get; set; }
+        public Vector3 Normal { get; set; }
 
-        public Face(FacetedBRepSolid owner)
+        public Face()
         {
-            Owner = owner;
-            Vertices = new List<int>();
-            Normal = new Point3D();
+            Vertices = new List<Vector3>();
+            Normal = new Vector3();
         }
 
         public void CalculateNormal()
         {
-            Normal = CalculateNormal(Owner.GetPoints(Vertices));
+            Normal = CalculateNormal(Vertices);
         }
 
-        private static Point3D CalculateNormal(List<Point3D> vertices)
+        public int GetOrAddVertexIndex(Vector3 vertex)
+        {
+            // Check if vertex already exists
+            for (int i = 0; i < Vertices.Count; i++)
+            {
+                if (VectorEquals(Vertices[i], vertex))
+                {
+                    return i;
+                }
+            }
+
+            // Add new vertex
+            Vertices.Add(vertex);
+            return Vertices.Count - 1;
+        }
+
+        private static bool VectorEquals(Vector3 a, Vector3 b)
+        {
+            return (a - b).LengthSquared() < 1e-10;
+        }
+
+        private static Vector3 CalculateNormal(List<Vector3> vertices)
         {
             if (vertices.Count < 3)
             {
 #if DEBUG
                 throw new ArgumentException("Face needs at least 3 vertices");
 #else
-                return new Point3D(0, 0, 1);
+                return new Vector3(0, 0, 1);
 #endif
             }
 
             // Use Newell's method for robust normal calculation
-            Point3D normal = new Point3D(0, 0, 0);
+            Vector3 normal = new Vector3(0, 0, 0);
             for (int i = 0; i < vertices.Count; i++)
             {
-                Point3D current = vertices[i];
-                Point3D next = vertices[(i + 1) % vertices.Count];
+                Vector3 current = vertices[i];
+                Vector3 next = vertices[(i + 1) % vertices.Count];
 
                 normal.X += (current.Y - next.Y) * (current.Z + next.Z);
                 normal.Y += (current.Z - next.Z) * (current.X + next.X);
                 normal.Z += (current.X - next.X) * (current.Y + next.Y);
             }
 
-            return normal.Normalize();
+            return normal.Normalized();
         }
 
-        public bool IsPointOnFace(Point3D point, double tolerance = 1e-10)
+        public bool IsPointOnFace(Vector3 point, double tolerance = 1e-10)
         {
             // Check if point is coplanar with the face
             if (Math.Abs(DistanceToPlane(point)) > tolerance)
                 return false;
 
             // Use point-in-polygon test with ray casting
-            return IsPointInPolygon(point, Owner.GetPoints(Vertices), Normal);
+            return IsPointInPolygon(point, Vertices, Normal);
         }
 
-        private double DistanceToPlane(Point3D point)
+        private double DistanceToPlane(Vector3 point)
         {
             // Plane equation: (point - vertices[0]) · normal = 0
-            return (point - Owner.Points[Vertices[0]]).Dot(Normal);
+            return (point - Vertices[0]).Dot(Normal);
         }
 
-        private bool IsPointInPolygon(Point3D point, List<Point3D> polygon, Point3D normal)
+        private bool IsPointInPolygon(Vector3 point, List<Vector3> polygon, Vector3 normal)
         {
             // Project polygon and point to 2D
             var (projectedPoint, projectedPolygon) = ProjectTo2D(point, polygon, normal);
@@ -88,10 +108,10 @@ namespace RengaBri4kaKernel.Geometry
             return crossings % 2 == 1;
         }
 
-        private (Point2D, List<Point2D>) ProjectTo2D(Point3D point, List<Point3D> polygon, Point3D normal)
+        private (Point2D, List<Point2D>) ProjectTo2D(Vector3 point, List<Vector3> polygon, Vector3 normal)
         {
             // Find dominant axis for projection
-            Point3D axis = new Point3D(Math.Abs(normal.X), Math.Abs(normal.Y), Math.Abs(normal.Z));
+            Vector3 axis = new Vector3(Math.Abs(normal.X), Math.Abs(normal.Y), Math.Abs(normal.Z));
             int dropIndex = axis.X > axis.Y ? (axis.X > axis.Z ? 0 : 2) : (axis.Y > axis.Z ? 1 : 2);
 
             List<Point2D> projected = new List<Point2D>();

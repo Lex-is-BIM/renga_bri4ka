@@ -32,7 +32,7 @@ namespace RengaBri4kaKernel.Extensions
             }
         }
 
-        public static FacetedBRepSolid[] ToFacetedBRep(this Renga.IExportedObject3D geometry)
+        public static FacetedBRepSolid[] ToFacetedBRep0(this Renga.IExportedObject3D geometry)
         {
             FacetedBRepSolid[] result = new FacetedBRepSolid[geometry.MeshCount];
             for (int rengaMeshCounter = 0; rengaMeshCounter < geometry.MeshCount; rengaMeshCounter++)
@@ -46,18 +46,20 @@ namespace RengaBri4kaKernel.Extensions
                 {
                     Renga.IGrid grid = mesh.GetGrid(rengaGridCounter);
 
-                    Dictionary<int, int> verticesIndexMap = new Dictionary<int, int>();
+                    Dictionary<int, Vector3> verticesIndexMap = new Dictionary<int, Vector3>();
                     for (int rengaVertexCounter = 0; rengaVertexCounter < grid.VertexCount; rengaVertexCounter++)
                     {
                         Renga.FloatPoint3D p = grid.GetVertex(rengaVertexCounter);
-                        verticesIndexMap.Add(rengaVertexCounter, brepMesh.AddPoint(new Point3D(p.X, p.Y, p.Z)));
+                        verticesIndexMap.Add(rengaVertexCounter, new Vector3(p.X, p.Y, p.Z));
 
                     }
                     for (int rengaFaceCounter = 0; rengaFaceCounter < grid.TriangleCount; rengaFaceCounter++)
                     {
                         Renga.Triangle tr = grid.GetTriangle(rengaFaceCounter);
-                        Face f = new Face(brepMesh);
-                        f.Vertices = new List<int>() { verticesIndexMap[(int)tr.V0], verticesIndexMap[(int)tr.V1], verticesIndexMap[(int)tr.V2] };
+                        Face f = new Face();
+                        f.GetOrAddVertexIndex(verticesIndexMap[(int)tr.V0]);
+                        f.GetOrAddVertexIndex(verticesIndexMap[(int)tr.V1]);
+                        f.GetOrAddVertexIndex(verticesIndexMap[(int)tr.V2]);
                         f.CalculateNormal();
                         brepMesh.AddFace(f);
                     }
@@ -66,6 +68,40 @@ namespace RengaBri4kaKernel.Extensions
             }
             return result;
         }
-        
+
+        public static FacetedBRepSolid[] ToFacetedBRep(this Renga.IExportedObject3D geometry)
+        {
+            FacetedBRepSolid[] result = new FacetedBRepSolid[geometry.MeshCount];
+            for (int rengaMeshCounter = 0; rengaMeshCounter < geometry.MeshCount; rengaMeshCounter++)
+            {
+                Renga.IMesh mesh = geometry.GetMesh(rengaMeshCounter);
+
+                
+                List<Triangle> triangles = new List<Triangle>();
+
+                for (int rengaGridCounter = 0; rengaGridCounter < mesh.GridCount; rengaGridCounter++)
+                {
+                    Renga.IGrid grid = mesh.GetGrid(rengaGridCounter);
+
+                    Dictionary<int, Vector3> verticesIndexMap = new Dictionary<int, Vector3>();
+                    for (int rengaVertexCounter = 0; rengaVertexCounter < grid.VertexCount; rengaVertexCounter++)
+                    {
+                        Renga.FloatPoint3D p = grid.GetVertex(rengaVertexCounter);
+                        verticesIndexMap.Add(rengaVertexCounter, new Vector3(p.X, p.Y, p.Z));
+
+                    }
+                    for (int rengaFaceCounter = 0; rengaFaceCounter < grid.TriangleCount; rengaFaceCounter++)
+                    {
+                        Renga.Triangle tr = grid.GetTriangle(rengaFaceCounter);
+                        Triangle trDef = new Triangle(verticesIndexMap[(int)tr.V0], verticesIndexMap[(int)tr.V1], verticesIndexMap[(int)tr.V2]);
+                        triangles.Add(trDef);
+                    }
+                }
+                FacetedBRepSolid brepMesh = MultiPlanarOptimizer.OptimizeTrianglesToBrep(triangles);
+                result[rengaMeshCounter] = brepMesh;
+            }
+            return result;
+        }
+
     }
 }

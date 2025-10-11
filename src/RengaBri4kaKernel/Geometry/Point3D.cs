@@ -6,22 +6,51 @@ using System.Threading.Tasks;
 
 namespace RengaBri4kaKernel.Geometry
 {
-    // Basic geometric classures
     public class Point3D
     {
-        public double X, Y, Z;
-        public Point3D(double x, double y, double z) { X = x; Y = y; Z = z; }
-        public Point3D() { X = 0.0; Y = 0.0; Z = 0.0; }
-        public static Point3D operator -(Point3D a, Point3D b) => new Point3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
-        public static Point3D operator +(Point3D a, Point3D b) => new Point3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
-        public static Point3D operator *(Point3D a, double scalar) => new Point3D(a.X * scalar, a.Y * scalar, a.Z * scalar);
+        public double X { get; set; }
+        public double Y { get; set; }
+        public double Z { get; set; }
 
-        public double Dot(Point3D other) => X * other.X + Y * other.Y + Z * other.Z;
-        public Point3D Cross(Point3D other) => new Point3D(
-            Y * other.Z - Z * other.Y,
-            Z * other.X - X * other.Z,
-            X * other.Y - Y * other.X);
-        public double Length() => Math.Sqrt(X * X + Y * Y + Z * Z);
-        public Point3D Normalize() => this * (1.0 / Length());
+        public Point3D(double x, double y, double z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
+
+        public double[] GetXYZ()
+        {
+            return new double[] { X, Y, Z };
+        }
+
+        public double DistanceSquared(Point3D other)
+        {
+            double dx = X - other.X;
+            double dy = Y - other.Y;
+            return dx * dx + dy * dy;
+        }
+
+        public override string ToString()
+        {
+            return $"({X}, {Y}, {Z})";
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Point3D other)
+            {
+                return Math.Abs(X - other.X) < 1e-10 &&
+                       Math.Abs(Y - other.Y) < 1e-10 &&
+                       Math.Abs(Z - other.Z) < 1e-10;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return X.GetHashCode() ^ Y.GetHashCode() ^ Z.GetHashCode();
+        }
+
     }
 }

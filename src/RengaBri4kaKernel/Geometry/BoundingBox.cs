@@ -15,6 +15,7 @@ namespace RengaBri4kaKernel.Geometry
         public double MinZ { get; set; }
         public double MaxZ { get; set; }
 
+
         public double[] GetMinPoint() { return new double[] { MinX, MinY, MinZ };}
         public double[] GetMaxPoint() { return new double[] { MaxX, MaxY, MaxZ }; }
         public double[] GetCentroid()
@@ -23,6 +24,10 @@ namespace RengaBri4kaKernel.Geometry
         }
 
         public static BoundingBox CalculateFromPoints(IEnumerable<Point3D> points)
+        {
+            return CalculateFromPoints(points.Select(a => new Vector3(a.X, a.Y, a.Z)));
+        }
+        public static BoundingBox CalculateFromPoints(IEnumerable<Vector3> points)
         {
             return new BoundingBox
             {

@@ -25,6 +25,8 @@ namespace RengaBri4kaKernel.Functions
             if (config == null) return;
             TimerUtils.CreateInstance().Start();
 
+            RengaProjectGeometryExtractor geomExtr = new RengaProjectGeometryExtractor();
+
             Renga.IOperation editOperation = PluginData.Project.CreateOperation();
             editOperation.Start();
 
@@ -48,11 +50,6 @@ namespace RengaBri4kaKernel.Functions
 
             Dictionary<int, IGeometryInstance[]> objectsGeometryConverted = new Dictionary<int, IGeometryInstance[]>();
 
-            // Если среди выбранных к анализу объектов имеются помещения и текущая редакция Renga == Professional, то сделаем частичный экспорт в IFC для получения геометрий
-            // TODO: реализовать, если надо ...
-
-            
-
             void Set_objectsGeometryConverted(IEnumerable<Renga.IModelObject> objects)
             {
                 foreach (Renga.IModelObject oneObject in objects)
@@ -60,10 +57,15 @@ namespace RengaBri4kaKernel.Functions
                     if (!objectsGeometryConverted.ContainsKey(oneObject.Id))
                     {
                         IGeometryInstance[]? geom = null;
-                        Renga.IExportedObject3D? object1Geometry = oneObject.GetExportedObject3D();
+
                         Line3D? objectAsLine = oneObject.GetLineGeometry(config.Segmentation ?? ClashDetectiveConfig.SegmentationDefault);
+
                         if ((config.AnalyzeBaseLinesOnly ?? false) && objectAsLine != null) geom = new IGeometryInstance[] { objectAsLine };
-                        else if (object1Geometry != null) geom = object1Geometry.ToFacetedBRep();
+                        else
+                        {
+                            //geom = oneObject.GetExportedObject3D()?.ToFacetedBRep0();// geomExtr.GetGeometryForObject(oneObject);
+                            geom = geomExtr.GetGeometryForObject(oneObject);
+                        }
 
                         if (geom != null) objectsGeometryConverted.Add(oneObject.Id, geom);
                     }
@@ -90,18 +92,22 @@ namespace RengaBri4kaKernel.Functions
                         CategoryObject2 = oTypes.Where(t => t.Id == object2.ObjectType).First().Name,
                     };
 
-                    
-
                     // проверка
                     bool isAtLeastOne = false;
                     SolidRelationship relResult = SolidRelationship.Separate;
-                    foreach (var object1GeometryPart in objectsGeometryConverted[object1.Id])
+                    IGeometryInstance[]? object1GeometryCollection;
+                    if (!objectsGeometryConverted.TryGetValue(object1.Id, out object1GeometryCollection)) continue;
+
+                    foreach (var object1GeometryPart in object1GeometryCollection)
                     {
                         if (isAtLeastOne) break;
                         //Могут проверяться только солиды с прочей геометрией, не наоборот
                         if (object1GeometryPart.GetGeometryType() != GeometryMode.FacetedBRepSolid) continue;
                         FacetedBRepSolid? object1GeometryPart_Solid = object1GeometryPart as FacetedBRepSolid;
                         if (object1GeometryPart_Solid == null) continue;
+
+                        IGeometryInstance[]? object2GeometryCollection;
+                        if (!objectsGeometryConverted.TryGetValue(object2.Id, out object2GeometryCollection)) continue;
 
                         foreach (var object2GeometryPart in objectsGeometryConverted[object2.Id])
                         {
@@ -122,6 +128,8 @@ namespace RengaBri4kaKernel.Functions
                                 break;
                             }
                         }
+
+
                     }
                     if (isAtLeastOne)
                     {
@@ -137,6 +145,8 @@ namespace RengaBri4kaKernel.Functions
                         report.Items.Add(clashInfo);
                         object2.CopyPropertiesFromOtherObjects(object1, config.PropertiesToCopy);
                     }
+
+
                 }
             }
             editOperation.Apply();

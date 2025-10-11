@@ -8,11 +8,11 @@ namespace RengaBri4kaKernel.Geometry
 {
     public class Line3D : IGeometryInstance
     {
-        public List<Point3D> Points;
+        public List<Vector3> Vertices;
         public BoundingBox? BBox;
         public Line3D()
         {
-            Points = new List<Point3D>();
+            Vertices = new List<Vector3>();
         }
 
         public override GeometryMode GetGeometryType()
@@ -22,7 +22,7 @@ namespace RengaBri4kaKernel.Geometry
 
         public override BoundingBox GetBBox()
         {
-            if (this.BBox == null) this.BBox = BoundingBox.CalculateFromPoints(this.Points);
+            if (this.BBox == null) this.BBox = BoundingBox.CalculateFromPoints(this.Vertices);
             return this.BBox;
         }
     }

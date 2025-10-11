@@ -29,8 +29,8 @@ namespace RengaBri4kaKernel.Functions
 
         public void SetColor(System.Windows.Media.Color color)
         {
-            int[]? ids = UserInput.GetSelectedObjects();
-            if (ids == null) return;
+            IEnumerable<Renga.IModelObject>? rengaModelObjects = PluginData.rengaApplication.Selection.GetSelectedObjects2();
+            if (rengaModelObjects == null) return;
 
             var editOperation = PluginData.Project.CreateOperation();
             editOperation.Start();
@@ -44,9 +44,8 @@ namespace RengaBri4kaKernel.Functions
 
             Renga.IModelObjectCollection modelObjects = rengaModel.GetObjects();
 
-            foreach (int id in ids)
+            foreach (Renga.IModelObject rengaObject in rengaModelObjects)
             {
-                Renga.IModelObject rengaObject = modelObjects.GetById(id);
                 Renga.ITextObject? textObject = rengaObject as Renga.ITextObject;
                 if (textObject == null) continue;
                 Renga.IRichTextDocument textDocument = textObject.GetRichTextDocument();

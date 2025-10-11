@@ -51,7 +51,8 @@
             <Button x:Name="Button_SaveSettingsToFile" Margin="0,5,0,0" Content="Сохранить настройки в файл" Click="Button_SaveSettingsToFile_Click"></Button>
             <Button x:Name="Button_LoadSettingsFromFile" Margin="0,5,0,0" Content="Загрузить настройки из файла" Click="Button_LoadSettingsFromFile_Click"></Button>
             <Separator Margin="0,5,0,5"></Separator>
-            <Button x:Name="Button_Start" Content="Начать расчёт" Click="Button_Start_Click"></Button>
+            <Button x:Name="Button_DeleteGeometryCache" Content="Удалить кэш (объектная геометрия)" Click="Button_DeleteGeometryCache_Click"></Button>
+            <Button x:Name="Button_Start" Margin="0,5,0,5" Content="Начать расчёт" Click="Button_Start_Click"></Button>
         </StackPanel>
     </Grid>
 </Window>

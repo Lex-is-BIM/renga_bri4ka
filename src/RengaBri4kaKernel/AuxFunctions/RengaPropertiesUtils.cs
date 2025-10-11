@@ -66,6 +66,30 @@ namespace RengaBri4kaKernel.AuxFunctions
             return properties.OrderBy(p => p.Name).ToArray();
         }
 
+        public static double? GetQuantityValue(Renga.IQuantity rengaQuantity)
+        {
+            double? propValue = null;
+
+            switch (rengaQuantity.Type)
+            {
+                case Renga.QuantityType.QuantityType_Count:
+                    propValue = rengaQuantity.AsCount() * 1.0;
+                    break;
+                case Renga.QuantityType.QuantityType_Length:
+                    propValue = rengaQuantity.AsLength(Renga.LengthUnit.LengthUnit_Meters);
+                    break;
+                case Renga.QuantityType.QuantityType_Mass:
+                    propValue = rengaQuantity.AsMass(Renga.MassUnit.MassUnit_Kilograms);
+                    break;
+                case Renga.QuantityType.QuantityType_Area:
+                    propValue = rengaQuantity.AsArea(Renga.AreaUnit.AreaUnit_Meters2);
+                    break;
+                case Renga.QuantityType.QuantityType_Volume:
+                    propValue = rengaQuantity.AsVolume(Renga.VolumeUnit.VolumeUnit_Meters3);
+                    break;
+            }
+            return propValue;
+        }
 
     }
 

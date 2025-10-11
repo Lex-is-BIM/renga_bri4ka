@@ -26,6 +26,7 @@ namespace RengaBri4kaLoader
         RENGA_BRI4KA_TEXTCOLORING,
         RENGA_BRI4KA_COLLISIONSMANAGER,
         RENGA_BRI4KA_COLLISIONSVIEWER,
+        RENGA_BRI4KA_SOLARSHADOWANAL,
         RENGA_BRI4KA_PLUGINVERSION,
         RENGA_BRI4KA_PLUGINHELP
     }
@@ -115,6 +116,13 @@ namespace RengaBri4kaLoader
                     Bri4ka_CollisionsReportViewer collisionViewerUI = new Bri4ka_CollisionsReportViewer();
                     //System.Windows.Application.Current.Run(collisionViewerUI);
                     collisionViewerUI.Show();
+                    break;
+                case PluginFunctionVariant.RENGA_BRI4KA_SOLARSHADOWANAL:
+#if DEBUG
+                    RengaShadowsBySunCreator sunFunc = new RengaShadowsBySunCreator();
+                    sunFunc.SetSolarParameters(DateTime.Now, 55.0, 30.0);
+                    sunFunc.CalcFromObjects();
+#endif
                     break;
 
                 //Настройки

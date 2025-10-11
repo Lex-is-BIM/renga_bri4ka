@@ -11,13 +11,6 @@ namespace RengaBri4kaKernel.AuxFunctions
     /// </summary>
     internal class UserInput
     {
-        public static int[]? GetSelectedObjects()
-        {
-            Array objects = PluginData.rengaApplication.Selection.GetSelectedObjects();
-            if (objects.Length > 0) return objects.Cast<int>().ToArray();
-            return null;
-        }
-
         public static IEnumerable<Renga.IModelObject>? GetModelObjectsByTypes(Guid[] types)
         {
             if (PluginData.Project == null) return null;
@@ -32,9 +25,5 @@ namespace RengaBri4kaKernel.AuxFunctions
             }
             return result;
         }
-
-        
-
-
     }
 }

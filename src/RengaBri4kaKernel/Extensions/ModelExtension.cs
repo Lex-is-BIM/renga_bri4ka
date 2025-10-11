@@ -1,5 +1,6 @@
 using Renga;
 using RengaBri4kaKernel.Configs;
+using RengaBri4kaKernel.Geometry;
 using RengaBri4kaKernel.RengaInternalResources;
 using System;
 using System.Collections.Generic;
@@ -194,6 +195,63 @@ namespace RengaBri4kaKernel.Extensions
 
             Renga.IModelObject? levelAsModelObject = levelObject as Renga.IModelObject;
             return levelAsModelObject;
+        }
+
+        public static Renga.IModelObject? CreateHatch(this Renga.IModel rengaModel, List<RengaBri4kaKernel.Geometry.Point3D> contour, bool isMeters = true)
+        {
+            if (PluginData.Project == null) return null;
+            if (contour.Count() < 3) return null;
+            Renga.IOperation editOperation = PluginData.Project.CreateOperation();
+            editOperation.Start();
+
+            double numKoeff = 1.0;
+            if (isMeters) numKoeff = 1000.0;
+
+            Renga.INewEntityArgs creationParams = rengaModel.CreateNewEntityArgs();
+            creationParams.TypeId = Renga.ObjectTypes.Hatch;
+
+            var hatchObjectRaw = rengaModel.CreateObject(creationParams);
+            if (hatchObjectRaw == null)
+            {
+                editOperation.Rollback();
+                return null;
+            }
+
+            Renga.IBaseline2DObject? hatchAsBaseline2dObject = hatchObjectRaw as Renga.IBaseline2DObject;
+            if (hatchAsBaseline2dObject == null)
+            {
+                editOperation.Rollback();
+                return null;
+            }
+
+            if (contour[0] != contour[contour.Count - 1]) contour.Add(contour[0]);
+
+            List<Renga.ICurve2D> curvesTemp = new List<ICurve2D>();
+            for (int vertexCounter = 0;  vertexCounter < contour.Count - 1; vertexCounter++)
+            {
+                var vertex1 = contour[vertexCounter];
+                var vertex2 = contour[vertexCounter + 1];
+
+                Renga.Point2D rengaVertex1 = new Renga.Point2D() { X = vertex1.X * numKoeff, Y = vertex1.Y * numKoeff };
+                Renga.Point2D rengaVertex2 = new Renga.Point2D() { X = vertex2.X * numKoeff, Y = vertex2.Y * numKoeff };
+                Renga.ICurve2D curveData = PluginData.rengaApplication.Math.CreateLineSegment2D(rengaVertex1, rengaVertex2);
+                curvesTemp.Add(curveData);
+            }
+
+            hatchAsBaseline2dObject.SetBaseline(PluginData.rengaApplication.Math.CreateCompositeCurve2D(curvesTemp.ToArray()));
+            editOperation.Apply();
+
+            return hatchObjectRaw;
+        }
+
+        public static Renga.ILevel? GetLevel(this Renga.IModel rengaModel, int id)
+        {
+            var rengaObjects = rengaModel.GetObjects();
+            Renga.IModelObject? rengaObject = rengaObjects.GetById(id);
+            if (rengaObject == null) return null;
+            Renga.ILevel? rengaLevelObject = rengaObject as Renga.ILevel;
+            return rengaLevelObject;
+
         }
     }
 }
