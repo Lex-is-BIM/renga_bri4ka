@@ -263,5 +263,24 @@ namespace RengaBri4kaKernel.Extensions
             return rengaLevelObject;
 
         }
+
+        public static IEnumerable<Renga.IModelObject>? GetVisibleObjects()
+        {
+            var view = PluginData.rengaApplication.ActiveView;
+            var modelView = view as Renga.IModelView;
+            if (modelView == null) return null;
+
+            Renga.IModel model = PluginData.Project.Model;
+            Renga.IModelObjectCollection objects = model.GetObjects();
+            List<Renga.IModelObject> needObjects = new List<IModelObject>();
+
+            for (int i = 0; i < objects.Count; i++)
+            {
+                Renga.IModelObject o = objects.GetByIndex(i);
+                if (modelView.IsObjectVisible(o.Id)) needObjects.Add(o);
+            }
+
+            return needObjects;
+        }
     }
 }

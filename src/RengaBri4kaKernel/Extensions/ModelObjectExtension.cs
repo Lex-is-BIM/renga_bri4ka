@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace RengaBri4kaKernel.Extensions
 {
@@ -84,19 +85,50 @@ namespace RengaBri4kaKernel.Extensions
             return null;
         }
 
+        public static Line3D? GetExternalBorder(this Renga.IModelObject rengaObject, int gridType)
+        {
+            Renga.IExportedObject3D? geom = rengaObject.GetExportedObject3D();
+            if (geom == null) return null;
+
+            List<Point3D> points = new List<Point3D>();
+
+            for (int rengaMeshCounter = 0; rengaMeshCounter < geom.MeshCount; rengaMeshCounter++)
+            {
+                Renga.IMesh mesh = geom.GetMesh(rengaMeshCounter);
+
+                for (int rengaGridCounter = 0; rengaGridCounter < mesh.GridCount; rengaGridCounter++)
+                {
+                    Renga.IGrid grid = mesh.GetGrid(rengaGridCounter);
+                    for (int rengaVertexCounter = 0; rengaVertexCounter < grid.VertexCount; rengaVertexCounter++)
+                    {
+                        Renga.FloatPoint3D p = grid.GetVertex(rengaVertexCounter);
+                        points.Add(new Point3D(p.X, p.Y, p.Z));
+
+                    }
+                }
+            }
+            var extContour = DelaunayTriangulation.CalculateConvexHull(points);
+            return new Line3D(extContour);
+        }
+
         public static Line3D? GetLineGeometry(this Renga.IModelObject rengaObject, int segmentation)
         {
-            Renga.IBaseline2DObject? rengaObjectAsBaseline2DObject = rengaObject.GetInterfaceByName("IBaseline2DObject") as Renga.IBaseline2DObject;
-            if (rengaObjectAsBaseline2DObject != null)
+            object rengaObjectAsBaseline2DObjectRaw = rengaObject.GetInterfaceByName("IBaseline2DObject");
+            if (rengaObjectAsBaseline2DObjectRaw != null)
             {
-                Renga.ICurve2D curve2d = rengaObjectAsBaseline2DObject.GetBaselineInCS(
-                    new Renga.Placement2D()
-                    {
-                        Origin = new Renga.Point2D() { X = 0, Y = 0 },
-                        xAxis = new Renga.Vector2D() { X = 1, Y = 0 }
-                    });
-                return RengaGeometryConverter.FromCurve2d_2(curve2d);
+                Renga.IBaseline2DObject? rengaObjectAsBaseline2DObject = rengaObjectAsBaseline2DObjectRaw as Renga.IBaseline2DObject;
+                if (rengaObjectAsBaseline2DObject != null)
+                {
+                    Renga.ICurve2D curve2d = rengaObjectAsBaseline2DObject.GetBaselineInCS(
+                        new Renga.Placement2D()
+                        {
+                            Origin = new Renga.Point2D() { X = 0, Y = 0 },
+                            xAxis = new Renga.Vector2D() { X = 1, Y = 0 }
+                        });
+                    return RengaGeometryConverter.FromCurve2d_2(curve2d);
+                }
             }
+            
             
             if (rengaObject.ObjectType.Equals(Renga.ObjectTypes.Beam))
             {

@@ -11,9 +11,12 @@ namespace RengaBri4kaKernel.AuxFunctions
     /// </summary>
     internal class UserInput
     {
-        public static IEnumerable<Renga.IModelObject>? GetModelObjectsByTypes(Guid[] types)
+        public static IEnumerable<Renga.IModelObject>? GetModelObjectsByTypes(Guid[] types, bool onlyVisible = false)
         {
             if (PluginData.Project == null) return null;
+
+            var view = PluginData.rengaApplication.ActiveView;
+            var modelView = view as Renga.IModelView;
 
             List<Renga.IModelObject> result = new List<Renga.IModelObject>();
             Renga.IModel model = PluginData.Project.Model;
@@ -21,7 +24,12 @@ namespace RengaBri4kaKernel.AuxFunctions
             for (int i = 0; i < objects.Count; i++)
             {
                 Renga.IModelObject o = objects.GetByIndex(i);
-                if (types.Contains(o.ObjectType)) result.Add(o);
+                
+                if (types.Contains(o.ObjectType)) 
+                {
+                    if (onlyVisible && modelView != null && modelView.IsObjectVisible(o.Id)) result.Add(o);
+                    else if (!onlyVisible) result.Add(o);
+                }
             }
             return result;
         }

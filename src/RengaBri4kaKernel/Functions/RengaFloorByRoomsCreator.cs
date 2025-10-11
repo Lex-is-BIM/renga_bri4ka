@@ -25,7 +25,7 @@ namespace RengaBri4kaKernel.Functions
 
             IEnumerable<Renga.IModelObject>? selectedObjects = PluginData.rengaApplication.Selection.GetSelectedObjects2(true);
 #if DEBUG
-            selectedObjects = UserInput.GetModelObjectsByTypes(new Guid[] { RengaObjectTypes.Room });
+            //selectedObjects = UserInput.GetModelObjectsByTypes(new Guid[] { RengaObjectTypes.Room });
 #endif
             if (selectedObjects == null)
             {
@@ -46,7 +46,7 @@ namespace RengaBri4kaKernel.Functions
 
             foreach (var selectedObject in selectedObjectsRooms)
             {
-                var lineGeometry = selectedObject.GetLineGeometry(100);
+                var lineGeometry = selectedObject.GetExternalBorder((int)Renga.GridTypes.Room.Floor);
                 if (lineGeometry == null) continue;
 
                 List<Point3D> points = lineGeometry.Vertices.Select(p => new Point3D(p.X, p.Y, p.Z)).ToList();

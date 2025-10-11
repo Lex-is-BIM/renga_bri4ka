@@ -15,6 +15,15 @@ namespace RengaBri4kaKernel.Geometry
             Vertices = new List<Vector3>();
         }
 
+        public Line3D(IEnumerable<Point3D> points)
+        {
+            Vertices = new List<Vector3>();
+            foreach (var point in points)
+            {
+                Vertices.Add(new Vector3(point.X, point.Y, point.Z));
+            }
+        }
+
         public override GeometryMode GetGeometryType()
         {
             return GeometryMode.Curve3d;
