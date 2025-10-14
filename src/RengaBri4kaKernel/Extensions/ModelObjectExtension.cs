@@ -85,7 +85,7 @@ namespace RengaBri4kaKernel.Extensions
             return null;
         }
 
-        public static Line3D? GetExternalBorder(this Renga.IModelObject rengaObject, int gridType)
+        public static Line3D? GetExternalBorder(this Renga.IModelObject rengaObject, int? gridType)
         {
             Renga.IExportedObject3D? geom = rengaObject.GetExportedObject3D();
             if (geom == null) return null;
@@ -99,6 +99,7 @@ namespace RengaBri4kaKernel.Extensions
                 for (int rengaGridCounter = 0; rengaGridCounter < mesh.GridCount; rengaGridCounter++)
                 {
                     Renga.IGrid grid = mesh.GetGrid(rengaGridCounter);
+                    if (gridType != null && (grid.GridType != gridType.Value)) continue;
                     for (int rengaVertexCounter = 0; rengaVertexCounter < grid.VertexCount; rengaVertexCounter++)
                     {
                         Renga.FloatPoint3D p = grid.GetVertex(rengaVertexCounter);
@@ -107,8 +108,11 @@ namespace RengaBri4kaKernel.Extensions
                     }
                 }
             }
-            var extContour = DelaunayTriangulation.CalculateConvexHull(points);
-            return new Line3D(extContour);
+            //ConcaveHull.Compute(points, 3) ;
+
+            //var triangles = DelaunayTriangulation.Triangulate(points);
+            //var extContour = DelaunayTriangulation.CalculateExternalBorder(triangles); // DelaunayTriangulation.CalculateConvexHull(points);
+            return new Line3D(points);
         }
 
         public static Line3D? GetLineGeometry(this Renga.IModelObject rengaObject, int segmentation)
