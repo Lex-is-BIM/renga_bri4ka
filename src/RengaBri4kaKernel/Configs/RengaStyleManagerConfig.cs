@@ -47,14 +47,10 @@ namespace RengaBri4kaKernel.Configs
         ElectricalCircuitLine
     }
 
-    public enum StyleTypeVariant
-    {
-        ObjectInProject,
-        STDL
-    }
-
-
-    public abstract class RengaStyleDef
+    /// <summary>
+    /// Описывает стиль в проекте
+    /// </summary>
+    public class RengaStyleDef
     {
         public RengaStyleDef()
         {
@@ -62,16 +58,14 @@ namespace RengaBri4kaKernel.Configs
             Properties = new Dictionary<string, string>();
             StyleCategory = RengaStyleCategoryVariant._Unknown;
         }
+
         public string Name { get; set; }
-        public abstract StyleTypeVariant GetStyleType();
+        public bool IsSTDL { get { if (STDL == null) return false; return true; } }
         public RengaStyleCategoryVariant StyleCategory { get; set; }
         public Dictionary<string, string> Properties { get; set; }
-
-        /// <summary>
-        /// Имя файла иконки в подпапке (TODO)
-        /// </summary>
-        //public string IconPath { get; set; }
-
+        public RengaSTDLDef? STDL { get; set; }
+        public Guid? ProjectId { get; set; }
+        public Guid? ObjectUnuqueId { get; set; }
 
         public override bool Equals(object? obj)
         {
@@ -85,59 +79,38 @@ namespace RengaBri4kaKernel.Configs
     }
 
     /// <summary>
-    /// Описывает стиль STDL
+    /// Описывает объект, созданный с помощью STDL, который может быть импортирован в разные категории в Renga-проекте
     /// </summary>
-    public class RengaSTDLFile : RengaStyleDef
+    public class RengaSTDLDef
     {
-        public string DefaultName { get; set; } // = Name
+        public RengaSTDLDef()
+        {
+            Properties = new Dictionary<string, string>();
+        }
+        public string DefaultName { get; set; }
         public string Description { get; set; }
         public string Version { get; set; }
         public string Author { get; set; }
         public Version STDL_Version { get; set; } // = version при чтении RST файла
 
-        public override StyleTypeVariant GetStyleType()
-        {
-            return StyleTypeVariant.STDL;
-        }
+        public Dictionary<string, string> Properties { get; set; }
+
+        /// <summary>
+        /// Путь к RST файлу в папке плагина
+        /// </summary>
+        public string Path { get; set; }
 
         public override bool Equals(object? obj)
         {
-            RengaSTDLFile? objOther = obj as RengaSTDLFile;
+            RengaSTDLDef? objOther = obj as RengaSTDLDef;
             if (objOther == null) return false;
 
-            return base.Equals(obj) &&
-                DefaultName == objOther.DefaultName &&
+            return DefaultName == objOther.DefaultName &&
                 Description == objOther.Description &&
                 Version == objOther.Version &&
-                Author == objOther.Author;
+                Author == objOther.Author &&
+                Properties == objOther.Properties;
         }
-    }
-
-
-    /// <summary>
-    /// Описывает стиль объекта из проекта\шаблона Renga
-    /// </summary>
-    public class RengaObjectStyleInProject : RengaStyleDef
-    {
-        public Guid ProjectId { get; set; }
-        public Guid ObjectUnuqueId { get; set; }
-
-        public override StyleTypeVariant GetStyleType()
-        {
-            return StyleTypeVariant.ObjectInProject;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            RengaObjectStyleInProject? objOther = obj as RengaObjectStyleInProject;
-            if (objOther == null) return false;
-
-            return
-                base.Equals(obj) &&
-                ProjectId == objOther.ProjectId &&
-                ObjectUnuqueId == objOther.ObjectUnuqueId;
-        }
-
     }
 
     /// <summary>
@@ -160,9 +133,8 @@ namespace RengaBri4kaKernel.Configs
     public interface RengaStyleManagerConfigFunc
     {
         public void AddRengaProject(string filePath, bool reSave = false);
-        //public void AddObjectInProject(RengaObjectStyleInProject objectDef);
-        public bool IsStyleExists(RengaStyleDef style);
         public void AddStdlObject(string stdlPath);
+        public List<RengaStyleDef> GetStylesByCondition(RengaStyleCategoryVariant category, string condition);
 
         /// <summary>
         /// Восстанавливает конфиг из кэшированных данных в папке (если конфиг был испорчен)
@@ -229,6 +201,8 @@ namespace RengaBri4kaKernel.Configs
         public List<RengaProjectWithObjects> ProjectsCollection { get; private set; }
 
         public List<RengaStyleDef> StylesCollecion { get; private set; }
+
+        public List<RengaSTDLDef> StylesStdlCollection { get; private set; }
 
         public static RengaStyleManagerConfig Create()
         {

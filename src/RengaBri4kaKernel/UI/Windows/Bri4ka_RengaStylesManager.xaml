@@ -5,26 +5,45 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RengaBri4kaKernel.UI.Windows"
         mc:Ignorable="d"
-        Title="Bri4ka_RengaStylesManager" Height="450" Width="800">
-    <Grid Margin="5,5,5,5">
+        Title="Bri4ka_RengaStylesManager">
+    <Grid >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.6*"/>
             <ColumnDefinition Width="0.4*"/>
         </Grid.ColumnDefinitions>
-        <StackPanel Orientation="Vertical" Grid.Column="0">
+        <StackPanel Orientation="Vertical" Margin="5,5,5,5" Grid.Column="0">
             <Label Content="Перечень всех стилей:"></Label>
-            <DataGrid x:Name="DataGrid_StyleCollection" VerticalScrollBarVisibility="Visible" AutoGenerateColumns="False" IsReadOnly="True">
+            <DataGrid x:Name="DataGrid_StyleCollection" VerticalScrollBarVisibility="Visible" AutoGenerateColumns="False" Height ="300" IsReadOnly="True">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" Binding="{Binding Path=Date}" Width="100" />
-                    <DataGridTextColumn Header="Is STDL" Binding="{Binding Path=Relation}" Width="50" />
-                    <DataGridTextColumn Header="Имя объекта 1" Binding="{Binding Path=NameObject1}" Width="120" />
-                    <DataGridTextColumn Header="Категория объекта 1" Binding="{Binding Path=CategoryObject1}" Width="150" />
-                    <DataGridTextColumn Header="Код объекта 1" Binding="{Binding Path=ObjectId1}" Width="100" />
-                    <DataGridTextColumn Header="Имя объекта 2" Binding="{Binding Path=NameObject2}" Width="120" />
-                    <DataGridTextColumn Header="Категория объекта 2" Binding="{Binding Path=CategoryObject2}" Width="150" />
-                    <DataGridTextColumn Header="Код объекта 2" Binding="{Binding Path=ObjectId2}" Width="100" />
+                    <DataGridTextColumn Header="Имя" Binding="{Binding Path=Name}" Width="200" />
+                    <DataGridTextColumn Header="STDL" Binding="{Binding Path=IsSTDL}" Width="50" />
+                    <DataGridTextColumn Header="Категория" Binding="{Binding Path=Category}" Width="150" />
                 </DataGrid.Columns>
             </DataGrid>
+            <Label Content="Расширенная информация о стиле:"></Label>
+            <TextBox x:Name="TextBox_ExtendedInfo" Margin="0,5,0,0" Height="150"></TextBox>
+        </StackPanel>
+
+        <StackPanel Orientation="Vertical" Margin="5,5,5,5" Grid.Column="1">
+            <GroupBox Header="Поиск объектов в Библиотеке:">
+                <StackPanel Orientation="Vertical">
+                    <Label Content="Выберите категорию:"></Label>
+                    <ListBox x:Name="ListBox_Category" Margin="0,5,0,0" Height="100" ScrollViewer.VerticalScrollBarVisibility="Visible"> </ListBox>
+                    <Label Content="Часть имени или значения строкового параметра:"></Label>
+                    <TextBox x:Name="TextBox_Search" Margin="0,5,0,0"></TextBox>
+                    <Button x:Name="Button_FindStyles" Margin="0,5,0,0" Content="Найти стили"></Button>
+                    <ListBox x:Name="ListBox_SearchResults" Margin="0,5,0,0" Height="150"></ListBox>
+                    <Button x:Name="Button_InsertSelected" Margin="0,5,0,0" Content="Вставить выбранный"></Button>
+                </StackPanel>
+            </GroupBox>
+
+            
+            <Separator  Margin="0,5,0,5"></Separator>
+            <Button x:Name="Button_ReadProjects" Margin="0,5,0,0" Content="Добавить стили из проекта Renga  "></Button>
+            <Button x:Name="Button_ReadSTDL" Margin="0,5,0,0" Content="Добавить стили из RST"></Button>
+            <Separator Margin="0,5,0,5"></Separator>
+            <Button x:Name="Button_UpdateIcons" Margin="0,5,0,0" Content="Обновить иконки" IsEnabled="False"></Button>
+            <Button x:Name="Button_CreateReport" Margin="0,5,0,0" Content="Создать отчет" IsEnabled="False"></Button>
         </StackPanel>
     </Grid>
 </Window>

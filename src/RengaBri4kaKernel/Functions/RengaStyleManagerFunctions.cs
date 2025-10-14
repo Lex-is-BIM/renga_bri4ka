@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -52,7 +53,7 @@ namespace RengaBri4kaKernel.Configs
             if (PluginData.Project == null) return;
 
             // Считываем стили.
-            tmpStylesCollection = new List<RengaObjectStyleInProject>();
+            tmpStylesCollection = new List<RengaStyleDef>();
             GetFromEntityCollection(PluginData.Project.WindowStyles, fileId, RengaStyleCategoryVariant.Window);
             GetFromEntityCollection(PluginData.Project.DoorStyles, fileId, RengaStyleCategoryVariant.Door);
             GetFromEntityCollection(PluginData.Project.ElementStyles, fileId, RengaStyleCategoryVariant.Element);
@@ -133,7 +134,7 @@ namespace RengaBri4kaKernel.Configs
             PluginData.rengaApplication.CloseProject(!reSave);
         }
 
-        private List<RengaObjectStyleInProject> tmpStylesCollection;
+        private List<RengaStyleDef> tmpStylesCollection;
 
         /// <summary>
         /// Вспомогательный метод. Считывает набор стилей и формирует их описания
@@ -147,7 +148,7 @@ namespace RengaBri4kaKernel.Configs
             for (int styleCounter = 0; styleCounter < entities.Count; styleCounter++)
             {
                 Renga.IEntity styleEntity = entities.GetByIndex(styleCounter);
-                RengaObjectStyleInProject styleDef = new RengaObjectStyleInProject();
+                RengaStyleDef styleDef = new RengaStyleDef();
                 styleDef.ProjectId = projectId;
                 styleDef.StyleCategory = category;
                 styleDef.Name = styleEntity.Name;
@@ -160,33 +161,6 @@ namespace RengaBri4kaKernel.Configs
             }
         }
 
-        public bool IsStyleExists(RengaStyleDef style)
-        {
-            RengaSTDLFile? style_STDL = style as RengaSTDLFile;
-            RengaObjectStyleInProject? style_Project = style as RengaObjectStyleInProject;
-
-            foreach (var styleDef in this.StylesCollecion)
-            {
-                if (styleDef.GetStyleType() == StyleTypeVariant.STDL)
-                {
-                    RengaSTDLFile? styleDef_STDL = styleDef as RengaSTDLFile;
-                    if (styleDef_STDL == null) continue;
-
-                    if (styleDef_STDL.Equals(style_STDL)) return true;
-
-
-                }
-                else if (styleDef.GetStyleType() == StyleTypeVariant.ObjectInProject)
-                {
-                    RengaObjectStyleInProject? styleDef_Project = styleDef as RengaObjectStyleInProject;
-                    if (styleDef_Project == null) continue;
-
-                    if (styleDef_Project.Equals(style_Project)) return true;
-                }
-            }
-
-            return false;
-        }
         //public void AddObjectInProject(RengaObjectStyleInProject objectDef);
         public void AddStdlObject(string stdlPath)
         {
@@ -196,7 +170,7 @@ namespace RengaBri4kaKernel.Configs
             string rstPath = Path.Combine(GetStdlDirectory(), Guid.NewGuid().ToString("N") + ".rst");
             File.Copy(stdlPath, rstPath, true);
 
-            RengaSTDLFile rstDef = new RengaSTDLFile();
+            RengaSTDLDef rstDef = new RengaSTDLDef();
             
             bool rstReadStatus = false;
             using (var rnpAsZip = ZipFile.OpenRead(rstPath))
@@ -233,7 +207,54 @@ namespace RengaBri4kaKernel.Configs
                 }
             }
 
-            if (rstReadStatus && !IsStyleExists(rstDef)) this.StylesCollecion.Add(rstDef);
+            if (!rstReadStatus) return;
+
+            // Нужно проверить наличие среди объектов такого стиля. Если имя совпадает, то присвоим ему этот STDL
+            bool isStyleExists = false;
+
+            int index = this.StylesCollecion.FindIndex(x => !x.IsSTDL && x.Name == rstDef.DefaultName);
+            if (index != -1)
+            {
+                isStyleExists = true;
+                this.StylesCollecion[index].STDL = rstDef;
+            }
+
+            // Добавим стиль как новый
+            if (!isStyleExists)
+            {
+                RengaStyleDef styleDef = new RengaStyleDef();
+                styleDef.Name = rstDef.DefaultName;
+                styleDef.STDL = rstDef;
+                styleDef.Properties = rstDef.Properties;
+                styleDef.StyleCategory = RengaStyleCategoryVariant._Unknown;
+                this.StylesCollecion.Add(styleDef);
+            }
+        }
+
+        public List<RengaStyleDef> GetStylesByCondition(RengaStyleCategoryVariant category, string condition)
+        {
+            List<RengaStyleDef> styles = new List<RengaStyleDef>();
+
+            foreach (var style in this.StylesCollecion)
+            {
+                if (style.StyleCategory == category | style.StyleCategory == RengaStyleCategoryVariant._Unknown)
+                {
+                    if (style.Name.Contains(condition)) styles.Add(style);
+                    else
+                    {
+                        foreach (var prop  in style.Properties)
+                        {
+                            if (prop.Value.Contains(condition))
+                            {
+                                styles.Add(style);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return styles;
         }
 
         public void Restore()
