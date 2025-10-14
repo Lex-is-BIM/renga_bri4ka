@@ -25,7 +25,7 @@ namespace RengaBri4kaKernel.RengaInternalResources
         public static Guid Equipment = new Guid("{5d2f3734-5a49-4504-90b1-0676f0f25da7}");
         public static Guid Floor = new Guid("{f5bd8bd8-39c1-47f8-8499-f673c580dfbe}");
         public static Guid Hatch = new Guid("{84b43087-d4a4-4cce-b34d-40e283d9e691}");
-        public static Guid Hole = new Guid("{0xecef8f90, 0xcf9, 0x4494, {0x98, 0xde, 0x91, 0x24, 0x2a, 0x2a, 0x9f, 0x5c}}");
+        public static Guid Hole = new Guid("{ecef8f90-0cf9-4494-98de-91242a2a9f5c}");
         public static Guid IfcObject = new Guid("{f914251d-d5fa-48b2-b93b-074f442cbf3b}");
         public static Guid IsolatedFoundation = new Guid("{6063816c-89ff-4c8f-a814-3be6cb94128e}");
         public static Guid Level = new Guid("{c3ce17ff-6f28-411f-b18d-74fe957b2ba8}");
@@ -64,6 +64,7 @@ namespace RengaBri4kaKernel.RengaInternalResources
 
         public static Guid[] GetAll()
         {
+            var t = Guid.Empty;
             RengaObjectTypes rO = new RengaObjectTypes();
             var fields = typeof(RengaObjectTypes).GetFields();
             return fields.Select(f => (Guid)f.GetValue(rO)).ToArray();

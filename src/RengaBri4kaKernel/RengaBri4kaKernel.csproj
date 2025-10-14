@@ -19,6 +19,11 @@
 
     <ItemGroup>
       <PackageReference Include="System.IO.Compression" Version="4.3.0" />
+      <PackageReference Include="System.Text.Json" Version="8.0.5" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Files\" />
     </ItemGroup>
 
     <Choose>

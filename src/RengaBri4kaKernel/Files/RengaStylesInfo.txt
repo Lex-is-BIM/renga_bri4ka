@@ -1,0 +1,26 @@
+RengaStyleCategoryVariant - enum,Renga Style ID,Renga Object Type,Renga Object Parameter Id,Name RU
+Beam,{cf0b0f04-f5b5-4432-98f4-8234c95adbdd},{63478188-7c88-4a6d-b891-9725f04a5bc7},{a7ec11d7-1e94-47fe-a45b-63907f13e4bc},Балка
+Column,{be44b154-19b7-435a-8957-9ef8782630c2},{d9ee2442-e807-42fb-8fe5-9dcfe543035d},{19bcc807-6ec4-46d7-b9c7-b4f24b0c65b8},Колонна
+Door,{19d3f81f-582a-489e-a52b-585c1151a5e4},{1cfba99c-01e7-4078-ae1a-3e2ff0673599},{dd5ce6b5-5cec-4782-bfd6-04492230bce0},Дверь
+Duct,{a98a0a5a-d730-42e7-bfc8-e4433ebace78},{06cc88ee-9a67-4626-9c34-dde03c331a74},{3801dadb-62aa-4c7d-81a5-9e326973f3f0},Воздуховод
+DuctAccessory,{6c5c8b91-bfea-4e92-9753-5655c05640a0},{47d0d93f-3c7b-4269-bf8a-de246e1724d0},{398ee259-61a2-4a3f-b9ac-c4cde46c86ff},Аксессуар воздуховода
+DuctFitting,{6c5d6ba0-ebd9-445b-84a2-9eb093938e4f},{77ffca60-b20e-49f0-b42f-4fdc9b1c825b},{ee6ed99b-c5bb-435a-bc6d-c5cc2bdcffab},Деталь воздуховода
+ElectricalCircuitLine,{33f3e437-83f9-422a-81d4-640a152c619e},83de45e6-4793-49ec-8b9e-65a2438f36de,{ee4722a7-69c8-4e24-9824-8129a86d5453},Электрическая линия
+ElectricalConductor,{fa7a0de9-f4d4-4f95-b108-feea4d7efeB7},{00000000-0000-0000-0000-000000000000},{5560fb09-ae5b-4880-981a-1b78a4cefe82},Электрический проводник
+ElectricDistributionBoard,{861c1e37-7777-43a9-96e7-3a7a2c6ea4},{96da9155-43c1-42b8-bba2-b4f61fa43acc},{ba0b28ec-425c-4a93-b4f5-9360ca4b5c50},Электрический распределительный щит
+Element,{5142f6e7-f551-4d2f-b5ba-5d4f0ecf4e7a},{e1e3bd66-2e13-4fa4-a9eb-677e03067c2f},{3b962fce-2ad8-4c53-a077-c84439463ffd},Элемент
+Equipment,{a359a970-c1fe-41dd-af3d-659ea5b3b360},{5d2f3734-5a49-4504-90b1-0676f0f25da7},{77527586-ce0b-40a0-af54-bfa1e3fac812},Оборудование
+Hole,{82f8a17b-16c4-473e-85bc-9fa505ff7d},{ecef8f90-0cf9-4494-98de-91242a2a9f5c},{fcdc44a1-da23-4bb5-8ff6-30fc180bf92f},Отверстие
+LightingFixture,{1f7a0a76-bb99-4a6f-9f72-1789f2f7b362},{793d3f7c-905d-4d85-a351-b152241dd2e7},{3772a612-ccda-4ea0-aeb7-318c9265bf5d},Осветительный прибор
+MechanicalEquipment,{001480ae-c561-4ee4-bc20-caef5eda1936},{de4420ce-02b6-4b12-9cd7-9322118be8fe},{001480ae-c561-4ee4-bc20-caef5eda1936},Вентиляционное оборудование
+Pipe,{9d6a0db9-4828-40d8-8529-bf5cd2b58c4e},{838cc9f6-e3d8-4132-af6f-c58df0f8d037},{a1c5b3e9-3f6c-487a-9dce-5d46a6d15650},Труба
+PipeAccessory,{a30f3bca-f17b-422a-886a-7a362cd49a},{41e2788a-49ed-487f-9ae1-55b6e09ae6e5},{6192511a-c024-430c-9bb1-3998f1bff1a1},Аксессуар трубопровода
+PipeFitting,{b12f0bdc-f7ff-43a4-bca0-09bc97454537},{d31dc2e3-808e-4987-8481-7f86665a07fc},{d594d391-8538-48a2-acac-ac0814dddc1b},Деталь трубопровода
+Plate,{9b5cabad-3468-478e-94df-a535c5aeaa3e},{62cf086e-5a39-4484-840c-ffa6a1c6e2b7},{701717d2-0a0e-466c-9521-abc20f7a3101},Пластина
+PlumbingFixture,{3441c9f5-7d7f-43e2-b0a2-1ce06e8ac8},{b8c7155a-b462-4ff5-bc41-c9c17a9f48fa},{2bdc59eb-f7c5-4b1e-b5bc-47074e5d4ab2},Санитарно-техническое оборудование
+Rebar,{608a1b78-96f3-40a6-a0ec-71000105581b},{9fabc932-590f-4068-89a8-ee6ee3d7cbbf},{ac288f7a-24d6-4283-b6fa-43357234cb28},Арматурный стержень
+Reinforcement,{03a4a438-573f-46c9-bea5-60eb7fa485},{9fabc932-590f-4068-89a8-ee6ee3d7cbbf},{8f747ef8-457b-43e7-bc03-afbddcb5a40f},Армирование
+ReinforcementUnit,{7edb85d6-7c0a-47d3-adce-35b8e0dae28a},{9fabc932-590f-4068-89a8-ee6ee3d7cbbf},{cfee575a-3b6a-464c-8464-379f1a4845c0},Арматурное изделие
+Reinforcment_Connection,{00000000-0000-0000-0000-000000000000},{9fabc932-590f-4068-89a8-ee6ee3d7cbbf},{00000000-0000-0000-0000-000000000000},Армирование соединений
+Window,{fac4a246-031c-413e-9993-6e9cf9f2306a},{2b02b353-2ca5-4566-88bb-917ea8460174},{cb4882f5-ba8b-4690-8bf0-0e48b52561ae},Окно
+WiringAccessory,{a6d3b6b2-acbd-4423-9afc-04d84a09211a},{b00d5c25-92a8-4409-a3b7-7c37ed792c06},{acd2f29b-f0c3-49c8-bde6-c623b979d0be},Электроустановочное изделие

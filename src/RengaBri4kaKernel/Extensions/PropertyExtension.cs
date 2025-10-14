@@ -108,7 +108,8 @@ namespace RengaBri4kaKernel.Extensions
                     propValue = _property.GetDoubleValue();
                     break;
                 case Renga.PropertyType.PropertyType_Enumeration:
-                    propValue = _property.GetEnumerationValue(); break;
+                    propValue = _property.GetEnumerationValue();
+                    break;
                 case Renga.PropertyType.PropertyType_Integer:
                     propValue = _property.GetIntegerValue();
                     break;
@@ -116,12 +117,14 @@ namespace RengaBri4kaKernel.Extensions
                     propValue = _property.GetLengthValue(Renga.LengthUnit.LengthUnit_Meters);
                     break;
                 case Renga.PropertyType.PropertyType_Logical:
-                    propValue = _property.GetLogicalValue(); break;
+                    propValue = _property.GetLogicalValue();
+                    break;
                 case Renga.PropertyType.PropertyType_Mass:
                     propValue = _property.GetMassValue(Renga.MassUnit.MassUnit_Kilograms);
                     break;
                 case Renga.PropertyType.PropertyType_String:
-                    propValue = _property.GetStringValue(); break;
+                    propValue = _property.GetStringValue();
+                    break;
                 case Renga.PropertyType.PropertyType_Volume:
                     propValue = _property.GetVolumeValue(Renga.VolumeUnit.VolumeUnit_Meters3);
                     break;
