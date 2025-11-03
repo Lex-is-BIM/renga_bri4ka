@@ -26,7 +26,7 @@ namespace RengaBri4kaKernel.Functions
 
         private readonly Action<RengaCameraInfo> _progressCallback;
 
-        private const int pTimerIntervals = 10;
+        private const int pTimerIntervals = 2;
 
         public RengaCameraHandlerViewCube2(Action<RengaCameraInfo> progressCallback)
         {
@@ -86,9 +86,9 @@ namespace RengaBri4kaKernel.Functions
                                         camera.FocusPoint.Y / pRoundCoords,
                                         camera.FocusPoint.Z / pRoundCoords },
                                     UpVector = new double[] {
-                                        camera.UpVector.X / pRoundCoords,
-                                        camera.UpVector.Y / pRoundCoords,
-                                        camera.UpVector.Z / pRoundCoords },
+                                        camera.UpVector.X,
+                                        camera.UpVector.Y,
+                                        camera.UpVector.Z },
                                     Info =
                                     $"Position: {camera.Position.X};{camera.Position.Y};{camera.Position.Z}\n" +
                                     $"FocusPoint: {camera.FocusPoint.X};{camera.FocusPoint.Y};{camera.FocusPoint.Z}\n" +
