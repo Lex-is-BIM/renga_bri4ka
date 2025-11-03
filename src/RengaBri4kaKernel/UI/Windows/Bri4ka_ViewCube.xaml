@@ -1,0 +1,41 @@
+<Window x:Class="RengaBri4kaKernel.UI.Windows.Bri4ka_ViewCube"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="3D View Cube" Height="600" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="300"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- View Cube Control -->
+        <Viewport3D x:Name="ViewCubeViewport" Grid.Column="0" 
+            Margin="10">
+            <Viewport3D.Camera>
+                <PerspectiveCamera x:Name="CubeCamera" 
+                         Position="5,5,5" 
+                         LookDirection="-1,-1,-1"
+                         UpDirection="0,0,1"
+                         FieldOfView="45"/>
+            </Viewport3D.Camera>
+        </Viewport3D>
+        
+        <!-- Control Panel -->
+        <StackPanel Grid.Column="1" Margin="10" >
+            <TextBlock Text="Camera Position" FontWeight="Bold" Margin="0,0,0,5"/>
+            <TextBlock x:Name="CameraPositionText" Text="Renga Camera's Paramters"></TextBlock>
+            <Button Content="Reset View" Click="ResetView_Click" Margin="0,10,0,0"/>
+            <Separator></Separator>
+            <GroupBox Header="Задать фиксированную ориентацию">
+                <StackPanel Orientation="Vertical">
+                    <Button x:Name="Button_SetOrientFix_Top" Margin="5,5,0,5"  Content="Вид сверху"></Button>
+                    <Button x:Name="Button_SetOrientFix_Bottom" Margin="5,5,0,5"  Content="Вид снизу"></Button>
+                    <Button x:Name="Button_SetOrientFix_Right" Margin="5,5,0,5"  Content="Вид справа"></Button>
+                    <Button x:Name="Button_SetOrientFix_Left" Margin="5,5,0,5"  Content="Вид слева"></Button>
+                    <Button x:Name="Button_SetOrientFix_Front" Margin="5,5,0,5"  Content="Вид спереди"></Button>
+                    <Button x:Name="Button_SetOrientFix_Back" Margin="5,5,0,5"  Content="Вид сзади"></Button>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+    </Grid>
+</Window>

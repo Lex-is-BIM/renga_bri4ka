@@ -28,6 +28,7 @@ namespace RengaBri4kaLoader
         RENGA_BRI4KA_COLLISIONSVIEWER,
         RENGA_BRI4KA_SOLARSHADOWANAL,
         RENGA_BRI4KA_FLOORBYROOM,
+        RENGA_BRI4KA_VIEWCUBE,
         RENGA_BRI4KA_PLUGINVERSION,
         RENGA_BRI4KA_PLUGINHELP
     }
@@ -132,6 +133,11 @@ namespace RengaBri4kaLoader
                 case PluginFunctionVariant.RENGA_BRI4KA_FLOORBYROOM:
                     RengaFloorByRoomsCreator floorByRoomsCreator = new RengaFloorByRoomsCreator();
                     floorByRoomsCreator.Start();
+                    break;
+                case PluginFunctionVariant.RENGA_BRI4KA_VIEWCUBE:
+                    //RengaCameraHandlerViewCube.GetInstance().ShowViewCubeControl();
+                    Bri4ka_ViewCube cubeWindow = new Bri4ka_ViewCube();
+                    cubeWindow.Show();
                     break;
 
                 //Настройки

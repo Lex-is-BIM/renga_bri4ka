@@ -78,7 +78,7 @@ namespace RengaBri4kaKernel.AuxFunctions
             SetObjectsSelected(ids);
         }
 
-        public static void LookTo(double[] pos, double[] focusPoint)
+        public static void LookTo(double[] pos, double[] focusPoint, double[] upVector)
         {
             Renga.IView view = PluginData.rengaApplication.ActiveView as Renga.IView;
             if (view.Type != Renga.ViewType.ViewType_View3D) return;
@@ -91,7 +91,7 @@ namespace RengaBri4kaKernel.AuxFunctions
             camera.LookAt(
                 new Renga.FloatPoint3D() { X = (float)focusPoint[0], Y = (float)focusPoint[1], Z = (float)focusPoint[2] },
                 new Renga.FloatPoint3D() { X = (float)pos[0], Y = (float)pos[1], Z = (float)pos[2] },
-                new Renga.FloatVector3D() { X = 0, Y = 0, Z = 1 });
+                new Renga.FloatVector3D() { X = (float)upVector[0], Y = (float)upVector[1], Z = (float)upVector[2] });
         }
 
         public static void ShowMessageBox(string text, bool prefix = true)

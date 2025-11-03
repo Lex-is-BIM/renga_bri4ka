@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace RengaBri4kaKernel.Extensions
 {
+
     internal static class ApplicationExtension
     {
         public static bool CloseProject2(this Renga.IApplication application)
