@@ -10,7 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-
+using RengaBri4kaKernel.AuxFunctions;
 using RengaBri4kaKernel.Functions;
 
 namespace RengaBri4kaKernel.UI.Windows
@@ -22,9 +22,15 @@ namespace RengaBri4kaKernel.UI.Windows
     {
         private Model3DGroup cubeModel;
         private AxisAngleRotation3D cameraRotation;
-        private double cameraDistance = 10;
+        private double cameraDistance = RengaCameraHandlerViewCube2.pCameraDistance;
+
+        // Сдвиг от нуля (для функций задания положения камеры)
+        private double coordsOffsetView = 100000; // 100 м.
         private bool sceneUpdateStatus = false;
         private readonly RengaCameraHandlerViewCube2 _service;
+
+        private const string pHeaderRengaCameraParameters = "Renga Camera3D -- параметры (мм)";
+        private const string pHeaderViewcubeCameraParameters = "ViewCube Camera -- параметры (м)";
 
         public Bri4ka_ViewCube()
         {
@@ -33,15 +39,25 @@ namespace RengaBri4kaKernel.UI.Windows
             DrawCoordinateAxes();
 
             _service = new RengaCameraHandlerViewCube2(UpdateCameraInfo);
+
+            this.TextBox_OfsetFromZero.Text = "100";
         }
 
-        private void UpdateCameraInfo(RengaCameraInfo value)
+        private void TextBox_OfsetFromZero_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            double textData = 100.0;
+            if (double.TryParse(this.TextBox_OfsetFromZero.Text, out textData)) coordsOffsetView = textData * 1000.0;
+        }
+
+        private void UpdateCameraInfo(CameraParameters value)
         {
             // Use Dispatcher since this might be called from a different thread
             Dispatcher.Invoke(() =>
             {
-                this.RengaCamera_Info.Text = value.Info;
-                AnimateCameraTo2(value.Position, value.FocusPoint, value.UpVector);
+                this.RengaCamera_Info.Text = value.RengaCameraInfo;
+                this.ViewCube_CameraInfo.Text = value.ViewcubeCameraInfo;
+
+                AnimateCameraTo(value.Position, value.Direction, value.UpVector);
 
             });
         }
@@ -51,10 +67,10 @@ namespace RengaBri4kaKernel.UI.Windows
             cubeModel = new Model3DGroup();
 
             // Create cube faces with different colors
-            CreateCubeFace(new Point3D(-1, -1, 1), new Point3D(1, -1, 1), new Point3D(1, 1, 1), new Point3D(-1, 1, 1), Colors.Blue, "Front");    // Front
-            CreateCubeFace(new Point3D(1, -1, -1), new Point3D(-1, -1, -1), new Point3D(-1, 1, -1), new Point3D(1, 1, -1), Colors.Blue, "Back");   // Back
-            CreateCubeFace(new Point3D(-1, 1, -1), new Point3D(-1, 1, 1), new Point3D(1, 1, 1), new Point3D(1, 1, -1), Colors.Green, "Top");     // Top
-            CreateCubeFace(new Point3D(-1, -1, 1), new Point3D(-1, -1, -1), new Point3D(1, -1, -1), new Point3D(1, -1, 1), Colors.Green, "Bottom"); // Bottom
+            CreateCubeFace(new Point3D(-1, -1, 1), new Point3D(1, -1, 1), new Point3D(1, 1, 1), new Point3D(-1, 1, 1), Colors.LightBlue, "Front");    // Front
+            CreateCubeFace(new Point3D(1, -1, -1), new Point3D(-1, -1, -1), new Point3D(-1, 1, -1), new Point3D(1, 1, -1), Colors.LightBlue, "Back");   // Back
+            CreateCubeFace(new Point3D(-1, 1, -1), new Point3D(-1, 1, 1), new Point3D(1, 1, 1), new Point3D(1, 1, -1), Colors.LightGreen, "Top");     // Top
+            CreateCubeFace(new Point3D(-1, -1, 1), new Point3D(-1, -1, -1), new Point3D(1, -1, -1), new Point3D(1, -1, 1), Colors.LightGreen, "Bottom"); // Bottom
             CreateCubeFace(new Point3D(1, -1, 1), new Point3D(1, -1, -1), new Point3D(1, 1, -1), new Point3D(1, 1, 1), Colors.Red, "Right");  // Right
             CreateCubeFace(new Point3D(-1, -1, -1), new Point3D(-1, -1, 1), new Point3D(-1, 1, 1), new Point3D(-1, 1, -1), Colors.Red, "Left");  // Left
 
@@ -72,7 +88,7 @@ namespace RengaBri4kaKernel.UI.Windows
             Model3DGroup axesGroup = new Model3DGroup();
             double axisLength = 4;
             // X Axis (Red)
-            DrawAxis(axesGroup, new Point3D(0, 0, 0), new Point3D(axisLength, 0, 0), Colors.Red, "X");
+            DrawAxis(axesGroup, new Point3D(0, 0, 0), new Point3D(axisLength, 0, 0), Colors.DarkRed, "X");
             // Y Axis (Green)
             DrawAxis(axesGroup, new Point3D(0, 0, 0), new Point3D(0, axisLength, 0), Colors.Green, "Y");
             // Z Axis (Blue)
@@ -110,7 +126,7 @@ namespace RengaBri4kaKernel.UI.Windows
             }
 
             // Add label if enabled
-            AddAxisLabel(group, end, color, label);
+            // AddAxisLabel(group, end, color, label);
         }
 
         private MeshGeometry3D CreateCylinderMesh(Point3D start, Point3D end, double radius)
@@ -202,7 +218,7 @@ namespace RengaBri4kaKernel.UI.Windows
             }
         }
 
-
+        /*
         private void AddAxisLabel(Model3DGroup group, Point3D position, Color color, string text)
         {
             // Create a simple billboard label using GeometryModel3D
@@ -235,7 +251,7 @@ namespace RengaBri4kaKernel.UI.Windows
 
             group.Children.Add(labelModel);
         }
-
+        */
         private void AddTriangle(MeshGeometry3D mesh, Point3D p1, Point3D p2, Point3D p3)
         {
             int index = mesh.Positions.Count;
@@ -246,7 +262,7 @@ namespace RengaBri4kaKernel.UI.Windows
             mesh.TriangleIndices.Add(index + 1);
             mesh.TriangleIndices.Add(index + 2);
         }
-
+        
 
         private void CreateCubeFace(Point3D p1, Point3D p2, Point3D p3, Point3D p4, Color color, string faceName)
         {
@@ -285,79 +301,10 @@ namespace RengaBri4kaKernel.UI.Windows
             CubeCamera.LookDirection = new Vector3D(lookDirectionRaw[0], lookDirectionRaw[1], lookDirectionRaw[2]);
             CubeCamera.UpDirection = new Vector3D(upDirectionRaw[0], upDirectionRaw[1], upDirectionRaw[2]);
 
-            // Упрощаем координаты для записи в форму
-            this.ViewCube_CameraInfo.Text =
-                $"Position: {lookPositionRaw[0].ToString("0.##")};{lookPositionRaw[1].ToString("0.##")};{lookPositionRaw[2].ToString("0.##")}\n" +
-                $"LookDirection: {lookDirectionRaw[0].ToString("0.##")};{lookDirectionRaw[1].ToString("0.##")};{lookDirectionRaw[2].ToString("0.##")}\n" +
-                $"UpDirection: {upDirectionRaw[0].ToString("0.##")};{upDirectionRaw[1].ToString("0.##")};{upDirectionRaw[2].ToString("0.##")}";
-
             //RengaBri4kaKernel.AuxFunctions.RengaUtils.LookTo(new double[] { v.X, v.Y, v.Z }, new double[] { lookDirection.X, lookDirection.Y, lookDirection.Z }, new double[] { upDirection.X, upDirection.Y, upDirection.Z });
         }
 
-        private void AnimateCameraTo2(double[] position, double[] focusPoint, double[] upDirection)
-        {
-            // Вектор направления взгляда считатся на основе точки фокуса (renga) и точки положения камеры (renga)
-            double[] lookDirection = new double[]
-            {
-                -focusPoint[0] + position[0],
-                -focusPoint[1] + position[1],
-                -focusPoint[2] + position[2]
-            };
-
-            position = lookDirection;
-
-            // Положение камеры нужно пересчитать. 
-            // Положение камеры нужно сдвинуть для видимости куба с расстояния cameraDistance метров
-            // Найдем расстояние от текущего position до 0 коорддинат
-            double positionLength = Math.Sqrt(position[0] * position[0] + position[1] * position[1] + position[2] * position[2]);
-
-            // Найдем поправку к координатам как отношение высоты орбиты камеры к positionLength
-            double positionLengthCoefficient = cameraDistance / positionLength / cameraDistance;
-
-            // Применим поправку к координатам
-            double[] lookPosition = new double[]
-            {
-                position[0] * positionLengthCoefficient,
-                position[1] * positionLengthCoefficient,
-                position[2] * positionLengthCoefficient,
-            };
-
-            lookDirection = lookPosition;
-
-
-            AnimateCameraTo(
-                lookDirection,
-                GetPositionFromFocusPointAndUpVector(lookDirection),
-                upDirection);
-
-            /*
-            AnimateCameraTo(
-                lookPosition,
-                lookDirection,
-                upDirection);
-            
-            //Нужно уменьшить lookDirection
-            lookDirection = new double[] { -lookDirection[0] + position[0], -lookDirection[1] + position[1], -lookDirection[2] + position[2] };
-
-            if (lookDirection.Max() > cameraDistance)
-            {
-                double maxV = lookDirection.Max();
-                lookDirection = new double[]
-                {
-                    lookDirection[0] - maxV,
-                    lookDirection[1] - maxV,
-                    lookDirection[2] - maxV,
-                };
-            }
-            AnimateCameraTo(
-                null,
-                new Vector3D(lookDirection[0], lookDirection[1], lookDirection[2]),
-                new Vector3D(upDirection[0], upDirection[1], upDirection[2]));
-            //new Point3D(position[0], position[1], position[2])
-            */
-        }
-
-        private double[] GetPositionFromFocusPointAndUpVector(double[] focusDir)
+        private double[] GetPositionFromFocusPointAndUpVector(double[] focusDir, double distance)
         {
             double[] p = new double[] {
                 -focusDir[0] * cameraDistance,
@@ -370,21 +317,43 @@ namespace RengaBri4kaKernel.UI.Windows
         {
             var f = new double[] { -0.1, -0.1, -0.1 };
             var up = new double[]{0, 0, 1};
-            AnimateCameraTo(GetPositionFromFocusPointAndUpVector(f), f, up);
+            AnimateCameraTo(GetPositionFromFocusPointAndUpVector(f, this.cameraDistance), f, up);
+        }
+
+        private void SetView(double[] position)
+        {
+            var up = new double[] { 0, 0, 1 };
+            RengaUtils.LookTo(position, new double[] { 0, 0, 0 }, up);
+            //AnimateCameraTo(GetPositionFromFocusPointAndUpVector(focusPoint), focusPoint, up);
         }
 
         private void Button_SetOrientFix_Top_Click(object sender, RoutedEventArgs e)
         {
-            var f = new double[] { 0, 0, 1 };
-            var up = new double[] { 0, 0, 1 };
-            AnimateCameraTo(GetPositionFromFocusPointAndUpVector(f), f, up);
+            SetView(new double[] {0,0, coordsOffsetView });
         }
 
         private void Button_SetOrientFix_Down_Click(object sender, RoutedEventArgs e)
         {
-            var f = new double[] { 0, 0, -1 };
-            var up = new double[] { 0, 0, 1 };
-            AnimateCameraTo(GetPositionFromFocusPointAndUpVector(f), f, up);
+            SetView(new double[] { 0, 0, -coordsOffsetView });
+        }
+
+        private void Button_SetOrientFix_Right_Click(object sender, RoutedEventArgs e)
+        {
+            SetView(new double[] { coordsOffsetView, 0, 0  });
+        }
+
+        private void Button_SetOrientFix_Left_Click(object sender, RoutedEventArgs e)
+        {
+            SetView(new double[] { -coordsOffsetView, 0, 0 });
+        }
+        private void Button_SetOrientFix_Front_Click(object sender, RoutedEventArgs e)
+        {
+            SetView(new double[] { 0, coordsOffsetView, 0 });
+        }
+
+        private void Button_SetOrientFix_Back_Click(object sender, RoutedEventArgs e)
+        {
+            SetView(new double[] { 0, -coordsOffsetView, 0 });
         }
     }
 }

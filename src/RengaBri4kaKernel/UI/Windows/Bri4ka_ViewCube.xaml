@@ -22,20 +22,21 @@
         
         <!-- Control Panel -->
         <StackPanel Grid.Column="1" Margin="10" >
-            <TextBlock Text="Renga Camera 3D Parameters" FontWeight="Bold" Margin="0,5,0,0"/>
-            <TextBlock x:Name="RengaCamera_Info" Margin="0,5,0,0" Text="Renga Camera 3D Parameters"></TextBlock>
-            <TextBlock Text="View Cube Camera Parameters" FontWeight="Bold" Margin="0,5,0,0"/>
-            <TextBlock x:Name="ViewCube_CameraInfo" Margin="0,5,0,0" Text="View Cube Camera Parameters"></TextBlock>
-            <Button Content="Reset View" Click="ResetView_Click" Margin="0,10,0,0"/>
+            <TextBlock x:Name="RengaCamera_InfoHeader" Text="Renga Camera3D -- параметры (мм)" FontWeight="Bold" Margin="0,5,0,0"/>
+            <TextBlock x:Name="RengaCamera_Info" Margin="0,5,0,0"></TextBlock>
+            <TextBlock x:Name="ViewCubeCamera_InfoHeader" Text="ViewCube Camera -- параметры (м)" FontWeight="Bold" Margin="0,5,0,0"/>
+            <TextBlock x:Name="ViewCube_CameraInfo" Margin="0,5,0,0"></TextBlock>
             <Separator></Separator>
             <GroupBox Header="Задать фиксированную ориентацию">
                 <StackPanel Orientation="Vertical">
                     <Button x:Name="Button_SetOrientFix_Top" Margin="5,5,0,5"  Content="Вид сверху" Click="Button_SetOrientFix_Top_Click"></Button>
                     <Button x:Name="Button_SetOrientFix_Bottom" Margin="5,5,0,5"  Content="Вид снизу" Click="Button_SetOrientFix_Down_Click"></Button>
-                    <Button x:Name="Button_SetOrientFix_Right" Margin="5,5,0,5"  Content="Вид справа"></Button>
-                    <Button x:Name="Button_SetOrientFix_Left" Margin="5,5,0,5"  Content="Вид слева"></Button>
-                    <Button x:Name="Button_SetOrientFix_Front" Margin="5,5,0,5"  Content="Вид спереди"></Button>
-                    <Button x:Name="Button_SetOrientFix_Back" Margin="5,5,0,5"  Content="Вид сзади"></Button>
+                    <Button x:Name="Button_SetOrientFix_Right" Margin="5,5,0,5"  Content="Вид справа" Click="Button_SetOrientFix_Right_Click"></Button>
+                    <Button x:Name="Button_SetOrientFix_Left" Margin="5,5,0,5"  Content="Вид слева" Click="Button_SetOrientFix_Left_Click"></Button>
+                    <Button x:Name="Button_SetOrientFix_Front" Margin="5,5,0,5"  Content="Вид спереди" Click="Button_SetOrientFix_Front_Click"></Button>
+                    <Button x:Name="Button_SetOrientFix_Back" Margin="5,5,0,5"  Content="Вид сзади" Click="Button_SetOrientFix_Back_Click"></Button>
+                    <Label Content="Сдвиг от нуля для вида, метры:"></Label>
+                    <TextBox x:Name="TextBox_OfsetFromZero" Margin="5,5,0,5" TextChanged="TextBox_OfsetFromZero_TextChanged"></TextBox>
                 </StackPanel>
             </GroupBox>
         </StackPanel>
