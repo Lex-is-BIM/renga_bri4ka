@@ -62,12 +62,17 @@ namespace RengaBri4kaKernel.RengaInternalResources
         public static Guid Window = new Guid("{2b02b353-2ca5-4566-88bb-917ea8460174}");
         public static Guid WiringAccessory = new Guid("{b00d5c25-92a8-4409-a3b7-7c37ed792c06}");
 
-        public static Guid[] GetAll()
+        public static List<Tuple<Guid, string>> GetAll()
         {
+            List<Tuple<Guid, string>> res = new List<Tuple<Guid, string>>();
             var t = Guid.Empty;
             RengaObjectTypes rO = new RengaObjectTypes();
             var fields = typeof(RengaObjectTypes).GetFields();
-            return fields.Select(f => (Guid)f.GetValue(rO)).ToArray();
+            foreach (var field in fields)
+            {
+                res.Add(Tuple.Create<Guid, string>((Guid)field.GetValue(rO), field.Name));
+            }
+            return res;
         }
     }
 }

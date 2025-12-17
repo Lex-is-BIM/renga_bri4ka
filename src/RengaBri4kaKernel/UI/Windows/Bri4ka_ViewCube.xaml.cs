@@ -39,8 +39,14 @@ namespace RengaBri4kaKernel.UI.Windows
             DrawCoordinateAxes();
 
             _service = new RengaCameraHandlerViewCube2(UpdateCameraInfo);
+            this.Closed += Bri4ka_ViewCube_Closed;
 
             this.TextBox_OfsetFromZero.Text = "100";
+        }
+
+        private void Bri4ka_ViewCube_Closed(object? sender, EventArgs e)
+        {
+            PluginData.windowViewCube = null;
         }
 
         private void TextBox_OfsetFromZero_TextChanged(object sender, TextChangedEventArgs e)

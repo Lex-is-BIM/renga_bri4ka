@@ -29,6 +29,7 @@ namespace RengaBri4kaLoader
         RENGA_BRI4KA_SOLARSHADOWANAL,
         RENGA_BRI4KA_FLOORBYROOM,
         RENGA_BRI4KA_VIEWCUBE,
+        RENGA_BRI4KA_FOLLOWUSERSELECTION,
         RENGA_BRI4KA_PLUGINVERSION,
         RENGA_BRI4KA_PLUGINHELP
     }
@@ -115,10 +116,13 @@ namespace RengaBri4kaLoader
                     collisionUI.ShowDialog();
                     break;
                 case PluginFunctionVariant.RENGA_BRI4KA_COLLISIONSVIEWER:
-                    Bri4ka_CollisionsReportViewer collisionViewerUI = new Bri4ka_CollisionsReportViewer();
-                    //System.Windows.Application.Current.Run(collisionViewerUI);
-                    collisionViewerUI.Show();
-                    break;
+                    {
+                        if (PluginData.windowCollisionReportsViewer != null) PluginData.windowCollisionReportsViewer.Close();
+                        PluginData.windowCollisionReportsViewer = new Bri4ka_CollisionsReportViewer();
+                        PluginData.windowCollisionReportsViewer.Show();
+                        break;
+                    }
+                    
                 case PluginFunctionVariant.RENGA_BRI4KA_SOLARSHADOWANAL:
 #if DEBUG
                     //RengaShadowsBySunCreator sunFunc = new RengaShadowsBySunCreator();
@@ -136,9 +140,23 @@ namespace RengaBri4kaLoader
                     break;
                 case PluginFunctionVariant.RENGA_BRI4KA_VIEWCUBE:
                     //RengaCameraHandlerViewCube.GetInstance().ShowViewCubeControl();
-                    Bri4ka_ViewCube cubeWindow = new Bri4ka_ViewCube();
-                    cubeWindow.Show();
-                    break;
+                    {
+                        if (PluginData.windowViewCube == null)
+                        {
+                            PluginData.windowViewCube = new Bri4ka_ViewCube();
+                            PluginData.windowViewCube.Show();
+                        }
+                        
+                        break;
+                    }
+                case PluginFunctionVariant.RENGA_BRI4KA_FOLLOWUSERSELECTION:
+                    {
+                        Bri4ka_ManageSelectPermissions followSettings = new Bri4ka_ManageSelectPermissions();
+                        followSettings.ShowDialog();
+
+                        break;
+                    }
+
 
                 //Настройки
                 case PluginFunctionVariant.RENGA_BRI4KA_PLUGINVERSION:

@@ -5,8 +5,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-using RengaBri4kaKernel.UI.Windows;
-
 namespace RengaBri4kaKernel.Functions
 {
     internal struct CameraParameters

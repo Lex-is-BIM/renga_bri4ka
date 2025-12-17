@@ -22,7 +22,7 @@
         
         <!-- Control Panel -->
         <StackPanel Grid.Column="1" Margin="10" >
-            <TextBlock x:Name="RengaCamera_InfoHeader" Text="Renga Camera3D -- параметры (мм)" FontWeight="Bold" Margin="0,5,0,0"/>
+            <TextBlock x:Name="RengaCamera_InfoHeader" Text="Renga Camera3D -- параметры (м)" FontWeight="Bold" Margin="0,5,0,0"/>
             <TextBlock x:Name="RengaCamera_Info" Margin="0,5,0,0"></TextBlock>
             <TextBlock x:Name="ViewCubeCamera_InfoHeader" Text="ViewCube Camera -- параметры (м)" FontWeight="Bold" Margin="0,5,0,0"/>
             <TextBlock x:Name="ViewCube_CameraInfo" Margin="0,5,0,0"></TextBlock>

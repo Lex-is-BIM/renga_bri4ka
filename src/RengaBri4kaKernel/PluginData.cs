@@ -1,5 +1,6 @@
 using Renga;
 using RengaBri4kaKernel.Configs;
+using RengaBri4kaKernel.UI.Windows;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,5 +58,8 @@ namespace RengaBri4kaKernel
         public static string? PluginFolder;
 
         public static bool IsRengaProfeccional = false;
+
+        public static Bri4ka_ViewCube? windowViewCube;
+        public static Bri4ka_CollisionsReportViewer? windowCollisionReportsViewer;
     }
 }

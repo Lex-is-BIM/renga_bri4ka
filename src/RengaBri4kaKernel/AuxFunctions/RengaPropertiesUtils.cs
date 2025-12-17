@@ -9,13 +9,37 @@ namespace RengaBri4kaKernel.AuxFunctions
 {
     internal class RengaPropertiesUtils
     {
-        public static void RegisterPropertyIfNotReg(Guid propId, string propName, Renga.PropertyType propType = Renga.PropertyType.PropertyType_Double)
+        public static void RegisterPropertyIfNotReg(Guid propId, string propName, Renga.PropertyType propType = Renga.PropertyType.PropertyType_Double, string[]? enumValues = null)
         {
             if (PluginData.Project == null) return;
             if (!PluginData.Project.PropertyManager.IsPropertyRegistered(propId))
             {
-                Renga.PropertyDescription propDescr = new Renga.PropertyDescription() { Name = propName, Type = propType };
-                PluginData.Project.PropertyManager.RegisterProperty(propId, propDescr);
+                Renga.IPropertyDescription propDescr = PluginData.Project.PropertyManager.CreatePropertyDescription(propName,
+                    propType);
+                if (propType == Renga.PropertyType.PropertyType_Enumeration && enumValues != null) propDescr.SetEnumerationItems(enumValues);
+                PluginData.Project.PropertyManager.RegisterProperty2(propId, propDescr);
+            }
+        }
+
+        public static string[] GetEnumerationValues(Guid propId)
+        {
+            if (PluginData.Project == null) return new string[] { };
+            var propDescr = PluginData.Project.PropertyManager.GetPropertyDescription2(propId);
+            return propDescr.GetEnumerationItems().Cast<string>().ToArray();
+        }
+
+        public static void SetEnumerationValues(Guid propId, string[] values, Dictionary<string, string> valuesMap)
+        {
+            if (PluginData.Project == null) return;
+            if (PluginData.Project.PropertyManager.IsPropertyRegistered(propId))
+            {
+                List<string> valuesMap2 = new List<string>();
+                foreach (var valueMapItem in valuesMap)
+                {
+                    valuesMap2.Add(valueMapItem.Key);
+                    valuesMap2.Add(valueMapItem.Value);
+                }
+                PluginData.Project.PropertyManager.UpdateEnumValues(propId, values, valuesMap2.ToArray());
             }
         }
 
@@ -26,7 +50,7 @@ namespace RengaBri4kaKernel.AuxFunctions
 
             if (!project.PropertyManager.IsPropertyRegistered(propId)) return;
 
-            if (objectTypes == null) objectTypes = RengaObjectTypes.GetAll();
+            if (objectTypes == null) objectTypes = RengaObjectTypes.GetAll().Select(a=>a.Item1).ToArray();
 
             foreach (var type in objectTypes)
             {

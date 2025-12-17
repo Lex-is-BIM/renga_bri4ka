@@ -19,4 +19,11 @@ namespace RengaBri4kaKernel
         ColorSelectedText,
         WidgetToGetColor
     }
+
+    public enum BehaviorOnSelectUnaccessObjects : int
+    {
+        SkipSelectionWithoutExceptions,
+        SkipSelectionWithExceptions,
+        ShowSelectionDialog
+    }
 }

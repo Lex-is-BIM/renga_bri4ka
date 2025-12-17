@@ -18,6 +18,7 @@
 	- [Построить тени](./6.3_RENGA_BRI4KA_SOLARSHADOWANAL.md)
 	- [Перекрытие по помещению](./6.4_RENGA_BRI4KA_FLOORBYROOM.md)
 	- [Видовой куб](./6.5_RENGA_BRI4KA_VIEWCUBE.md)
+	- [Запрет выбора](./6.6_RENGA_BRI4KA_FOLLOWUSERSELECTION.md) 	
 - [7. Группа "Настройки и справка"]()
 	- [Вывести уклоны кровли](./7.1_RENGA_BRI4KA_PLUGINVERSION.md)
 	- [Справка](./7.2_RENGA_BRI4KA_PLUGINHELP.md)
