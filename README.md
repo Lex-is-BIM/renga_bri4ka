@@ -6,6 +6,12 @@
 
 План разработки см. в [отдельном файле](TODO.md).
 
+Telegram-канал:
+
+[Telegram: View @renga_bri4kaPlugin](https://t.me/renga_bri4kaPlugin)
+
+
+
 # Установка и использование
 
 См. [отдельный файл](docs/src/1.1_INSTALL.md)
