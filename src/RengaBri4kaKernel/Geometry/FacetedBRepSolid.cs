@@ -79,7 +79,7 @@ namespace RengaBri4kaKernel.Geometry
             Faces.Add(faceDef);
         }
 
-        public void AddTriangle(Triangle triangle)
+        public void AddTriangle(Triangle2 triangle)
         {
             var indices = new int[3];
             Face faceDef = new Face();

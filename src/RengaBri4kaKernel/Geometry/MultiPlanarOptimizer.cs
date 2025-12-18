@@ -10,7 +10,7 @@ namespace RengaBri4kaKernel.Geometry
     {
         private const double Tolerance = 1e-10;
 
-        public static FacetedBRepSolid OptimizeTrianglesToBrep(List<Triangle> triangles)
+        public static FacetedBRepSolid OptimizeTrianglesToBrep(List<Triangle2> triangles)
         {
             if (triangles == null || triangles.Count == 0)
                 return new FacetedBRepSolid();
@@ -38,9 +38,9 @@ namespace RengaBri4kaKernel.Geometry
             return resultBrep;
         }
 
-        private static Dictionary<Plane, List<Triangle>> GroupTrianglesByPlanes(List<Triangle> triangles)
+        private static Dictionary<Plane, List<Triangle2>> GroupTrianglesByPlanes(List<Triangle2> triangles)
         {
-            var groups = new Dictionary<Plane, List<Triangle>>();
+            var groups = new Dictionary<Plane, List<Triangle2>>();
 
             foreach (var triangle in triangles)
             {
@@ -63,14 +63,14 @@ namespace RengaBri4kaKernel.Geometry
 
                 if (!foundGroup)
                 {
-                    groups[plane] = new List<Triangle> { triangle };
+                    groups[plane] = new List<Triangle2> { triangle };
                 }
             }
 
             return groups;
         }
 
-        private static List<List<Vector3>> OptimizePlanarTriangles(List<Triangle> triangles, Plane plane)
+        private static List<List<Vector3>> OptimizePlanarTriangles(List<Triangle2> triangles, Plane plane)
         {
             if (triangles.Count == 0)
                 return new List<List<Vector3>>();
@@ -98,7 +98,7 @@ namespace RengaBri4kaKernel.Geometry
             return faces;
         }
 
-        private static List<Edge> ExtractAllEdges(List<Triangle> triangles)
+        private static List<Edge> ExtractAllEdges(List<Triangle2> triangles)
         {
             var edges = new List<Edge>();
 

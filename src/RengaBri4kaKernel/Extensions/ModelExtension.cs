@@ -204,10 +204,14 @@ namespace RengaBri4kaKernel.Extensions
             return levelAsModelObject;
         }
 
-        public static Renga.IModelObject? CreateBaselineObject(this Renga.IModel rengaModel, BaselineObjectType objectType, List<RengaBri4kaKernel.Geometry.Point3D> contour, bool isMeters = true)
+        public static Renga.IModelObject? CreateBaselineObject(this Renga.IModel rengaModel, BaselineObjectType objectType, List<RengaBri4kaKernel.Geometry.Point3D> contourRaw, bool isMeters = true)
         {
             if (PluginData.Project == null) return null;
-            if (contour.Count() < 3) return null;
+            if (contourRaw.Count() < 3) return null;
+
+            List<RengaBri4kaKernel.Geometry.Point3D> contour = contourRaw;
+            //if (contourRaw[0] != contourRaw[contourRaw.Count - 1]) contour.Add(contourRaw[0]);
+
             Renga.IOperation editOperation = PluginData.Project.CreateOperation();
             editOperation.Start();
 
@@ -218,7 +222,6 @@ namespace RengaBri4kaKernel.Extensions
             if (objectType == BaselineObjectType.Hatch) creationParams.TypeId = Renga.ObjectTypes.Hatch;
             else if (objectType == BaselineObjectType.Line3d) creationParams.TypeId = Renga.ObjectTypes.Line3D;
             else if (objectType == BaselineObjectType.Floor) creationParams.TypeId = Renga.ObjectTypes.Floor;
-
 
             var hatchObjectRaw = rengaModel.CreateObject(creationParams);
             if (hatchObjectRaw == null)
@@ -249,8 +252,23 @@ namespace RengaBri4kaKernel.Extensions
             }
 
             hatchAsBaseline2dObject.SetBaseline(PluginData.rengaApplication.Math.CreateCompositeCurve2D(curvesTemp.ToArray()));
-            editOperation.Apply();
+            //поднять объект
 
+            Renga.ILevelObject? textObjectOnLevel = hatchAsBaseline2dObject as Renga.ILevelObject;
+            if (textObjectOnLevel != null)
+            {
+                var pl = textObjectOnLevel.GetPlacement();
+                //Сначала сдвигаем на середину ограничивающей рамки текста
+                pl.Move(new Vector3D()
+                {
+                    X = 0,
+                    Y = 0,
+                    Z = contour[0].Z * numKoeff
+                });
+                textObjectOnLevel.SetPlacement(pl);
+            }
+
+            editOperation.Apply();
             return hatchObjectRaw;
         }
 
@@ -281,6 +299,17 @@ namespace RengaBri4kaKernel.Extensions
             }
 
             return needObjects;
+        }
+
+        public static Renga.IModelObjectCollection? GetObjects(this Renga.IModel rengaModel)
+        {
+            Renga.IModelObjectCollection? result = null;
+            try
+            {
+                result = rengaModel.GetObjects();
+            }
+            catch (Exception ex) { }
+            return result;
         }
     }
 }

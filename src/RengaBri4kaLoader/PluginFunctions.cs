@@ -30,6 +30,7 @@ namespace RengaBri4kaLoader
         RENGA_BRI4KA_FLOORBYROOM,
         RENGA_BRI4KA_VIEWCUBE,
         RENGA_BRI4KA_FOLLOWUSERSELECTION,
+        RENGA_BRI4KA_ELEVATIONIMPORT,
         RENGA_BRI4KA_PLUGINVERSION,
         RENGA_BRI4KA_PLUGINHELP
     }
@@ -156,6 +157,14 @@ namespace RengaBri4kaLoader
 
                         break;
                     }
+                case PluginFunctionVariant.RENGA_BRI4KA_ELEVATIONIMPORT:
+                    {
+                        Bri4ka_ElevationImporterSettings elevImport = new Bri4ka_ElevationImporterSettings();
+                        elevImport.ShowDialog();
+
+                        break;
+                    }
+                //
 
 
                 //Настройки
@@ -180,6 +189,7 @@ namespace RengaBri4kaLoader
                         
                     }
                     break;
+
 
             }
         }

@@ -32,7 +32,7 @@ namespace RengaBri4kaKernel.AuxFunctions
             List<int> ids = new List<int>();
 
             Renga.IModel model = PluginData.Project.Model;
-            Renga.IModelObjectCollection objects = model.GetObjects();
+            Renga.IModelObjectCollection? objects = model.GetObjects();
 
             for (int i = 0; i < objects.Count; i++)
             {

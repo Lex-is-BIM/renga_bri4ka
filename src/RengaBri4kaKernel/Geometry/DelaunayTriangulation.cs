@@ -46,6 +46,24 @@ namespace RengaBri4kaKernel.Geometry
                 };
             }
 
+            // Check if this triangle contains contour at specified level
+            public bool ContainsContour(double level)
+            {
+                int above = 0;
+                int below = 0;
+
+                if (A.Z >= level) above++;
+                else below++;
+
+                if (B.Z >= level) above++;
+                else below++;
+
+                if (C.Z >= level) above++;
+                else below++;
+
+                return above > 0 && below > 0 && above < 3;
+            }
+
             public override string ToString()
             {
                 return $"[{A}, {B}, {C}]";

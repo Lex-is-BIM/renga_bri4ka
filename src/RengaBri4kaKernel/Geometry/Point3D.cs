@@ -36,6 +36,15 @@ namespace RengaBri4kaKernel.Geometry
             return $"({X}, {Y}, {Z})";
         }
 
+        public static Point3D operator -(Point3D a, Point3D b)
+        {
+            return new Point3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+        }
+
+        public static Point3D operator +(Point3D a, Point3D b) => new Point3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+
+        public static Point3D operator *(Point3D a, double scalar) => new Point3D(a.X * scalar, a.Y * scalar, a.Z * scalar);
+
         public override bool Equals(object obj)
         {
             if (obj is Point3D other)

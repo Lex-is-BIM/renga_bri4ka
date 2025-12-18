@@ -77,7 +77,7 @@ namespace RengaBri4kaKernel.Extensions
                 Renga.IMesh mesh = geometry.GetMesh(rengaMeshCounter);
 
                 
-                List<Triangle> triangles = new List<Triangle>();
+                List<Triangle2> triangles = new List<Triangle2>();
 
                 for (int rengaGridCounter = 0; rengaGridCounter < mesh.GridCount; rengaGridCounter++)
                 {
@@ -93,7 +93,7 @@ namespace RengaBri4kaKernel.Extensions
                     for (int rengaFaceCounter = 0; rengaFaceCounter < grid.TriangleCount; rengaFaceCounter++)
                     {
                         Renga.Triangle tr = grid.GetTriangle(rengaFaceCounter);
-                        Triangle trDef = new Triangle(verticesIndexMap[(int)tr.V0], verticesIndexMap[(int)tr.V1], verticesIndexMap[(int)tr.V2]);
+                        Triangle2 trDef = new Triangle2(verticesIndexMap[(int)tr.V0], verticesIndexMap[(int)tr.V1], verticesIndexMap[(int)tr.V2]);
                         triangles.Add(trDef);
                     }
                 }

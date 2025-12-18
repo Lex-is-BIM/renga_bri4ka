@@ -84,7 +84,16 @@ namespace RengaBri4kaKernel.Functions
             //Список для объектов, которые Пользователь не имеет права трогать
             List<int> wrong_objects = new List<int>();
             List<string> wrong_objects_names = new List<string>();
-            Renga.IModelObjectCollection model_objects = PluginData.rengaApplication.Project.Model.GetObjects();
+            Renga.IModelObjectCollection? model_objects = null;
+            try
+            {
+                model_objects = PluginData.rengaApplication.Project.Model.GetObjects();
+
+            }
+            catch (Exception ex) { }
+
+            if (model_objects == null) return;
+
             foreach (int internal_model_object_id in selected_objects_id)
             {
                 Renga.IModelObject one_object = model_objects.GetById(internal_model_object_id);

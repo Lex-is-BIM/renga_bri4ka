@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace RengaBri4kaKernel.Geometry
 {
-    public struct Triangle
+    public struct Triangle2
     {
         public Vector3 V1, V2, V3;
 
-        public Triangle(Vector3 v1, Vector3 v2, Vector3 v3)
+        public Triangle2(Vector3 v1, Vector3 v2, Vector3 v3)
         {
             V1 = v1;
             V2 = v2;

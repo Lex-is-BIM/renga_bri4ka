@@ -30,5 +30,6 @@ del "RengaBri4ka.zip"
 "C:\Program Files\7-Zip\7z" a -tzip "RengaBri4ka.zip" RengaBri4ka
 rmdir /s /q RengaBri4ka
 
+pause
 ::@endlocal
 ::@exit /B 1
