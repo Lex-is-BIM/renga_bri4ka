@@ -4,17 +4,17 @@
 
 ![](icons/Bri4kaIcon_256x256.png)
 
-План разработки см. в [отдельном файле](TODO.md).
-
 Telegram-канал:
 
 [Telegram: View @renga_bri4kaPlugin](https://t.me/renga_bri4kaPlugin)
 
+## Доступные функции
 
+См. [тут](./src/RengaBri4kaLoader/PluginMenu.tsv)
 
 # Установка и использование
 
-См. [отдельный файл](docs/src/1.1_INSTALL.md)
+См. [здесь](docs/src/1.1_INSTALL.md)
 
 ## Возможные обновления
 
@@ -24,7 +24,7 @@ Telegram-канал:
 
 Внешние зависимости (файлы из Renga SDK, `Renga.NET.PluginUtility.dll`, `Renga.NET8.PluginUtility.dll`, `RengaCOMAPI.tlb`) размещаются по относительному пути в папке `external` в корне репозитория. Для корректности, они исключены на уровне `.gitignore`.
 
-Проекты имеют TargetFramework = net48.
+Проекты имеют TargetFramework = net48, net8.0-windows.
 
 Иконки создаются в приложении IcoFX, лежат в \external и в репозиторий не включаются.
 
