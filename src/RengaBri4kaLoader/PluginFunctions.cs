@@ -19,6 +19,7 @@ namespace RengaBri4kaLoader
 {
     internal enum PluginFunctionVariant
     {
+        _RENGA_TEST,
         RENGA_BRI4KA_CALCROOFSLOPES,
         RENGA_BRI4KA_TRIANGLESSTAT,
         RENGA_BRI4KA_FILEMETADATA,
@@ -31,6 +32,7 @@ namespace RengaBri4kaLoader
         RENGA_BRI4KA_VIEWCUBE,
         RENGA_BRI4KA_FOLLOWUSERSELECTION,
         RENGA_BRI4KA_ELEVATIONIMPORT,
+        RENGA_BRI4KA_COMMANDLINEPREPROC,
         RENGA_BRI4KA_PLUGINVERSION,
         RENGA_BRI4KA_PLUGINHELP
     }
@@ -147,7 +149,6 @@ namespace RengaBri4kaLoader
                             PluginData.windowViewCube = new Bri4ka_ViewCube();
                             PluginData.windowViewCube.Show();
                         }
-                        
                         break;
                     }
                 case PluginFunctionVariant.RENGA_BRI4KA_FOLLOWUSERSELECTION:
@@ -162,6 +163,13 @@ namespace RengaBri4kaLoader
                         Bri4ka_ElevationImporterSettings elevImport = new Bri4ka_ElevationImporterSettings();
                         elevImport.ShowDialog();
 
+                        break;
+                    }
+                case PluginFunctionVariant.RENGA_BRI4KA_COMMANDLINEPREPROC:
+                    {
+                        if (PluginData.windowCmdPreProcessor != null) PluginData.windowCmdPreProcessor.Close();
+                        PluginData.windowCmdPreProcessor = new Bri4ka_CmdPreProcessor();
+                        PluginData.windowCmdPreProcessor.Show();
                         break;
                     }
                 //
@@ -189,6 +197,48 @@ namespace RengaBri4kaLoader
                         
                     }
                     break;
+
+                case PluginFunctionVariant._RENGA_TEST:
+                    {
+                        var app = new Renga.Application();
+                        var project = app.Project;
+
+                        double elevation = 2345;
+
+                        var editOperation = project.CreateOperation();
+                        editOperation.Start();
+
+                        Renga.INewEntityArgs creationParams = project.Model.CreateNewEntityArgs();
+                        creationParams.TypeId = Renga.EntityTypes.Level;
+                        creationParams.Placement3D = new Renga.Placement3D()
+                        {
+                            //Тут не задает elevation
+                            Origin = new Renga.Point3D() { X = 0, Y = 0, Z = elevation },
+                            xAxis = new Renga.Vector3D() { X = 1, Y = 0, Z = 0 },
+                            zAxis = new Renga.Vector3D() { X = 0, Y = 0, Z = 1 }
+                        };
+
+                        var levelObjectRaw = project.Model.CreateObject(creationParams);
+                        if (levelObjectRaw == null)
+                        {
+                            editOperation.Rollback();
+                            return;
+                        }
+
+                        Renga.ILevel? levelObject = levelObjectRaw as Renga.ILevel;
+                        if (levelObject == null)
+                        {
+                            editOperation.Rollback();
+                            return;
+                        }
+
+                        //Тут тоже не задает elevation
+                        levelObject.Placement.Move(new Vector3D() { X = 0, Y = 0, Z = elevation });
+                        editOperation.Apply();
+                        
+
+                        break;
+                    }
 
 
             }

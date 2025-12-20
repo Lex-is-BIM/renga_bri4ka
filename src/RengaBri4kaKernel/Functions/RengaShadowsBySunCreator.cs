@@ -122,10 +122,11 @@ namespace RengaBri4kaKernel.Functions
                 var extContour = DelaunayTriangulation.CalculateConvexHull(vertices);
                 var bbox = BoundingBox.CalculateFromPoints(vertices);
 
-                Renga.IModelObject? createdObject = PluginData.Project.Model.CreateBaselineObject(BaselineObjectType.Hatch, extContour, false);
+                Renga.IModelObject? createdObject = PluginData.Project.Model.CreateBaselineObject(BaselineObjectType.Hatch, extContour, -1, false);
                 if (createdObject != null)
                 {
-                    PluginData.Project.Model.CreateText(bbox.GetCentroid(), $"Расчетный час: " + solarPoint.Hour.ToString());
+                    var c = bbox.GetCentroid();
+                    PluginData.Project.Model.CreateText(new Geometry.Point3D(c[0], c[1], c[2]), $"Расчетный час: " + solarPoint.Hour.ToString());
 
                     //createdObject.SetObjectsProperties(propIds, new object[] {  });
                 }

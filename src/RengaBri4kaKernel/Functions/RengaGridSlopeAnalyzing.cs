@@ -177,7 +177,7 @@ namespace RengaBri4kaKernel.Functions
                     slopeMarkText = "←" + slopeMark.Slope;
                 }
 
-                Renga.IModelObject? textObjectAsModel = rengaModel.CreateText(new double[] { slopeMark.Position[0], slopeMark.Position[1], 0 }, slopeMarkText, TextObjectType.ModelText, levelId, slopeMark.Angle, TextOffsetMode.TopLeftCorner, mConfig.TextStyle);
+                Renga.IModelObject? textObjectAsModel = rengaModel.CreateText(new Geometry.Point3D(slopeMark.Position[0], slopeMark.Position[1], 0), slopeMarkText, TextObjectType.ModelText, levelId, slopeMark.Angle, TextOffsetMode.TopLeftCorner, mConfig.TextStyle);
 
                 if (textObjectAsModel != null)
                 {

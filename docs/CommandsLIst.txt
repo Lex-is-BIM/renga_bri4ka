@@ -1,0 +1,13 @@
+COMMAND	DESCR	BODY	COMMENT
+SET_LEVEL_ACTIVE	Установить уровень активным	(LEVELNAME)	Для команд по созданию чего-либо		
+CREATE_BEAM	Создать балку	(POINT_START;POINT_END)	
+CREATE_COLUMN	Создать колонну	(POINT;HEIGHT)	Высоту через параметр
+CREATE_FLOOR	Создать перекрытие	(POINT1;POINT2...)	
+CREATE_ROOF	Создать кровлю	(POINT1;POINT2...)			
+CREATE_WALL	Создать стену	(THICKNESS;POINT1;POINT2...)	
+CREATE_LINE	Создать линию	(POINT1;POINT2...)	Если вызов в модели, то Line3d, если в чертеже, то DrawingLine (8.10)
+CREATE_TEXT	Создать текст	(POINT;TEXT)	Если вызов в модели, то ModelText, если в чертеже, то DrawingText		
+CREATE_HATCH	Создать штриховку	(POINT1;POINT2...)	
+CREATE_PROPERTY	Создать определение свойства	(NAME;PROPTYPE;ASSIGNTYPES)	PROPTYPE = Renga.PropertyType; ASSIGNTYPES - перечисление через ; типов объектов, имена на латинице		
+CREATE_PROPERTY2	Создать определение свойства с Id	(NAME;HUID;PROPTYPE;ASSIGNTYPES)			
+CREATE_PROPERTYENUM	Создать определение свойства ENUM	(NAME;PROPTYPE;ENUMS;SSIGNTYPES)	ENUMS - разделение через символ "|"		

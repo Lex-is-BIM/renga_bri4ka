@@ -13,7 +13,7 @@ namespace RengaBri4kaKernel.AuxFunctions
     {
         public static RengaTypeInfo[] GetRengaObjectTypes()
         {
-            var ids = typeof(Renga.ObjectTypes).GetRuntimeFields();
+            var ids = typeof(Renga.EntityTypes).GetRuntimeFields();
             RengaTypeInfo[] rengaTypesInfo = new RengaTypeInfo[ids.Count()];
             for (int i = 0; i < ids.Count(); i++)
             {

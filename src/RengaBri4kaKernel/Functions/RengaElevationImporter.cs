@@ -191,13 +191,13 @@ namespace RengaBri4kaKernel.Functions
                 {
                     var polyline2 = DelaunayTriangulation.CalculateConvexHull(polyline);
 
-                    Renga.IModelObject? rengaObject = rModel.CreateBaselineObject(BaselineObjectType.Floor, polyline2, true);
+                    Renga.IModelObject? rengaObject = rModel.CreateBaselineObject(BaselineObjectType.Floor, polyline2, -1, true);
                     if (rengaObject == null) continue;
 
                     Renga.IOperation editOperation = PluginData.Project.CreateOperation();
                     editOperation.Start();
 
-                    var floorThicknessParam = rengaObject.GetParameters().Get(Renga.ParameterIds.FloorThickness);
+                    var floorThicknessParam = rengaObject.GetParameters().Get(Renga.Parameters.FloorThickness);
                     floorThicknessParam.SetDoubleValue(settings.IsolinesStep * 1000.0);
 
                     editOperation.Apply();

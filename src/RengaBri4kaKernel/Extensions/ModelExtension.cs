@@ -27,8 +27,20 @@ namespace RengaBri4kaKernel.Extensions
     {
         Hatch,
         Line3d,
-        Floor
+        DrawingLine,
+        Floor,
+        Beam,
+        Wall,
+        Roof
     }
+
+    public enum SinglePositionObjectType
+    {
+        Equipment,
+        Column
+    }
+
+
     internal static class ModelExtension
     {
         /// <summary>
@@ -45,7 +57,7 @@ namespace RengaBri4kaKernel.Extensions
         /// <returns></returns>
         public static Renga.IModelObject? CreateText(
             this Renga.IModel rengaModel,
-            double[] Position,
+            Geometry.Point3D Position,
             string text,
             TextObjectType textType = TextObjectType.ModelText,
             int LevelId = -1,
@@ -58,7 +70,7 @@ namespace RengaBri4kaKernel.Extensions
             editOperation.Start();
 
             Renga.INewEntityArgs creationParams = rengaModel.CreateNewEntityArgs();
-            creationParams.TypeId = Renga.ObjectTypes.ModelText;
+            creationParams.TypeId = Renga.EntityTypes.ModelText;
             double cos = Math.Cos(angleRadians);
             double sin = Math.Sin(angleRadians);
 
@@ -67,24 +79,31 @@ namespace RengaBri4kaKernel.Extensions
 
             creationParams.Placement3D = new Renga.Placement3D()
             {
-                Origin = new Renga.Point3D() { X = Position[0], Y = Position[1], Z = Position[2] },
+                Origin = new Renga.Point3D() { X = Position.X, Y = Position.Y, Z = Position.Z },
                 xAxis = new Renga.Vector3D() { X = x, Y = y, Z = 0 },
-                zAxis = new Renga.Vector3D() { X = 0, Y = 0, Z = 1}
+                zAxis = new Renga.Vector3D() { X = 0, Y = 0, Z = 1 }
             };
             if (textType == TextObjectType.DrawingText)
             {
-                creationParams.TypeId = Renga.ObjectTypes.DrawingText;
+                creationParams.TypeId = Renga.EntityTypes.DrawingText;
                 creationParams.Placement2D = new Renga.Placement2D()
                 {
-                    Origin = new Renga.Point2D() { X = Position[0], Y = Position[1]},
+                    Origin = new Renga.Point2D() { X = Position.X, Y = Position.Y },
                     xAxis = new Renga.Vector2D() { X = x, Y = y }
                 };
             }
 
-            if (LevelId != -1 && textType == TextObjectType.ModelText)
+            if (LevelId != -1)
             {
                 //Пока прячем на 8.9. Это баг АПИ
-                if (PluginData.RengaVersion.CompareTo(new Version("8.9")) > 0) creationParams.HostObjectId = LevelId;
+                //if (PluginData.RengaVersion.CompareTo(new Version("8.9")) > 0) creationParams.HostObjectId = LevelId;
+            }
+
+            //Проверка уровня
+            if (LevelId != -1 && textType == TextObjectType.ModelText)
+            {
+                Renga.IModelObject? levelObjectCheck = rengaModel.GetObjects().GetById(LevelId);
+                if (levelObjectCheck != null && levelObjectCheck.ObjectType == RengaObjectTypes.Level) creationParams.HostObjectId = LevelId;
             }
 
             var textObjectRaw = rengaModel.CreateObject(creationParams);
@@ -94,7 +113,7 @@ namespace RengaBri4kaKernel.Extensions
                 return null;
             }
             Renga.ITextObject? textObject = textObjectRaw as Renga.ITextObject;
-            if (textObject == null) 
+            if (textObject == null)
             {
                 editOperation.Rollback();
                 return null;
@@ -176,9 +195,10 @@ namespace RengaBri4kaKernel.Extensions
             editOperation.Start();
 
             Renga.INewEntityArgs creationParams = rengaModel.CreateNewEntityArgs();
-            creationParams.TypeId = Renga.ObjectTypes.Level;
+            creationParams.TypeId = Renga.EntityTypes.Level;
             creationParams.Placement3D = new Renga.Placement3D()
             {
+                //Тут не задает elevation
                 Origin = new Renga.Point3D() { X = 0, Y = 0, Z = elevation },
                 xAxis = new Renga.Vector3D() { X = 1, Y = 0, Z = 0 },
                 zAxis = new Renga.Vector3D() { X = 0, Y = 0, Z = 1 }
@@ -197,6 +217,8 @@ namespace RengaBri4kaKernel.Extensions
                 editOperation.Rollback();
                 return null;
             }
+
+            //Тут тоже не задает elevation
             levelObject.Placement.Move(new Vector3D() { X = 0, Y = 0, Z = elevation });
             editOperation.Apply();
 
@@ -204,10 +226,58 @@ namespace RengaBri4kaKernel.Extensions
             return levelAsModelObject;
         }
 
-        public static Renga.IModelObject? CreateBaselineObject(this Renga.IModel rengaModel, BaselineObjectType objectType, List<RengaBri4kaKernel.Geometry.Point3D> contourRaw, bool isMeters = true)
+        public static Renga.IModelObject? CreatePositionObject(this Renga.IModel rengaModel, SinglePositionObjectType objectType, RengaBri4kaKernel.Geometry.Point3D position, int LevelId = -1, bool isMeters = true)
         {
             if (PluginData.Project == null) return null;
-            if (contourRaw.Count() < 3) return null;
+
+            Renga.IOperation editOperation = PluginData.Project.CreateOperation();
+            editOperation.Start();
+
+            Renga.INewEntityArgs creationParams = rengaModel.CreateNewEntityArgs();
+            //Проверка уровня
+            if (LevelId != -1)
+            {
+                Renga.IModelObject? levelObjectCheck = rengaModel.GetObjects().GetById(LevelId);
+                if (levelObjectCheck != null && levelObjectCheck.ObjectType == RengaObjectTypes.Level) creationParams.HostObjectId = LevelId;
+            }
+
+            switch (objectType)
+            {
+                case SinglePositionObjectType.Equipment: creationParams.TypeId = RengaObjectTypes.Equipment; break;
+                case SinglePositionObjectType.Column: creationParams.TypeId = RengaObjectTypes.Column; break;
+            }
+
+            double numKoeff = 1.0;
+            if (isMeters) numKoeff = 1000.0;
+
+            creationParams.Placement3D = new Placement3D()
+            {
+                Origin = new Renga.Point3D()
+                {
+                    X = position.X * numKoeff,
+                    Y = position.Y * numKoeff,
+                    Z = position.Z * numKoeff,
+                },
+                xAxis = new Renga.Vector3D() { X = 1, Y = 0, Z = 0 },
+                zAxis = new Renga.Vector3D() { X = 0, Y = 0, Z = 1 }
+            };
+
+            var createdRengaObject = rengaModel.CreateObject(creationParams);
+            if (createdRengaObject == null)
+            {
+                editOperation.Rollback();
+                return null;
+            }
+
+            editOperation.Apply();
+
+            return createdRengaObject;
+        }
+
+        public static Renga.IModelObject? CreateBaselineObject(this Renga.IModel rengaModel, BaselineObjectType objectType, List<RengaBri4kaKernel.Geometry.Point3D> contourRaw, int LevelId = -1, bool isMeters = true)
+        {
+            if (PluginData.Project == null) return null;
+            if (contourRaw.Count() < 2) return null;
 
             List<RengaBri4kaKernel.Geometry.Point3D> contour = contourRaw;
             //if (contourRaw[0] != contourRaw[contourRaw.Count - 1]) contour.Add(contourRaw[0]);
@@ -219,42 +289,84 @@ namespace RengaBri4kaKernel.Extensions
             if (isMeters) numKoeff = 1000.0;
 
             Renga.INewEntityArgs creationParams = rengaModel.CreateNewEntityArgs();
-            if (objectType == BaselineObjectType.Hatch) creationParams.TypeId = Renga.ObjectTypes.Hatch;
-            else if (objectType == BaselineObjectType.Line3d) creationParams.TypeId = Renga.ObjectTypes.Line3D;
-            else if (objectType == BaselineObjectType.Floor) creationParams.TypeId = Renga.ObjectTypes.Floor;
 
-            var hatchObjectRaw = rengaModel.CreateObject(creationParams);
-            if (hatchObjectRaw == null)
+            //Проверка уровня
+            if (LevelId != -1)
+            {
+                Renga.IModelObject? levelObjectCheck = rengaModel.GetObjects().GetById(LevelId);
+                if (levelObjectCheck != null && levelObjectCheck.ObjectType == RengaObjectTypes.Level) creationParams.HostObjectId = LevelId;
+            }
+
+            switch (objectType)
+            {
+                case BaselineObjectType.Hatch: creationParams.TypeId = RengaObjectTypes.Hatch; break;
+                case BaselineObjectType.DrawingLine: creationParams.TypeId = RengaObjectTypes.DrawingLine; break;
+                case BaselineObjectType.Line3d: creationParams.TypeId = RengaObjectTypes.Line3D; break;
+                case BaselineObjectType.Roof: creationParams.TypeId = RengaObjectTypes.Roof; break;
+                case BaselineObjectType.Beam: creationParams.TypeId = RengaObjectTypes.Beam; break;
+                case BaselineObjectType.Wall: creationParams.TypeId = RengaObjectTypes.Wall; break;
+                case BaselineObjectType.Floor: creationParams.TypeId = RengaObjectTypes.Floor; break;
+            }
+
+            var baseLineEntity = rengaModel.CreateObject(creationParams);
+            if (baseLineEntity == null)
             {
                 editOperation.Rollback();
                 return null;
             }
 
-            Renga.IBaseline2DObject? hatchAsBaseline2dObject = hatchObjectRaw as Renga.IBaseline2DObject;
-            if (hatchAsBaseline2dObject == null)
+            if (objectType == BaselineObjectType.Line3d | objectType == BaselineObjectType.Beam)
             {
-                editOperation.Rollback();
-                return null;
+                Renga.IBaseline3DObject? baseLineEntity_3D = baseLineEntity as Renga.IBaseline3DObject;
+                if (baseLineEntity_3D == null)
+                {
+                    editOperation.Rollback();
+                    return null;
+                }
+
+                List<Renga.ICurve3D> curvesTemp = new List<ICurve3D>();
+                for (int vertexCounter = 0; vertexCounter < contour.Count - 1; vertexCounter++)
+                {
+                    var vertex1 = contour[vertexCounter];
+                    var vertex2 = contour[vertexCounter + 1];
+
+                    Renga.Point3D rengaVertex1 = new Renga.Point3D() { X = vertex1.X * numKoeff, Y = vertex1.Y * numKoeff, Z = vertex1.Z * numKoeff };
+                    Renga.Point3D rengaVertex2 = new Renga.Point3D() { X = vertex2.X * numKoeff, Y = vertex2.Y * numKoeff, Z = vertex2.Z * numKoeff };
+                    Renga.ICurve3D curveData = PluginData.rengaApplication.Math.CreateLineSegment3D(rengaVertex1, rengaVertex2);
+                    curvesTemp.Add(curveData);
+                }
+                baseLineEntity_3D.SetBaseline(PluginData.rengaApplication.Math.CreateCompositeCurve3D(curvesTemp.ToArray()));
+            }
+            else
+            {
+                Renga.IBaseline2DObject? baseLineEntity_2D = baseLineEntity as Renga.IBaseline2DObject;
+                if (baseLineEntity_2D == null)
+                {
+                    editOperation.Rollback();
+                    return null;
+                }
+
+                if (contour[0] != contour[contour.Count - 1]) contour.Add(contour[0]);
+
+                List<Renga.ICurve2D> curvesTemp = new List<ICurve2D>();
+                for (int vertexCounter = 0; vertexCounter < contour.Count - 1; vertexCounter++)
+                {
+                    var vertex1 = contour[vertexCounter];
+                    var vertex2 = contour[vertexCounter + 1];
+
+                    Renga.Point2D rengaVertex1 = new Renga.Point2D() { X = vertex1.X * numKoeff, Y = vertex1.Y * numKoeff };
+                    Renga.Point2D rengaVertex2 = new Renga.Point2D() { X = vertex2.X * numKoeff, Y = vertex2.Y * numKoeff };
+                    Renga.ICurve2D curveData = PluginData.rengaApplication.Math.CreateLineSegment2D(rengaVertex1, rengaVertex2);
+                    curvesTemp.Add(curveData);
+                }
+
+                baseLineEntity_2D.SetBaseline(PluginData.rengaApplication.Math.CreateCompositeCurve2D(curvesTemp.ToArray()));
             }
 
-            if (contour[0] != contour[contour.Count - 1]) contour.Add(contour[0]);
-
-            List<Renga.ICurve2D> curvesTemp = new List<ICurve2D>();
-            for (int vertexCounter = 0;  vertexCounter < contour.Count - 1; vertexCounter++)
-            {
-                var vertex1 = contour[vertexCounter];
-                var vertex2 = contour[vertexCounter + 1];
-
-                Renga.Point2D rengaVertex1 = new Renga.Point2D() { X = vertex1.X * numKoeff, Y = vertex1.Y * numKoeff };
-                Renga.Point2D rengaVertex2 = new Renga.Point2D() { X = vertex2.X * numKoeff, Y = vertex2.Y * numKoeff };
-                Renga.ICurve2D curveData = PluginData.rengaApplication.Math.CreateLineSegment2D(rengaVertex1, rengaVertex2);
-                curvesTemp.Add(curveData);
-            }
-
-            hatchAsBaseline2dObject.SetBaseline(PluginData.rengaApplication.Math.CreateCompositeCurve2D(curvesTemp.ToArray()));
+           
             //поднять объект
 
-            Renga.ILevelObject? textObjectOnLevel = hatchAsBaseline2dObject as Renga.ILevelObject;
+            Renga.ILevelObject? textObjectOnLevel = baseLineEntity as Renga.ILevelObject;
             if (textObjectOnLevel != null)
             {
                 var pl = textObjectOnLevel.GetPlacement();
@@ -269,7 +381,7 @@ namespace RengaBri4kaKernel.Extensions
             }
 
             editOperation.Apply();
-            return hatchObjectRaw;
+            return baseLineEntity;
         }
 
         public static Renga.ILevel? GetLevel(this Renga.IModel rengaModel, int id)
@@ -310,6 +422,23 @@ namespace RengaBri4kaKernel.Extensions
             }
             catch (Exception ex) { }
             return result;
+        }
+
+        public static int GetLevelIdByName(this Renga.IModel rengaModel, string name)
+        {
+            Renga.IModelObjectCollection objects = rengaModel.GetObjects();
+
+            for (int i = 0; i < objects.Count; i++)
+            {
+                Renga.IModelObject o = objects.GetByIndex(i);
+                if (o.ObjectType == RengaObjectTypes.Level)
+                {
+                    Renga.ILevel? oAsLevel = o.GetInterfaceByName("ILevel") as Renga.ILevel;
+                    if (oAsLevel != null && oAsLevel.LevelName == name) return o.Id;
+                }
+                
+            }
+            return -1;
         }
     }
 }

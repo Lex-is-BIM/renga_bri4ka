@@ -16,6 +16,7 @@ namespace RengaBri4kaKernel.RengaInternalResources
         public static Guid DiametralDimension = new Guid("{2aabe3a4-a29e-4534-a9f5-0f070fee240c}");
         public static Guid Door = new Guid("{1cfba99c-01e7-4078-ae1a-3e2ff0673599}");
         public static Guid DrawingText = new Guid("{688cce66-411f-44a2-a5cc-149bdde3169c}");
+        public static Guid DrawingLine = new Guid("{681cabaf-4469-438e-83d7-1efd664eda6b}");
         public static Guid Duct = new Guid("{06cc88ee-9a67-4626-9c34-dde03c331a74}");
         public static Guid DuctAccessory = new Guid("{47d0d93f-3c7b-4269-bf8a-de246e1724d0}");
         public static Guid DuctFitting = new Guid("{77ffca60-b20e-49f0-b42f-4fdc9b1c825b}");

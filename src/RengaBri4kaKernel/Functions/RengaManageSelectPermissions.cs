@@ -73,7 +73,7 @@ namespace RengaBri4kaKernel.Functions
 
             /* При каждом новом выборе пользователем объектов модели действуют следующие операции:
                 1. Получаются идентификаторы объектов модели, выделенных Пользователем;
-                2. Если объекты модели не имеют тип Renga.ObjectTypes.Undefined:
+                2. Если объекты модели не имеют тип Renga.EntityTypes.Undefined:
                     2.1. Если у модели заполнена свойство Enumeration и оно != '_NO':
                     2.2. Если это свойство не входит в набор свойств, разрешенных для пользователя по файлу сопоставления, то 
                 этот идентификатор объекта фиксируется во временный список
@@ -98,7 +98,7 @@ namespace RengaBri4kaKernel.Functions
             {
                 Renga.IModelObject one_object = model_objects.GetById(internal_model_object_id);
                 //Исключение от ошибок
-                if (one_object.ObjectType != Renga.ObjectTypes.Undefined)
+                if (one_object.ObjectType != Renga.EntityTypes.UndefinedObject)
                 {
                     if (one_object.GetProperties() == null) continue;
 

@@ -8,6 +8,7 @@ using System.Windows.Interop;
 
 using RengaBri4kaKernel;
 using RengaBri4kaKernel.Configs;
+using RengaBri4kaKernel.Functions;
 
 using Renga;
 
@@ -15,14 +16,12 @@ namespace RengaBri4kaLoader
 {
     public class PluginLoader : IPlugin
     {
-        private Renga.IApplication m_app;
         private readonly List<Renga.ActionEventSource> m_eventSources = new List<Renga.ActionEventSource>();
 
         public bool Initialize(string pluginFolder)
         {
             PluginData.PluginFolder = pluginFolder;
             Renga.Application rengaApp = new Renga.Application();
-            m_app = rengaApp;
 
             PluginData.rengaApplication = rengaApp;
             PluginData.IsRengaProfeccional = rengaApp.ProductName.Contains("Renga Professional");
@@ -35,6 +34,7 @@ namespace RengaBri4kaLoader
         private void InitMenu(string pluginDir, Renga.IUI rengaUI)
         {
             Renga.IUIPanelExtension pluginPanel = rengaUI.CreateUIPanelExtension();
+            //Основные функции плагина
             Renga.IDropDownButton pluginButton = rengaUI.CreateDropDownButton();
 
             var PluginIconDef = GetIcon(rengaUI, "RENGA_BRI4KA_MAIN_32x32");
@@ -90,6 +90,50 @@ namespace RengaBri4kaLoader
             }
 
             pluginPanel.AddDropDownButton(pluginButton);
+            
+
+            // Командные сценарии
+           
+            RengaCmdPreProcessor cmdProcessor = new RengaCmdPreProcessor();
+            var commandsReg = cmdProcessor.GetRegisteredCommands();
+            if (commandsReg.Any())
+            {
+                Renga.IDropDownButton pluginButton_CmdScenarios = rengaUI.CreateDropDownButton();
+
+                var CmdScenariosIconDef = GetIcon(rengaUI, "RENGA_BRI4KA_CmdScenariosTab_32x32");
+                if (CmdScenariosIconDef != null) pluginButton_CmdScenarios.Icon = CmdScenariosIconDef;
+
+
+                foreach (var command in commandsReg)
+                {
+                    Renga.IAction cmdSceratioAction = rengaUI.CreateAction();
+                    cmdSceratioAction.DisplayName = command;
+
+                    ActionEventSource functionEvent = new ActionEventSource(cmdSceratioAction);
+                    functionEvent.Triggered += (o, s) =>
+                    {
+                        cmdProcessor.RunRegisteredScenarion(command);
+                    };
+                    m_eventSources.Add(functionEvent);
+
+                    pluginButton_CmdScenarios.AddAction(cmdSceratioAction);
+                }
+                pluginPanel.AddDropDownButton(pluginButton_CmdScenarios);
+            }
+
+#if DEBUG
+            Renga.IAction testAcrion1 = rengaUI.CreateAction();
+            testAcrion1.DisplayName = "TEST";
+            ActionEventSource functionEvent_TEST = new ActionEventSource(testAcrion1);
+            functionEvent_TEST.Triggered += (o, s) =>
+            {
+                PluginFunctions.CreateInstance().Run(new PluginMenuItem() { Id = "_RENGA_TEST", Version="7.0" });
+            };
+            m_eventSources.Add(functionEvent_TEST);
+            pluginPanel.AddToolButton(testAcrion1);
+
+#endif
+
             rengaUI.AddExtensionToPrimaryPanel(pluginPanel);
         }
 

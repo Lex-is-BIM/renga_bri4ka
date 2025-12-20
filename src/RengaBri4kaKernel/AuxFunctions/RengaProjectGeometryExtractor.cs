@@ -49,7 +49,7 @@ namespace RengaBri4kaKernel.AuxFunctions
 
             // init quantity types
             List<Guid> ids = new List<Guid>();
-            foreach (var rengaQuantitiInfo in typeof(Renga.QuantityIds).GetRuntimeFields())
+            foreach (var rengaQuantitiInfo in typeof(Renga.Quantities).GetRuntimeFields())
             {
                 Guid? guid = (Guid?)rengaQuantitiInfo.GetValue(null);
                 if (guid != null) ids.Add(guid.Value);

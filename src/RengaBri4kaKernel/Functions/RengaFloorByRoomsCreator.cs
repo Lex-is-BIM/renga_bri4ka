@@ -51,7 +51,7 @@ namespace RengaBri4kaKernel.Functions
 
                 List<Point3D> points = lineGeometry.Vertices.Select(p => new Point3D(p.X, p.Y, p.Z)).ToList();
 
-                Renga.IModelObject? createdObject = PluginData.Project.Model.CreateBaselineObject(BaselineObjectType.Floor, points, false);
+                Renga.IModelObject? createdObject = PluginData.Project.Model.CreateBaselineObject(BaselineObjectType.Floor, points, -1, false);
             }
 
         }

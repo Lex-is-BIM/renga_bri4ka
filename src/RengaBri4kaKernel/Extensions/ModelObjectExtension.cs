@@ -134,12 +134,12 @@ namespace RengaBri4kaKernel.Extensions
             }
             
             
-            if (rengaObject.ObjectType.Equals(Renga.ObjectTypes.Beam))
+            if (rengaObject.ObjectType.Equals(Renga.EntityTypes.Beam))
             {
                 Renga.IBeamParams? objAsBeam = rengaObject as Renga.IBeamParams;
                 if (objAsBeam != null) return RengaGeometryConverter.FromCurve3d_2(objAsBeam.GetBaseline());
             }
-            if (rengaObject.ObjectType.Equals(Renga.ObjectTypes.Column))
+            if (rengaObject.ObjectType.Equals(Renga.EntityTypes.Column))
             {
                 Renga.IColumnParams? objAsColumn = rengaObject as Renga.IColumnParams;
                 if (objAsColumn != null) return new Line3D()
@@ -152,12 +152,12 @@ namespace RengaBri4kaKernel.Extensions
                     }
                 };
             }
-            //if (rengaObject.ObjectType.Equals(Renga.ObjectTypes.Floor))
+            //if (rengaObject.ObjectType.Equals(Renga.EntityTypes.Floor))
             //{
             //    Renga.IFloorParams? objAsFloor = rengaObject as Renga.IFloorParams;
             //    if (objAsFloor != null) return RengaGeometryConverter.FromCurve2d(objAsFloor.GetContour());
             //}
-            if (rengaObject.ObjectType.Equals(Renga.ObjectTypes.Route))
+            if (rengaObject.ObjectType.Equals(Renga.EntityTypes.Route))
             {
                 Renga.IRouteParams? objAsRoute = rengaObject as Renga.IRouteParams;
                 if (objAsRoute != null) return RengaGeometryConverter.FromCurve3d(objAsRoute.GetContour(), segmentation);
