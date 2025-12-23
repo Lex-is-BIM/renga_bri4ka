@@ -18,8 +18,10 @@ namespace RengaBri4kaKernel.Functions
             Guid currentProjectId = PluginData.Project.ProjectInfo.UniqueId;
             return currentProjectId.ToString("N");
         }
-        public static string GetScreensDir(string configName)
+
+        public static string GetScreensDir(string? configName)
         {
+            if (configName == null) configName = GetCurrentProjectId();
             string baseDirPath = Path.Combine(PluginConfig.GetDirectoryPath(), "Screens");
             if (!Directory.Exists(baseDirPath)) Directory.CreateDirectory(baseDirPath);
 
@@ -29,26 +31,35 @@ namespace RengaBri4kaKernel.Functions
             return screensDir;
         }
 
-        public static ViewPointsCollectionConfig GetCurrentConfig()
+        public static ViewPointsCollectionConfig GetCurrentConfig(ref string path)
         {
             Guid currentProjectId = PluginData.Project.ProjectInfo.UniqueId;
             string configsDir = Path.GetDirectoryName(PluginConfig.GetDefaultPath<ViewPointsCollectionConfig>());
+
+            path = Path.Combine(configsDir, GetCurrentProjectId() + ".xml");
             if (!Directory.Exists(configsDir))
             {
                 Directory.CreateDirectory(configsDir);
                 return new ViewPointsCollectionConfig();
             }
+
+            ViewPointsCollectionConfig? lastEditedConfig = new ViewPointsCollectionConfig();
+            DateTime lastEditedTime = DateTime.Parse("2010/10/12 12:00:00");
             foreach (string configPath in Directory.GetFiles(configsDir, "*.xml", SearchOption.TopDirectoryOnly))
             {
                 ViewPointsCollectionConfig? config = (ViewPointsCollectionConfig?)ConfigIO.LoadFrom<ViewPointsCollectionConfig>(configPath);
                 if (config == null) continue;
                 if (config.TargetProjectId == currentProjectId)
                 {
-                    return config;
+                    var currentEditedTime = new FileInfo(configPath).LastWriteTime;
+                    if (lastEditedTime.CompareTo(currentEditedTime) < 0)
+                    {
+                        lastEditedTime = currentEditedTime;
+                        lastEditedConfig = config;
+                    }
                 }
             }
-
-            return new ViewPointsCollectionConfig();
+            return lastEditedConfig;
         }
 
         // Задание состава объектов сцены и положения камеры
@@ -58,7 +69,9 @@ namespace RengaBri4kaKernel.Functions
 
             Renga.IView view = PluginData.rengaApplication.ActiveView;
             var modelView = view as Renga.IModelView;
-            if (modelView != null) modelView.SetObjectsVisibility2(ObjectsVisibilityVariant.ShowOnlySelected, viewPointDef.VisibleObjects);
+            if (modelView == null) return;
+
+            modelView.SetObjectsVisibility2(ObjectsVisibilityVariant.ShowOnlySelected, viewPointDef.VisibleObjects);
             modelView.VisualStyle = viewPointDef.ActiveStyle;
 
             Renga.ICamera3D? camera = PluginData.rengaApplication.GetCamera();
@@ -84,8 +97,8 @@ namespace RengaBri4kaKernel.Functions
 
             Renga.ImageFormat image_format = Renga.ImageFormat.ImageFormat_PNG;
 
-            string configName = PluginData.Project.ProjectInfo.UniqueId.ToString();
-            string screenSavePath = Path.Combine(GetScreensDir(configName), $"{viewPointDef.Name}-cameraResolution.png");
+            string screenSavePath = Path.Combine(GetScreensDir(null), $"{viewPointDef.Name}-cameraResolution.png");
+            if (File.Exists(screenSavePath)) File.Delete(screenSavePath);
             image.SaveToFile(screenSavePath, image_format);
         }
 

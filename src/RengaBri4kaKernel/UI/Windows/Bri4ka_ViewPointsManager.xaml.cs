@@ -13,7 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-
+using RengaBri4kaKernel.AuxFunctions;
 using RengaBri4kaKernel.Configs;
 using RengaBri4kaKernel.Extensions;
 using RengaBri4kaKernel.Functions;
@@ -33,15 +33,13 @@ namespace RengaBri4kaKernel.UI.Windows
 
             InitData();
 
-            //this.Closed += Bri4ka_ViewPointsManager_Closed;
+            this.Closed += Bri4ka_ViewPointsManager_Closed;
             this.ListBox_ViewPoints.ItemsSource = mViewPoints;
         }
 
-       
-
         private void InitData()
         {
-            SetConfig(RengaViewPointsManager.GetCurrentConfig());
+            SetConfig(RengaViewPointsManager.GetCurrentConfig(ref this.pLoadedConfig));
 
             this.TextBox_NewViewPointName.Text = ViewPointDefinition.NameBase;
 
@@ -116,6 +114,13 @@ namespace RengaBri4kaKernel.UI.Windows
             SaveThis();
         }
 
+        private void Button_Reset_Click(object sender, RoutedEventArgs e)
+        {
+            SaveThis();
+            this.mViewPoints.Clear();
+            pLoadedConfig = null;
+        }
+
         private void Button_UpdateViewPoint_Click(object sender, RoutedEventArgs e)
         {
             manageViewPoint(ViewPointUpdateMode.update);
@@ -124,12 +129,12 @@ namespace RengaBri4kaKernel.UI.Windows
 
         private void Button_SaveToFile_Click(object sender, RoutedEventArgs e)
         {
-            ConfigIO.SaveToWithDialogue(GetConfig());
+            pLoadedConfig = ConfigIO.SaveToWithDialogue(GetConfig());
         }
 
         private void Button_LoadFromFile_Click(object sender, RoutedEventArgs e)
         {
-            ViewPointsCollectionConfig? config = (ViewPointsCollectionConfig?)ConfigIO.LoadFromWithDialogue<ViewPointsCollectionConfig>();
+            ViewPointsCollectionConfig? config = (ViewPointsCollectionConfig?)ConfigIO.LoadFromWithDialogue2<ViewPointsCollectionConfig>(ref this.pLoadedConfig);
             this.SetConfig(config);
         }
 
@@ -144,6 +149,8 @@ namespace RengaBri4kaKernel.UI.Windows
                     RengaViewPointsManager.CreateScreen(viewPointDef, imageSize);
                 }
             }
+
+            Bri4ka_TextForm.ShowTextWindow("Изображения сохранены в папку " + RengaViewPointsManager.GetScreensDir(null), null);
         }
         #endregion
 
@@ -164,9 +171,13 @@ namespace RengaBri4kaKernel.UI.Windows
             Renga.IModelView mView = PluginData.rengaApplication.ActiveView as Renga.IModelView;
             viewPointDef.ActiveStyle = mView.VisualStyle;
 
-            var visObjects = PluginData.Project.Model.GetAllObjects(this.CheckBox_SaveVisibleElements.IsChecked ?? false);
-            if (visObjects == null) return null;
-            viewPointDef.VisibleObjects = visObjects.Select(ent => ent.Id).ToArray();
+            if (this.RadioButton_ObjectsAll.IsChecked == true) viewPointDef.VisibleObjects = null;
+            else
+            {
+                var visObjects = PluginData.Project.Model.GetAllObjects(this.RadioButton_ObjectsVisibleNow.IsChecked ?? false);
+                if (visObjects == null) return null;
+                viewPointDef.VisibleObjects = visObjects.Select(ent => ent.Id).ToArray();
+            }
 
             return viewPointDef;
         }
@@ -182,6 +193,7 @@ namespace RengaBri4kaKernel.UI.Windows
                 {
                     RengaViewPointsManager.GoToViewPoint(viewPointDef);
                 }
+                this.TextBox_NewViewPointName.Text = viewPointDef.Name;
             }
             else if (mode == ViewPointUpdateMode.update)
             {
@@ -209,10 +221,12 @@ namespace RengaBri4kaKernel.UI.Windows
 
         private void SaveThis()
         {
-            ConfigIO.SaveTo(null, GetConfig());
+            if (pLoadedConfig == null) return;
+            ConfigIO.SaveTo(pLoadedConfig, GetConfig());
         }
 
         private ObservableCollection<ViewPointDefinition> mViewPoints;
+        private string? pLoadedConfig = null;
     }
 
     enum ViewPointUpdateMode

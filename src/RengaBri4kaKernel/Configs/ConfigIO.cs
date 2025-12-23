@@ -29,7 +29,7 @@ namespace RengaBri4kaKernel.Configs
             return null;
         }
 
-        public static object? LoadFromWithDialogue<ConfigType>(string? initialDir = null)
+        private static Tuple<string, object?>? LoadFromWithDialogue0<ConfigType>(string? initialDir = null)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Title = "Выбор конфигурационного файла";
@@ -43,9 +43,24 @@ namespace RengaBri4kaKernel.Configs
 
             if (openFileDialog.ShowDialog() == true && File.Exists(openFileDialog.FileName))
             {
-                return LoadFrom<ConfigType>(openFileDialog.FileName);
+                return Tuple.Create(openFileDialog.FileName, LoadFrom<ConfigType>(openFileDialog.FileName));
             }
             return null;
+        }
+
+        public static object? LoadFromWithDialogue<ConfigType>(string? initialDir = null)
+        {
+            Tuple<string, object?>? res = LoadFromWithDialogue0<ConfigType>();
+            if (res == null) return null;
+            return res.Item2;
+        }
+
+        public static object? LoadFromWithDialogue2<ConfigType>(ref string path)
+        {
+            Tuple<string, object?>? res = LoadFromWithDialogue0<ConfigType>();
+            if (res == null) return null;
+            path = res.Item1;
+            return res.Item2;
         }
 
 
@@ -63,7 +78,7 @@ namespace RengaBri4kaKernel.Configs
             }
         }
 
-        public static void SaveToWithDialogue<ConfigType>(ConfigType objectData)
+        public static string? SaveToWithDialogue<ConfigType>(ConfigType objectData)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Title = "Сохранение файла конфигурации";
@@ -76,7 +91,10 @@ namespace RengaBri4kaKernel.Configs
             if (saveFileDialog.ShowDialog() == true)
             {
                 SaveTo(saveFileDialog.FileName, objectData);
+                return saveFileDialog.FileName;
             }
+
+            return null;
         }
 
         public static string GetDefaultPath<ConfigType>()

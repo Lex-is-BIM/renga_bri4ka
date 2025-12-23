@@ -34,7 +34,7 @@ namespace RengaBri4kaKernel.Configs
         public Guid Id { get; set; }
         public string Name { get; set; }
         //public bool ShowOnlyVisibleEntities { get; set; }
-        public int[] VisibleObjects { get; set; }
+        public int[]? VisibleObjects { get; set; }
 
         public ViewPointCameraParameters Camera { get; set; }
 

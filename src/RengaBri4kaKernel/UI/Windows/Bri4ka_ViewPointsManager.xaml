@@ -17,14 +17,22 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-					<CheckBox x:Name="CheckBox_GoToPoint" Content="Переходить на точку при выборе"></CheckBox>
+					<CheckBox x:Name="CheckBox_GoToPoint" Content="Переходить на точку при выборе" IsChecked="True"></CheckBox>
                     <Separator Margin="5,5,5,5"></Separator>
-                    <Label Content="Наименование новой точки обзора:"></Label>
+                    <Label Content="Наименование точки обзора:"></Label>
                     <TextBox x:Name="TextBox_NewViewPointName"></TextBox>
                     <Button x:Name="Button_AddViewPoint" Margin="0,5,0,0" Content="Добавить" Click="Button_AddViewPoint_Click"></Button>
                     <Button x:Name="Button_DeleteViewPoint" Margin="0,5,0,0" Content="Удалить" Click="Button_DeleteViewPoint_Click"></Button>
                     <Button x:Name="Button_UpdateViewPoint" Margin="0,5,0,0" Content="Обновить" Click="Button_UpdateViewPoint_Click"></Button>
-                    <CheckBox x:Name="CheckBox_SaveVisibleElements" Margin="0,5,0,0" Content="Сохранять только видимые элементы" ></CheckBox>
+                    
+                    <GroupBox Header="Видимость объектов">
+                        <StackPanel Orientation="Vertical">
+                            <RadioButton x:Name="RadioButton_ObjectsAll" Content="Только положение камеры" IsChecked="True"></RadioButton>
+                            <RadioButton x:Name="RadioButton_ObjectsVisibleNow" Content="Только видимые объекты"></RadioButton>
+                            <RadioButton x:Name="RadioButton_ObjectsAllNow" Content="Все объекты сейчас"></RadioButton>
+                        </StackPanel>
+                    </GroupBox>
+                    <Button x:Name="Button_Reset" Margin="0,5,0,0" Content="Создать новую коллекцию" Click="Button_Reset_Click"></Button>
                     <Separator Margin="5,5,5,5"></Separator>
                     <Button x:Name="Button_SaveToFile" Content="Сохранить точки обзора в файл" Click="Button_SaveToFile_Click"></Button>
                     <Button x:Name="Button_LoadFromFile" Margin="0,5,0,0" Content="Загрузить точки обзора из файла" Click="Button_LoadFromFile_Click"></Button>

@@ -21,6 +21,7 @@
 	- [Запрет выбора](./6.6_RENGA_BRI4KA_FOLLOWUSERSELECTION.md)
 	- [Импорт рельефа](./6.7_RENGA_BRI4KA_ELEVATIONIMPORT.md)
 	- [Командный препроцессор](./6.8_RENGA_BRI4KA_COMMANDLINEPREPROC.md)
+	- [Точки обзора](./6.9_RENGA_BRI4KA_VIEWPOINTSMANAGER.md)
 - [7. Группа "Настройки и справка"]()
 	- [Вывести уклоны кровли](./7.1_RENGA_BRI4KA_PLUGINVERSION.md)
 	- [Справка](./7.2_RENGA_BRI4KA_PLUGINHELP.md)
