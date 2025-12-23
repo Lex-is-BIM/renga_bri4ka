@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using RengaBri4kaKernel.AuxFunctions;
+using RengaBri4kaKernel.Extensions;
 using RengaBri4kaKernel.Functions;
 
 namespace RengaBri4kaKernel.UI.Windows
@@ -329,8 +330,10 @@ namespace RengaBri4kaKernel.UI.Windows
         private void SetView(double[] position)
         {
             var up = new double[] { 0, 0, 1 };
-            RengaUtils.LookTo(position, new double[] { 0, 0, 0 }, up);
-            //AnimateCameraTo(GetPositionFromFocusPointAndUpVector(focusPoint), focusPoint, up);
+
+            Renga.ICamera3D? camera = PluginData.rengaApplication.GetCamera();
+            if (camera == null) return;
+            camera.SetCameraParameters(new Configs.ViewPointCameraParameters() { Position = new float[] { 0, 0, 0 }, FocusPoint = new float[] { (float)position[0], (float)position[1], (float)position[2] } });
         }
 
         private void Button_SetOrientFix_Top_Click(object sender, RoutedEventArgs e)

@@ -49,9 +49,10 @@ namespace RengaBri4kaKernel.Configs
         }
 
 
-        public static void SaveTo<ConfigType>(string? path, ConfigType objectData)
+        public static void SaveTo<ConfigType>(string? path, ConfigType? objectData)
         {
             if (path == null) path = GetDefaultPath<ConfigType>();
+            if (objectData == null) return;
             string dir = Path.GetDirectoryName(path);
             if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
             using (var writer = new StreamWriter(path))
@@ -80,7 +81,9 @@ namespace RengaBri4kaKernel.Configs
 
         public static string GetDefaultPath<ConfigType>()
         {
-            return Path.Combine(PluginConfig.GetDirectoryPath(), "Configs", typeof(ConfigType).Name, "Default.xml");
+            string dir = Path.Combine(PluginConfig.GetDirectoryPath(), "Configs", typeof(ConfigType).Name);
+            if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+            return Path.Combine(dir, "Default.xml");
         }
     }
 }

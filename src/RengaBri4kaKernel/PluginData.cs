@@ -62,5 +62,6 @@ namespace RengaBri4kaKernel
         public static Bri4ka_ViewCube? windowViewCube;
         public static Bri4ka_CollisionsReportViewer? windowCollisionReportsViewer;
         public static Bri4ka_CmdPreProcessor? windowCmdPreProcessor;
+        public static Bri4ka_ViewPointsManager? windowViewPointsManager;
     }
 }

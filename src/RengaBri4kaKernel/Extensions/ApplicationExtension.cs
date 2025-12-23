@@ -19,6 +19,18 @@ namespace RengaBri4kaKernel.Extensions
             return true;
 
         }
+
+        public static Renga.ICamera3D? GetCamera(this Renga.IApplication application)
+        {
+            Renga.IView view = application.ActiveView as Renga.IView;
+            if (view.Type != Renga.ViewType.ViewType_View3D) return null;
+            Renga.IModelView? viewModel = view as Renga.IModelView;
+            if (viewModel == null) return null;
+            Renga.IView3DParams? viewModelParams = viewModel as Renga.IView3DParams;
+            if (viewModelParams == null) return null;
+
+            return viewModelParams.Camera;
+        }
     }
 
 }

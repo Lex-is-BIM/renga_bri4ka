@@ -160,7 +160,8 @@ namespace RengaBri4kaLoader
 
             if (PluginData.windowViewCube != null) PluginData.windowViewCube?.Close();
             if (PluginData.windowCollisionReportsViewer != null) PluginData.windowCollisionReportsViewer?.Close();
-
+            if (PluginData.windowCmdPreProcessor != null) PluginData.windowCmdPreProcessor?.Close();
+            if (PluginData.windowViewPointsManager != null) PluginData.windowViewPointsManager?.Close();
             //if (PluginData.PluginConfig != null) ConfigIO.SaveTo<PluginConfig>(PluginConfig.GetConfigPath(), PluginData.PluginConfig);
         }
     }

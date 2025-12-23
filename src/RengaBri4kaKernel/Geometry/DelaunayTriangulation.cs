@@ -69,7 +69,7 @@ namespace RengaBri4kaKernel.Geometry
                 return $"[{A}, {B}, {C}]";
             }
 
-            public override bool Equals(object obj)
+            public override bool Equals(object? obj)
             {
                 if (obj is Triangle other)
                 {

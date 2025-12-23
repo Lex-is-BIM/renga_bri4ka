@@ -394,20 +394,20 @@ namespace RengaBri4kaKernel.Extensions
 
         }
 
-        public static IEnumerable<Renga.IModelObject>? GetVisibleObjects()
+        public static IEnumerable<Renga.IModelObject>? GetAllObjects(this Renga.IModel rengaModel, bool visibleOnly = true)
         {
             var view = PluginData.rengaApplication.ActiveView;
             var modelView = view as Renga.IModelView;
             if (modelView == null) return null;
 
-            Renga.IModel model = PluginData.Project.Model;
-            Renga.IModelObjectCollection objects = model.GetObjects();
+            //Renga.IModel model = PluginData.Project.Model;
+            Renga.IModelObjectCollection objects = rengaModel.GetObjects();
             List<Renga.IModelObject> needObjects = new List<IModelObject>();
 
             for (int i = 0; i < objects.Count; i++)
             {
                 Renga.IModelObject o = objects.GetByIndex(i);
-                if (modelView.IsObjectVisible(o.Id)) needObjects.Add(o);
+                if ((visibleOnly && modelView.IsObjectVisible(o.Id)) | !visibleOnly) needObjects.Add(o);
             }
 
             return needObjects;

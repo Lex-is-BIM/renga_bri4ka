@@ -33,6 +33,7 @@ namespace RengaBri4kaLoader
         RENGA_BRI4KA_FOLLOWUSERSELECTION,
         RENGA_BRI4KA_ELEVATIONIMPORT,
         RENGA_BRI4KA_COMMANDLINEPREPROC,
+        RENGA_BRI4KA_VIEWPOINTSMANAGER,
         RENGA_BRI4KA_PLUGINVERSION,
         RENGA_BRI4KA_PLUGINHELP
     }
@@ -172,7 +173,15 @@ namespace RengaBri4kaLoader
                         PluginData.windowCmdPreProcessor.Show();
                         break;
                     }
-                //
+                case PluginFunctionVariant.RENGA_BRI4KA_VIEWPOINTSMANAGER:
+                    {
+                        if (PluginData.windowViewPointsManager == null)
+                        {
+                            PluginData.windowViewPointsManager = new Bri4ka_ViewPointsManager();
+                            PluginData.windowViewPointsManager.Show();
+                        }
+                        break;
+                    }
 
 
                 //Настройки

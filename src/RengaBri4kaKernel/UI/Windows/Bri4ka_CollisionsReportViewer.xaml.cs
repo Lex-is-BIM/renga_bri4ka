@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using RengaBri4kaKernel.AuxFunctions;
 using RengaBri4kaKernel.Configs;
+using RengaBri4kaKernel.Extensions;
 using RengaBri4kaKernel.Functions;
 
 namespace RengaBri4kaKernel.UI.Windows
@@ -56,7 +57,9 @@ namespace RengaBri4kaKernel.UI.Windows
 
             if (this.CheckBox_HideAllOtherObjects.IsChecked == true)
             {
-                RengaUtils.EditVisibility(ids2);
+                var view = PluginData.rengaApplication.ActiveView;
+                var modelView = view as Renga.IModelView;
+                if (modelView != null) modelView.SetObjectsVisibility2(ObjectsVisibilityVariant.ShowOnlySelected, ids2);
             }
             if (this.CheckBox_GoToObjects.IsChecked == true)
             {

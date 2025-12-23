@@ -112,11 +112,16 @@ namespace RengaBri4kaKernel.UI.Windows
         {
             RengaManageSelectPermissionsConfig config = this.GetConfig();
             RengaManageSelectPermissions.CreateInstance().SetConfig(config);
-            ConfigIO.SaveTo(ConfigIO.GetDefaultPath<RengaManageSelectPermissionsConfig>(), config);
+            ConfigIO.SaveTo(null, config);
 
             this.Close();
         }
 
         #endregion
+
+        ~Bri4ka_ManageSelectPermissions()
+        {
+            ConfigIO.SaveTo(null, this.GetConfig());
+        }
     }
 }

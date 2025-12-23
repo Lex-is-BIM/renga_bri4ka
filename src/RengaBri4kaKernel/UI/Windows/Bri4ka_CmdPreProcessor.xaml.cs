@@ -29,6 +29,8 @@ namespace RengaBri4kaKernel.UI.Windows
 
             this.TextBox_CMD.AcceptsReturn = true;
             this.TextBox_CMD.TextChanged += TextBox_CMD_TextChanged;
+
+            this.SizeToContent = SizeToContent.WidthAndHeight;
         }
 
         private void RunCommand()

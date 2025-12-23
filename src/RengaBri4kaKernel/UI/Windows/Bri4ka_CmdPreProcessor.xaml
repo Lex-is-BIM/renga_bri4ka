@@ -7,14 +7,22 @@
         mc:Ignorable="d"
         Title="Командный препроцессор">
     <Grid>
-        <StackPanel Orientation="Vertical">
-            <StackPanel Orientation="Horizontal">
-                <Button x:Name="Button_Clear" Content="Очистить" Click="Button_Clear_Click"></Button>
-                <Button x:Name="Button_SaveToFile" Content="Сохранить сценарий" Margin="5,0,0,0" Click="Button_SaveToFile_Click"></Button>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.3*"></RowDefinition>
+            <RowDefinition Height="0.7*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Vertical" >
+            <StackPanel Orientation="Vertical" Grid.Row="0">
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="Button_Clear" Content="Очистить" Click="Button_Clear_Click"></Button>
+                    <Button x:Name="Button_SaveToFile" Content="Сохранить сценарий" Margin="5,0,0,0" Click="Button_SaveToFile_Click"></Button>
+                </StackPanel>
+                <TextBox x:Name="TextBox_CMD" Margin="0,5,0,0" Height="50" ScrollViewer.VerticalScrollBarVisibility="Visible"></TextBox>
             </StackPanel>
-            <TextBox x:Name="TextBox_CMD" Margin="0,5,0,0" Height="50" ScrollViewer.VerticalScrollBarVisibility="Visible"></TextBox>
-            <Label Content="История команд"></Label>
-            <TextBox x:Name="TextBox_CMD_Log" Height="100" ScrollViewer.VerticalScrollBarVisibility="Visible" IsReadOnly="True"></TextBox>
+            <StackPanel Orientation="Vertical" Grid.Row="1">
+                <Label Content="История команд"></Label>
+                <TextBox x:Name="TextBox_CMD_Log" Height="100" ScrollViewer.VerticalScrollBarVisibility="Visible" IsReadOnly="True"></TextBox>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Window>
