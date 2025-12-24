@@ -43,8 +43,8 @@ namespace RengaBri4kaKernel.Functions
         public RengaElevationImporter()
         {
             this.pRengaBuildingTransformInfo = PluginData.Project.BuildingInfo.GetTransformPararameters();
-            this.pAngleSinus = Math.Sin(this.pRengaBuildingTransformInfo[3]);
-            this.pAngleCos = Math.Cos(this.pRengaBuildingTransformInfo[3]);
+            this.pAngleSinus = Math.Sin(this.pRengaBuildingTransformInfo.AngleRad);
+            this.pAngleCos = Math.Cos(this.pRengaBuildingTransformInfo.AngleRad);
         }
 
         /// <summary>
@@ -81,9 +81,9 @@ namespace RengaBri4kaKernel.Functions
 
         private void ReCalcPoints(ref double x, ref double y, ref double z)
         {
-            x -= pRengaBuildingTransformInfo[0];
-            y -= pRengaBuildingTransformInfo[1];
-            z -= pRengaBuildingTransformInfo[2];
+            x -= pRengaBuildingTransformInfo.X;
+            y -= pRengaBuildingTransformInfo.Y;
+            z -= pRengaBuildingTransformInfo.Z;
 
             x = x * pAngleCos - y * pAngleSinus;
             y = x * pAngleSinus + y * pAngleCos;
@@ -212,6 +212,6 @@ namespace RengaBri4kaKernel.Functions
         private LandXML_SurfaceDef[]? mLandXML_Surfaces;
         public bool IsXml = false;
         private XDocument? mLandXML;
-        private double[] pRengaBuildingTransformInfo;
+        private ProjectTransformPararameters pRengaBuildingTransformInfo;
     }
 }

@@ -149,7 +149,6 @@ namespace RengaBri4kaKernel.UI.Windows
                     RengaViewPointsManager.CreateScreen(viewPointDef, imageSize);
                 }
             }
-
             Bri4ka_TextForm.ShowTextWindow("Изображения сохранены в папку " + RengaViewPointsManager.GetScreensDir(null), null);
         }
         #endregion

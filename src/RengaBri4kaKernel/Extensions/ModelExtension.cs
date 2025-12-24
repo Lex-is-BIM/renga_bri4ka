@@ -27,6 +27,7 @@ namespace RengaBri4kaKernel.Extensions
     {
         Hatch,
         Line3d,
+        Line3dAsCircle,
         DrawingLine,
         Floor,
         Beam,
@@ -301,12 +302,14 @@ namespace RengaBri4kaKernel.Extensions
             {
                 case BaselineObjectType.Hatch: creationParams.TypeId = RengaObjectTypes.Hatch; break;
                 case BaselineObjectType.DrawingLine: creationParams.TypeId = RengaObjectTypes.DrawingLine; break;
-                case BaselineObjectType.Line3d: creationParams.TypeId = RengaObjectTypes.Line3D; break;
+                case BaselineObjectType.Line3d: case BaselineObjectType.Line3dAsCircle: creationParams.TypeId = RengaObjectTypes.Line3D; break;
                 case BaselineObjectType.Roof: creationParams.TypeId = RengaObjectTypes.Roof; break;
                 case BaselineObjectType.Beam: creationParams.TypeId = RengaObjectTypes.Beam; break;
                 case BaselineObjectType.Wall: creationParams.TypeId = RengaObjectTypes.Wall; break;
                 case BaselineObjectType.Floor: creationParams.TypeId = RengaObjectTypes.Floor; break;
             }
+
+            
 
             var baseLineEntity = rengaModel.CreateObject(creationParams);
             if (baseLineEntity == null)
@@ -315,7 +318,7 @@ namespace RengaBri4kaKernel.Extensions
                 return null;
             }
 
-            if (objectType == BaselineObjectType.Line3d | objectType == BaselineObjectType.Beam)
+            if (objectType == BaselineObjectType.Line3d | objectType == BaselineObjectType.Beam | objectType == BaselineObjectType.Line3dAsCircle)
             {
                 Renga.IBaseline3DObject? baseLineEntity_3D = baseLineEntity as Renga.IBaseline3DObject;
                 if (baseLineEntity_3D == null)
@@ -324,19 +327,29 @@ namespace RengaBri4kaKernel.Extensions
                     return null;
                 }
 
-                List<Renga.ICurve3D> curvesTemp = new List<ICurve3D>();
-                for (int vertexCounter = 0; vertexCounter < contour.Count - 1; vertexCounter++)
+                for (int vertexCounter = 0; vertexCounter < 2; vertexCounter++)
                 {
                     var vertex1 = contour[vertexCounter];
                     var vertex2 = contour[vertexCounter + 1];
 
                     Renga.Point3D rengaVertex1 = new Renga.Point3D() { X = vertex1.X * numKoeff, Y = vertex1.Y * numKoeff, Z = vertex1.Z * numKoeff };
                     Renga.Point3D rengaVertex2 = new Renga.Point3D() { X = vertex2.X * numKoeff, Y = vertex2.Y * numKoeff, Z = vertex2.Z * numKoeff };
-                    Renga.ICurve3D curveData = PluginData.rengaApplication.Math.CreateLineSegment3D(rengaVertex1, rengaVertex2);
-                    curvesTemp.Add(curveData);
+
+                    Renga.ICurve3D curveData;
+                    if (objectType == BaselineObjectType.Line3dAsCircle)
+                    {
+                        curveData = PluginData.rengaApplication.Math.CreateCircle3D(rengaVertex1, Vector3DExtension.OZ, 5);
+                    }
+                    else curveData = PluginData.rengaApplication.Math.CreateLineSegment3D(rengaVertex1, rengaVertex2);
+
+                    baseLineEntity_3D.SetBaseline(curveData);
+
+                    
                 }
-                baseLineEntity_3D.SetBaseline(PluginData.rengaApplication.Math.CreateCompositeCurve3D(curvesTemp.ToArray()));
+
+                //baseLineEntity_3D.SetBaseline(PluginData.rengaApplication.Math.CreateCompositeCurve3D(curvesTemp.ToArray()));
             }
+               
             else
             {
                 Renga.IBaseline2DObject? baseLineEntity_2D = baseLineEntity as Renga.IBaseline2DObject;
@@ -358,9 +371,11 @@ namespace RengaBri4kaKernel.Extensions
                     Renga.Point2D rengaVertex2 = new Renga.Point2D() { X = vertex2.X * numKoeff, Y = vertex2.Y * numKoeff };
                     Renga.ICurve2D curveData = PluginData.rengaApplication.Math.CreateLineSegment2D(rengaVertex1, rengaVertex2);
                     curvesTemp.Add(curveData);
+
+                    if (objectType == BaselineObjectType.Wall) baseLineEntity_2D.SetBaseline(curveData);
                 }
 
-                baseLineEntity_2D.SetBaseline(PluginData.rengaApplication.Math.CreateCompositeCurve2D(curvesTemp.ToArray()));
+                if (objectType != BaselineObjectType.Wall) baseLineEntity_2D.SetBaseline(PluginData.rengaApplication.Math.CreateCompositeCurve2D(curvesTemp.ToArray()));
             }
 
            
