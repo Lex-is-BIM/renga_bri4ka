@@ -19,8 +19,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RengaBri4kaKernel", "src\Re
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RengaBri4kaLoader", "src\RengaBri4kaLoader\RengaBri4kaLoader.csproj", "{895BC455-9BA8-4029-9E1A-B3AAA717985B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RengaBri4kaGis", "src\RengaBri4kaGis\RengaBri4kaGis.csproj", "{566EE415-3EF6-4D6A-B687-BB8A1845FD2B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,14 +49,6 @@ Global
 		{895BC455-9BA8-4029-9E1A-B3AAA717985B}.Release|Any CPU.Build.0 = Release|x64
 		{895BC455-9BA8-4029-9E1A-B3AAA717985B}.Release|x64.ActiveCfg = Release|x64
 		{895BC455-9BA8-4029-9E1A-B3AAA717985B}.Release|x64.Build.0 = Release|x64
-		{566EE415-3EF6-4D6A-B687-BB8A1845FD2B}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{566EE415-3EF6-4D6A-B687-BB8A1845FD2B}.Debug|Any CPU.Build.0 = Debug|x64
-		{566EE415-3EF6-4D6A-B687-BB8A1845FD2B}.Debug|x64.ActiveCfg = Debug|x64
-		{566EE415-3EF6-4D6A-B687-BB8A1845FD2B}.Debug|x64.Build.0 = Debug|x64
-		{566EE415-3EF6-4D6A-B687-BB8A1845FD2B}.Release|Any CPU.ActiveCfg = Release|x64
-		{566EE415-3EF6-4D6A-B687-BB8A1845FD2B}.Release|Any CPU.Build.0 = Release|x64
-		{566EE415-3EF6-4D6A-B687-BB8A1845FD2B}.Release|x64.ActiveCfg = Release|x64
-		{566EE415-3EF6-4D6A-B687-BB8A1845FD2B}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

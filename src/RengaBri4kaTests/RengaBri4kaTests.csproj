@@ -9,7 +9,7 @@
         <LangVersion>8.0</LangVersion>
         <UseWPF>true</UseWPF>
         <OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
-        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
         <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     </PropertyGroup>
 

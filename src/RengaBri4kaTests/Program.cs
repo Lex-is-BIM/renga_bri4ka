@@ -1,24 +1,35 @@
 using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
-using RengaBri4kaKernel;
-using RengaBri4kaKernel.AuxFunctions;
+using RengaBri4kaGis;
+
 namespace RengaBri4kaTests
 {
     internal class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            TriangleStat tr = new TriangleStat(
-                new double[] { 336.1639, 247.3732, 1.2 },
-                new double[] { 339.7545, 243.1365, -1 },
-                new double[] { 335.6619, 240.0849, 0 },
-                SlopeResultUnitsVariant.Degree
-                );
-            tr.Calculate();
+            string executingAssemblyFile = new Uri(Assembly.GetExecutingAssembly().GetName().CodeBase).LocalPath;
+            //string rootDirPath = new DirectoryInfo(Path.GetDirectoryName(executingAssemblyFile)).Parent.FullName;
 
-            Console.WriteLine(tr.ToString());
+            string osgeoLibPath = Path.GetDirectoryName(executingAssemblyFile);// Path.Combine(rootDirPath, "osgeo");
+            try
+            {
+                var gisAss = Assembly.LoadFrom(Path.Combine(osgeoLibPath, "RengaBri4kaGis.dll"));
 
-            Console.WriteLine("\nEnd!");
+                RengaBri4kaGis.GisLoader.Initialize(osgeoLibPath);
+            }
+            catch (Exception ex) { }
+
+            string inputFilePath = @"C:\Users\Georg\Documents\GitHub\TBS-GIS\samples\СПБ_МСК-1964\export_1.geojson";
+            OgrDataSource ogrFile = new OgrDataSource(inputFilePath);
+
+            return;
         }
     }
 }

@@ -26,13 +26,6 @@
       <Folder Include="Files\" />
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\RengaBri4kaGis\RengaBri4kaGis.csproj">
-        <Private>False</Private>
-        <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
-      </ProjectReference>
-    </ItemGroup>
-
     <Choose>
         <When Condition=" '$(TargetFramework)' == 'net48'">
             <ItemGroup>
@@ -56,9 +49,4 @@
             </ItemGroup>
         </When>
     </Choose>
-
-    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-      <Exec Command="del $(TargetDir)RengaBri4kaGis*" />
-    </Target>
-
 </Project>

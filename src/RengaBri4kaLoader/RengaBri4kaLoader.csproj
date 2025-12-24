@@ -58,7 +58,7 @@
     </Choose>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-        <Exec Command="if '$(TargetFramework)' == 'net8.0-windows' copy $(ProjectDir)RengaBri4kaReleaseNet8.rndesc $(TargetDir)RengaBri4ka.rndesc&#xD;&#xA;if '$(TargetFramework)' == 'net48' copy $(ProjectDir)RengaBri4kaRelease.rndesc $(TargetDir)RengaBri4ka.rndesc&#xD;&#xA;xcopy $(SolutionDir)icons\*.png $(TargetDir)icons /Y /I &#xD;&#xA;del $(TargetDir)RengaBri4kaGis*&#xD;&#xA;del $(TargetDir)*_csharp.dll" />
+        <Exec Command="if '$(TargetFramework)' == 'net8.0-windows' copy $(ProjectDir)RengaBri4kaReleaseNet8.rndesc $(TargetDir)RengaBri4ka.rndesc&#xD;&#xA;if '$(TargetFramework)' == 'net48' copy $(ProjectDir)RengaBri4kaRelease.rndesc $(TargetDir)RengaBri4ka.rndesc&#xD;&#xA;xcopy $(SolutionDir)icons\*.png $(TargetDir)icons /Y /I &#xD;&#xA;" />
     </Target>
 
 </Project>

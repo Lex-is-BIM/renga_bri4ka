@@ -34,7 +34,6 @@ namespace RengaBri4kaLoader
         RENGA_BRI4KA_ELEVATIONIMPORT,
         RENGA_BRI4KA_COMMANDLINEPREPROC,
         RENGA_BRI4KA_VIEWPOINTSMANAGER,
-        RENGA_BRI4KA_GISIMPORTVECTOR,
         RENGA_BRI4KA_PLUGINVERSION,
         RENGA_BRI4KA_PLUGINHELP
     }
@@ -184,11 +183,6 @@ namespace RengaBri4kaLoader
                         Bri4ka_ElevationImporterSettings elevImport = new Bri4ka_ElevationImporterSettings();
                         elevImport.ShowDialog();
 
-                        break;
-                    }
-                case PluginFunctionVariant.RENGA_BRI4KA_GISIMPORTVECTOR:
-                    {
-                        RengaGeodataImporter.CreateInstance().Start(ImportType.VectorData);
                         break;
                     }
 
