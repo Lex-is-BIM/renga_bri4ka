@@ -23,6 +23,7 @@ namespace RengaBri4kaLoader
         RENGA_BRI4KA_CALCROOFSLOPES,
         RENGA_BRI4KA_TRIANGLESSTAT,
         RENGA_BRI4KA_FILEMETADATA,
+        RENGA_BRI4KA_SETENT3DGEOMPROPS,
         RENGA_BRI4KA_LEVEL2STAT,
         RENGA_BRI4KA_TEXTCOLORING,
         RENGA_BRI4KA_COLLISIONSMANAGER,
@@ -34,8 +35,10 @@ namespace RengaBri4kaLoader
         RENGA_BRI4KA_ELEVATIONIMPORT,
         RENGA_BRI4KA_COMMANDLINEPREPROC,
         RENGA_BRI4KA_VIEWPOINTSMANAGER,
+        //RENGA_BRI4KA_FOLLOWDELETED,
         RENGA_BRI4KA_PLUGINVERSION,
-        RENGA_BRI4KA_PLUGINHELP
+        RENGA_BRI4KA_PLUGINSETTINGS,
+        //RENGA_BRI4KA_PLUGINHELP
     }
 
     internal class PluginMenuItem
@@ -52,8 +55,8 @@ namespace RengaBri4kaLoader
         private bool isGisLoaded = false;
         public PluginFunctions()
         {
-            var Ver = PluginData.rengaApplication.Version;
-            PluginData.RengaVersion = new Version(Ver.Major, Ver.Minor, Ver.BuildNumber, Ver.Patch);
+            //var Ver = PluginData.rengaApplication.Version;
+            //PluginData.RengaVersion = new Version(Ver.Major, Ver.Minor, Ver.BuildNumber, Ver.Patch);
         }
 
         public static PluginFunctions CreateInstance()
@@ -103,9 +106,21 @@ namespace RengaBri4kaLoader
                 case PluginFunctionVariant.RENGA_BRI4KA_FILEMETADATA:
                     {
                         if (PluginData.Project.HasUnsavedChanges()) PluginData.Project.Save();
+
+                        if (!PluginData.Project.HasFile())
+                        { 
+                            string tmpSavePath = RengaFileExplorer.GenerateTempPath();
+                            PluginData.Project.SaveAs(tmpSavePath, ProjectType.ProjectType_Project, true);
+                            
+                        }
                         RengaFileExplorer rnpExplorer = new RengaFileExplorer(PluginData.Project.FilePath);
 
                         Bri4ka_TextForm.ShowTextWindow(rnpExplorer.GetData(), "Параметры проекта Renga");
+                        break;
+                    }
+                case PluginFunctionVariant.RENGA_BRI4KA_SETENT3DGEOMPROPS:
+                    {
+                        new RengaGeometryStat2().Calculate();
                         break;
                     }
 
@@ -188,27 +203,34 @@ namespace RengaBri4kaLoader
 
 
                 //Настройки
+                case PluginFunctionVariant.RENGA_BRI4KA_PLUGINSETTINGS:
+                    {
+                        Bri4ka_PluginSettings settingsWIndow = new Bri4ka_PluginSettings();
+                        settingsWIndow.ShowDialog();
+                        break;
+                    }
                 case PluginFunctionVariant.RENGA_BRI4KA_PLUGINVERSION:
                     {
                         var ass_info = Assembly.GetExecutingAssembly().GetName();
                         MessageBox.Show("Версия плагина: " + ass_info.Version.ToString());
                     }
                     break;
-                case PluginFunctionVariant.RENGA_BRI4KA_PLUGINHELP:
-                    {
-                        string pdfGuidePath = Path.Combine(PluginData.PluginFolder, "Bri4kaGuide.pdf");
-                        if (File.Exists(pdfGuidePath))
-                        {
-                            using Process fileopener = new Process();
-                            fileopener.StartInfo.FileName = "explorer";
-                            fileopener.StartInfo.Arguments = "\"" + pdfGuidePath + "\"";
+                    //case PluginFunctionVariant.RENGA_BRI4KA_PLUGINHELP:
+                    //    {
 
-                            fileopener.Start();
-                            //Process.Start("explorer.exe", pdfGuidePath);
-                        }
-                        
-                    }
-                    break;
+                    //        string pdfGuidePath = Path.Combine(PluginData.PluginFolder, "Bri4kaGuide.pdf");
+                    //        if (File.Exists(pdfGuidePath))
+                    //        {
+                    //            using Process fileopener = new Process();
+                    //            fileopener.StartInfo.FileName = "explorer";
+                    //            fileopener.StartInfo.Arguments = "\"" + pdfGuidePath + "\"";
+
+                    //            fileopener.Start();
+                    //            //Process.Start("explorer.exe", pdfGuidePath);
+                    //        }
+                    //break;
+                //    }
+                //    
 
                 case PluginFunctionVariant._RENGA_TEST:
                     {

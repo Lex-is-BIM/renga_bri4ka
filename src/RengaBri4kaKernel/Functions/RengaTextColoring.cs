@@ -13,7 +13,7 @@ namespace RengaBri4kaKernel.Functions
 {
     internal class RengaTextColoring
     {
-        public class ParametersTextColoring : PLuginParametersCollection
+        public class ParametersTextColoring : PluginParametersCollection
         {
             public static Guid TextColorId = new Guid("{7a7429dc-85ca-4f5a-8665-1de4647d526e}");
             public const string TextColor = "Bri4ka. Код цвета RGBA";

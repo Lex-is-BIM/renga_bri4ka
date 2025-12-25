@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace RengaBri4kaKernel.Functions
 {
-    public class ParametersGeometryStat : PLuginParametersCollection
+    public class ParametersGeometryStat : PluginParametersCollection
     {
         public static Guid MeshesCountId = new Guid("{b9a92ee2-5706-439f-ace6-67943297fb3b}");
         public const string MeshesCount = "Bri4ka. Число мэшей";

@@ -28,7 +28,19 @@ namespace RengaBri4kaLoader
 
             Renga.IUI rengaUI = rengaApp.UI;
             InitMenu(pluginFolder, rengaUI);
+
+            var Ver = PluginData.rengaApplication.Version;
+            PluginData.RengaVersion = new Version(Ver.Major, Ver.Minor, Ver.BuildNumber, Ver.Patch);
+
+            //Start events
+            StartPluginEvents();
+
             return true;
+        }
+
+        private void StartPluginEvents()
+        {
+            if (PluginAppConfig.CreateInstance().AutoStartFollowProjectVisualStyle) RengaFollowProjectVisualStyle.CreateInstance();
         }
 
         private void InitMenu(string pluginDir, Renga.IUI rengaUI)
@@ -163,6 +175,8 @@ namespace RengaBri4kaLoader
             if (PluginData.windowCmdPreProcessor != null) PluginData.windowCmdPreProcessor?.Close();
             if (PluginData.windowViewPointsManager != null) PluginData.windowViewPointsManager?.Close();
             //if (PluginData.PluginConfig != null) ConfigIO.SaveTo<PluginConfig>(PluginConfig.GetConfigPath(), PluginData.PluginConfig);
+
+            RengaFollowProjectVisualStyle.CreateInstance().Stop();
         }
     }
 }

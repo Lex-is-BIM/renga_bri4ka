@@ -12,19 +12,24 @@ namespace RengaBri4kaKernel.AuxFunctions
 {
     internal class RengaUtils
     {
+
         public static RengaTypeInfo[] GetRengaObjectTypes()
         {
-            var ids = typeof(Renga.EntityTypes).GetRuntimeFields();
-            RengaTypeInfo[] rengaTypesInfo = new RengaTypeInfo[ids.Count()];
-            for (int i = 0; i < ids.Count(); i++)
+            if (mRengaEntTypes == null)
             {
-                FieldInfo field = ids.ElementAt(i);
-                var startIdx = field.Name.IndexOf('<');
-                var endIdx = field.Name.IndexOf('>');
-                rengaTypesInfo[i] = new RengaTypeInfo() { Id = (Guid)field.GetValue(null)!, Name = field.Name.Substring(startIdx + 1, endIdx - 1) };
+                var ids = typeof(Renga.EntityTypes).GetRuntimeFields();
+                mRengaEntTypes = new RengaTypeInfo[ids.Count()];
+                for (int i = 0; i < ids.Count(); i++)
+                {
+                    FieldInfo field = ids.ElementAt(i);
+                    var startIdx = field.Name.IndexOf('<');
+                    var endIdx = field.Name.IndexOf('>');
+                    mRengaEntTypes[i] = new RengaTypeInfo() { Id = (Guid)field.GetValue(null)!, Name = field.Name.Substring(startIdx + 1, endIdx - 1) };
+                }
             }
-            return rengaTypesInfo;
+            return mRengaEntTypes;
         }
+        private static RengaTypeInfo[]? mRengaEntTypes;
 
         public static int[]? ConvertUniqueIdsToId(Guid[]? objectsUniqId)
         {

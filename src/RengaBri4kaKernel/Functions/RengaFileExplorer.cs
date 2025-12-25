@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 using RengaBri4kaKernel.AuxFunctions;
+using Renga;
 
 namespace RengaBri4kaKernel.Functions
 {
@@ -16,6 +17,7 @@ namespace RengaBri4kaKernel.Functions
         public const string file_checksum = "checksum";
         public const string file_metadata = "metadata";
         public const string tag_AppVersion = "AppVersion";
+        public const string tag_SessionId = "SessionId";
 
         public Dictionary<string, string> RNP_Data;
 
@@ -29,10 +31,26 @@ namespace RengaBri4kaKernel.Functions
             return "";
         }
 
-        private RengaFileExplorer() { }
-        public RengaFileExplorer(string rnpFileh)
+        public RengaFileExplorer()
         {
-            pRnpFilePath = rnpFileh;
+            if (PluginData.Project.HasUnsavedChanges()) PluginData.Project.Save();
+
+            if (!PluginData.Project.HasFile())
+            {
+                string tmpSavePath = RengaFileExplorer.GenerateTempPath();
+                PluginData.Project.SaveAs(tmpSavePath, ProjectType.ProjectType_Project, true);
+                startProcessing(tmpSavePath);
+            }
+            else startProcessing(PluginData.Project.FilePath);
+        }
+        public RengaFileExplorer(string rnpFilePath)
+        {
+            startProcessing(rnpFilePath);
+        }
+
+        private void startProcessing(string rnpFilePath)
+        {
+            pRnpFilePath = rnpFilePath;
             RNP_Data = new Dictionary<string, string>();
             ReadData();
         }
@@ -54,11 +72,15 @@ namespace RengaBri4kaKernel.Functions
             return "";
         }
 
+        public static string GenerateTempPath(string ext = ".rnp")
+        {
+            return Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + ext);
+        }
         public void ReadData()
         {
             if (File.Exists(pRnpFilePath))
             {
-                string copyPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + Path.GetExtension(pRnpFilePath));
+                string copyPath = GenerateTempPath(Path.GetExtension(pRnpFilePath));
                 File.Copy(pRnpFilePath, copyPath, true);
                 if (!File.Exists(copyPath)) return;
                 using (var rnpAsZip = ZipFile.OpenRead(copyPath))

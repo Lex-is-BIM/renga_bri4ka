@@ -16,7 +16,7 @@ using RengaBri4kaKernel.Configs;
 namespace RengaBri4kaKernel.Functions
 {
 
-    public class ParametersShadowsBySunCreator : PLuginParametersCollection
+    public class ParametersShadowsBySunCreator : PluginParametersCollection
     {
         public static Guid HourPerDayId = new Guid("{4f5e2979-c0ad-4195-8c8c-3a9ff8ee1307}");
         public const string HourPerDay = "Bri4ka. Час дня (положение солнца) ";

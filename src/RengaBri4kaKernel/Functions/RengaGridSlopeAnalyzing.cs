@@ -13,7 +13,7 @@ using RengaBri4kaKernel.RengaInternalResources;
 
 namespace RengaBri4kaKernel.Functions
 {
-    public class ParametersSlopeAnalyzing : PLuginParametersCollection
+    public class ParametersSlopeAnalyzing : PluginParametersCollection
     {
         // Свойства, назначаемые объекту
         public static Guid SlopeMinValueId = new Guid("{21a0cf05-d6d2-4a57-b07f-9163414510a4}");
