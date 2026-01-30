@@ -9,18 +9,20 @@ rmdir /s /q RengaBri4ka
 ::Build VinnyLibConverter
 devenv RengaBri4ka.sln /Build "Release|Any CPU"
 
+:: Help-guide is copied in root
+xcopy .\docs\Bri4kaGuide.pdf "bin\Release" /Y /I
+
 ::For net48
 xcopy .\README.md "bin\Release\net48" /Y /I
 xcopy .\UPDATES.md "bin\Release\net48" /Y /I
 xcopy .\LICENSE "bin\Release\net48" /Y /I
-xcopy .\docs\Bri4kaGuide.pdf "bin\Release\net48" /Y /I
+
 copy src\RengaBri4kaLoader\RengaBri4kaRelease.rndesc bin\Release\net48\RengaBri4ka.rndesc
 
 ::For net8.0-windows
 xcopy .\README.md "bin\Release\net8.0-windows" /Y /I
 xcopy .\UPDATES.md "bin\Release\net8.0-windows" /Y /I
 xcopy .\LICENSE "bin\Release\net8.0-windows" /Y /I
-xcopy .\docs\Bri4kaGuide.pdf "bin\Release\net8.0-windows" /Y /I
 copy src\RengaBri4kaLoader\RengaBri4kaReleaseNet8.rndesc bin\Release\net8.0-windows\RengaBri4ka.rndesc
 
 :: For icons
