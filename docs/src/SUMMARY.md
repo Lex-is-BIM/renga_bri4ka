@@ -23,6 +23,7 @@
 	- [Видовой куб](./RENGA_BRI4KA_VIEWCUBE.md)
 	- [Командный препроцессор](./RENGA_BRI4KA_COMMANDLINEPREPROC.md)
 	- [Точки обзора](./RENGA_BRI4KA_VIEWPOINTSMANAGER.md)
+	- [Связать помещение с перекрытием](./RENGA_BRI4KA_LINKROOMWITHFLOOR.md)
 - [Группа "Блокировка"]()
 	- [Запрет выбора](./RENGA_BRI4KA_FOLLOWUSERSELECTION.md)
 	- [Закрепить связанные](./RENGA_BRI4KA_PINLINKED.md)
