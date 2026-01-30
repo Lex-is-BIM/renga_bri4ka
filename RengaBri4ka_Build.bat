@@ -14,16 +14,19 @@ xcopy .\README.md "bin\Release\net48" /Y /I
 xcopy .\UPDATES.md "bin\Release\net48" /Y /I
 xcopy .\LICENSE "bin\Release\net48" /Y /I
 xcopy .\docs\Bri4kaGuide.pdf "bin\Release\net48" /Y /I
+copy src\RengaBri4kaLoader\RengaBri4kaRelease.rndesc bin\Release\net48\RengaBri4ka.rndesc
 
 ::For net8.0-windows
 xcopy .\README.md "bin\Release\net8.0-windows" /Y /I
 xcopy .\UPDATES.md "bin\Release\net8.0-windows" /Y /I
 xcopy .\LICENSE "bin\Release\net8.0-windows" /Y /I
 xcopy .\docs\Bri4kaGuide.pdf "bin\Release\net8.0-windows" /Y /I
+copy src\RengaBri4kaLoader\RengaBri4kaReleaseNet8.rndesc bin\Release\net8.0-windows\RengaBri4ka.rndesc
+
+:: For icons
+call icons\RengaBri4ka_Icons.bat
 
 xcopy bin\Release\*.* RengaBri4ka /Y /I /E
-
-
 
 ::ZIP release
 del "RengaBri4ka.zip"
