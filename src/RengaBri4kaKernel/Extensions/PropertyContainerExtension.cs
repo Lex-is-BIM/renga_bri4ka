@@ -27,5 +27,24 @@ namespace RengaBri4kaKernel.Extensions
 
             return stringConvertedProperties;
         }
+
+        public static void SetProperties(this Renga.IPropertyContainer propContainer, Guid[]? propsId, object?[]? propsData)
+        {
+            if (propsId == null || propsData == null) return;
+            if (PluginData.Project == null) return;
+
+            for (int propCounter = 0; propCounter < propsId.Length; propCounter++)
+            {
+                Guid propId = propsId[propCounter];
+                object? propData = propsData[propCounter];
+                //var propDef = PluginData.Project.PropertyManager.GetPropertyDescription(propId);
+
+                if (propContainer.Contains(propId) && propData != null)
+                {
+                    Renga.IProperty? propInfo = propContainer.Get(propId);
+                    propInfo.SetPropertyValue(propData);
+                }
+            }
+        }
     }
 }

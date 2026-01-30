@@ -9,7 +9,7 @@ namespace RengaBri4kaKernel.AuxFunctions
 {
     internal class RengaGeometryConverter
     {
-        public static Line3D? FromCurve3d(Renga.ICurve3D? curve3d, int segmentation)
+        public static Line3D? FromCurve3d(Renga.ICurve3D? curve3d, int segmentation = 10)
         {
             if (curve3d == null) return null;
             double dParam = curve3d.MaxParameter - curve3d.MinParameter;
@@ -53,7 +53,7 @@ namespace RengaBri4kaKernel.AuxFunctions
             return line;
         }
 
-        public static Line3D? FromCurve2d_2(Renga.ICurve2D? curve2d)
+        public static Line3D? FromCurve2d_2(Renga.ICurve2D? curve2d, double elevation)
         {
             if (curve2d == null) return null;
             double dParam = curve2d.MaxParameter - curve2d.MinParameter;
@@ -63,7 +63,7 @@ namespace RengaBri4kaKernel.AuxFunctions
             {
                 double param = Convert.ToInt32(curve2d.MinParameter) + i;
                 var p = curve2d.GetPointOn(param);
-                line.Vertices.Add(new Vector3(p.X, p.Y, 0));
+                line.Vertices.Add(new Vector3(p.X, p.Y, elevation));
             }
             return line;
         }

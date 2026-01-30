@@ -1,3 +1,4 @@
+using Renga.GridTypes;
 using RengaBri4kaKernel.RengaInternalResources;
 using System;
 using System.Collections.Generic;
@@ -114,6 +115,8 @@ namespace RengaBri4kaKernel.AuxFunctions
             }
             return propValue;
         }
+
+        
 
     }
 

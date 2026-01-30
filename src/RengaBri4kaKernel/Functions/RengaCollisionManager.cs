@@ -10,6 +10,7 @@ using RengaBri4kaKernel.Configs;
 using RengaBri4kaKernel.Extensions;
 using RengaBri4kaKernel.Geometry;
 using Renga;
+using RengaBri4kaKernel.RengaInternalResources;
 
 namespace RengaBri4kaKernel.Functions
 {
@@ -37,7 +38,7 @@ namespace RengaBri4kaKernel.Functions
             IEnumerable<Renga.IModelObject>? group2 = UserInput.GetModelObjectsByTypes(pConfig.Group2);
 
             if (group1 == null || group2 == null) return;
-            var oTypes = RengaUtils.GetRengaObjectTypes();
+            var oTypes = RengaObjectTypes.GetRengaObjectTypesInfo();
 
             List<SolidRelationship> needRelationsRaw = new List<SolidRelationship>();
             //if (pConfig.ClashSettings.Separate) needRelationsRaw.Add(SolidRelationship.Separate);
@@ -58,7 +59,7 @@ namespace RengaBri4kaKernel.Functions
                     {
                         IGeometryInstance[]? geom = null;
 
-                        Line3D? objectAsLine = oneObject.GetLineGeometry(config.Segmentation ?? ClashDetectiveConfig.SegmentationDefault);
+                        Line3D? objectAsLine = oneObject.GetLineGeometry();
 
                         if ((config.AnalyzeBaseLinesOnly ?? false) && objectAsLine != null) geom = new IGeometryInstance[] { objectAsLine };
                         else

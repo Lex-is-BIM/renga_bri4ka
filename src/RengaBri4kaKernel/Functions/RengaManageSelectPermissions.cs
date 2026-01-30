@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 using RengaBri4kaKernel.Configs;
 using RengaBri4kaKernel.AuxFunctions;
+using RengaBri4kaKernel.RengaInternalResources;
 
 namespace RengaBri4kaKernel.Functions
 {
@@ -98,7 +99,7 @@ namespace RengaBri4kaKernel.Functions
             {
                 Renga.IModelObject one_object = model_objects.GetById(internal_model_object_id);
                 //Исключение от ошибок
-                if (one_object.ObjectType != Renga.EntityTypes.UndefinedObject)
+                if (one_object.ObjectType != RengaEntityTypes.UndefinedObject)
                 {
                     if (one_object.GetProperties() == null) continue;
 

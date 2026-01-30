@@ -1,3 +1,4 @@
+using RengaBri4kaKernel.AuxFunctions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,17 +64,91 @@ namespace RengaBri4kaKernel.RengaInternalResources
         public static Guid Window = new Guid("{2b02b353-2ca5-4566-88bb-917ea8460174}");
         public static Guid WiringAccessory = new Guid("{b00d5c25-92a8-4409-a3b7-7c37ed792c06}");
 
-        public static List<Tuple<Guid, string>> GetAll()
+        public static List<Tuple<Guid, string>> GetAll(bool only3d = false)
         {
             List<Tuple<Guid, string>> res = new List<Tuple<Guid, string>>();
             var t = Guid.Empty;
             RengaObjectTypes rO = new RengaObjectTypes();
             var fields = typeof(RengaObjectTypes).GetFields();
+
+            var objects_3d = GetObject3dCategories();
+
             foreach (var field in fields)
             {
-                res.Add(Tuple.Create<Guid, string>((Guid)field.GetValue(rO), field.Name));
+                Guid v = (Guid)field.GetValue(rO);
+                if (only3d && objects_3d.Contains(v)) res.Add(Tuple.Create<Guid, string>(v, field.Name));
+                if (!only3d) res.Add(Tuple.Create<Guid, string>(v, field.Name));
+
             }
-            return res;
+            return res.OrderBy(t => t.Item2).ToList();
         }
+
+        public static RengaTypeInfo[] GetRengaObjectTypesInfo (bool only3d = false)
+        {
+            List<RengaTypeInfo> res = new List<RengaTypeInfo>();
+            var t = Guid.Empty;
+            RengaObjectTypes rO = new RengaObjectTypes();
+            var fields = typeof(RengaObjectTypes).GetFields();
+
+            var objects_3d = GetObject3dCategories();
+
+            foreach (var field in fields)
+            {
+                Guid v = (Guid)field.GetValue(rO);
+                if (only3d && objects_3d.Contains(v)) res.Add(new RengaTypeInfo() { Id = v, Name = field.Name });
+                if (!only3d) res.Add(new RengaTypeInfo() { Id = v, Name = field.Name });
+
+            }
+            return res.OrderBy(t=>t.Name).ToArray();
+        }
+
+        public static Guid[] GetObject3dCategories()
+        {
+            return new Guid[]
+            {
+                RengaObjectTypes.AssemblyInstance,
+                RengaObjectTypes.Beam,
+                RengaObjectTypes.Column,
+                RengaObjectTypes.Door,
+                RengaObjectTypes.Duct,
+                RengaObjectTypes.DuctAccessory,
+                RengaObjectTypes.DuctFitting,
+                RengaObjectTypes.ElectricDistributionBoard,
+                RengaObjectTypes.Element,
+                RengaObjectTypes.Elevation,
+                RengaObjectTypes.Equipment,
+                RengaObjectTypes.Floor,
+                RengaObjectTypes.Hatch,
+                RengaObjectTypes.Hole,
+                RengaObjectTypes.IfcObject,
+                RengaObjectTypes.IsolatedFoundation,
+                //RengaObjectTypes.Level,
+                RengaObjectTypes.LightingFixture,
+                RengaObjectTypes.Line3D,
+                RengaObjectTypes.LineElectricalCircuit,
+                RengaObjectTypes.MechanicalEquipment,
+                RengaObjectTypes.ModelText,
+                RengaObjectTypes.Opening,
+                RengaObjectTypes.Pipe,
+                RengaObjectTypes.PipeAccessory,
+                RengaObjectTypes.PipeFitting,
+                RengaObjectTypes.Plate,
+                RengaObjectTypes.PlumbingFixture,
+                RengaObjectTypes.Railing,
+                RengaObjectTypes.Ramp,
+                RengaObjectTypes.Rebar,
+                RengaObjectTypes.Roof,
+                RengaObjectTypes.Room,
+                RengaObjectTypes.Route,
+                RengaObjectTypes.Section,
+                RengaObjectTypes.Stair,
+                RengaObjectTypes.Wall,
+                RengaObjectTypes.WallFoundation,
+                RengaObjectTypes.Window,
+                RengaObjectTypes.WiringAccessory
+            };
+        }
+
+       
     }
 }

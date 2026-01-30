@@ -1,5 +1,7 @@
 using RengaBri4kaKernel.AuxFunctions;
+using RengaBri4kaKernel.Functions;
 using RengaBri4kaKernel.Geometry;
+using RengaBri4kaKernel.RengaInternalResources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,21 +56,7 @@ namespace RengaBri4kaKernel.Extensions
             var propsManager = rengaObject.GetProperties();
             if (propsManager == null) return;
 
-            //var editOperation = PluginData.Project.CreateOperation();
-            //editOperation.Start();
-
-            for (int propCounter = 0; propCounter < propsId.Length; propCounter++)
-            {
-                Guid propId = propsId[propCounter];
-                object? propData = propsData[propCounter];
-                var propDef = PluginData.Project.PropertyManager.GetPropertyDescription(propId);
-
-                if (propsManager.Contains(propId) && propData != null)
-                {
-                    Renga.IProperty? propInfo = propsManager.Get(propId);
-                    propInfo.SetPropertyValue(propData);
-                }
-            }
+            propsManager.SetProperties(propsId, propsData);
         }
 
         public static Renga.IExportedObject3D? GetExportedObject3D(this Renga.IModelObject rengaObject)
@@ -115,11 +103,14 @@ namespace RengaBri4kaKernel.Extensions
             return new Line3D(points);
         }
 
-        public static Line3D? GetLineGeometry(this Renga.IModelObject rengaObject, int segmentation)
+        public static Line3D? GetLineGeometry(this Renga.IModelObject rengaObject, bool isClosed = false)
         {
             object rengaObjectAsBaseline2DObjectRaw = rengaObject.GetInterfaceByName("IBaseline2DObject");
             if (rengaObjectAsBaseline2DObjectRaw != null)
             {
+                bool isSucessfullyCalculated;
+                double elevation = GetElevation(rengaObject, out isSucessfullyCalculated);
+
                 Renga.IBaseline2DObject? rengaObjectAsBaseline2DObject = rengaObjectAsBaseline2DObjectRaw as Renga.IBaseline2DObject;
                 if (rengaObjectAsBaseline2DObject != null)
                 {
@@ -129,17 +120,22 @@ namespace RengaBri4kaKernel.Extensions
                             Origin = new Renga.Point2D() { X = 0, Y = 0 },
                             xAxis = new Renga.Vector2D() { X = 1, Y = 0 }
                         });
-                    return RengaGeometryConverter.FromCurve2d_2(curve2d);
+                    Line3D? createdLine = RengaGeometryConverter.FromCurve2d_2(curve2d, elevation);
+                    if (createdLine != null && isClosed)
+                    {
+                        createdLine.Vertices.Add(createdLine.Vertices.First());
+                    }
+                    return createdLine;
                 }
             }
             
             
-            if (rengaObject.ObjectType.Equals(Renga.EntityTypes.Beam))
+            if (rengaObject.ObjectType.Equals(RengaObjectTypes.Beam))
             {
                 Renga.IBeamParams? objAsBeam = rengaObject as Renga.IBeamParams;
                 if (objAsBeam != null) return RengaGeometryConverter.FromCurve3d_2(objAsBeam.GetBaseline());
             }
-            if (rengaObject.ObjectType.Equals(Renga.EntityTypes.Column))
+            if (rengaObject.ObjectType.Equals(RengaObjectTypes.Column))
             {
                 Renga.IColumnParams? objAsColumn = rengaObject as Renga.IColumnParams;
                 if (objAsColumn != null) return new Line3D()
@@ -157,13 +153,40 @@ namespace RengaBri4kaKernel.Extensions
             //    Renga.IFloorParams? objAsFloor = rengaObject as Renga.IFloorParams;
             //    if (objAsFloor != null) return RengaGeometryConverter.FromCurve2d(objAsFloor.GetContour());
             //}
-            if (rengaObject.ObjectType.Equals(Renga.EntityTypes.Route))
+            if (rengaObject.ObjectType.Equals(RengaObjectTypes.Route))
             {
                 Renga.IRouteParams? objAsRoute = rengaObject as Renga.IRouteParams;
-                if (objAsRoute != null) return RengaGeometryConverter.FromCurve3d(objAsRoute.GetContour(), segmentation);
+                if (objAsRoute != null) return RengaGeometryConverter.FromCurve3d(objAsRoute.GetContour());
             }
 
             return null;
+        }
+
+        public static double GetElevation(this Renga.IModelObject rengaObject, out bool isSucessfullyCalculated)
+        {
+            isSucessfullyCalculated = false;
+            Renga.IProject? rengaProject = PluginData.Project;
+            if (rengaProject == null) return 0.0;
+
+            var rengaAllObjects = rengaProject.Model.GetObjectsSafe();
+            if (rengaAllObjects == null) return 0.0;
+
+            Renga.ILevelObject? rengaFloorOnLevel = null;
+            try
+            {
+                rengaFloorOnLevel = rengaObject.GetInterfaceByName("ILevelObject") as Renga.ILevelObject;
+
+            }
+            catch { }
+            
+            if (rengaFloorOnLevel == null) return 0.0;
+
+            Renga.IModelObject? rengaLevelObjectRaw = rengaAllObjects.GetById(rengaFloorOnLevel.LevelId);
+            Renga.ILevel? rengaLevelObject = rengaLevelObjectRaw.GetInterfaceByName("ILevel") as Renga.ILevel;
+            if (rengaLevelObject == null) return 0.0;
+
+            isSucessfullyCalculated = true;
+            return rengaLevelObject.Elevation + rengaFloorOnLevel.ElevationAboveLevel;
         }
     }
 }

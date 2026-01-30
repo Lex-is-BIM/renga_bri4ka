@@ -9,7 +9,10 @@ namespace RengaBri4kaKernel.Geometry
     public class ContourSegment
     {
         public Point3D Start { get; set; }
+        public int StartVertexIndex { get; set; }
         public Point3D End { get; set; }
+        public int EndVertexIndex { get; set; }
+
         public double Level { get; set; }
 
         public ContourSegment(Point3D start, Point3D end, double level)
@@ -17,6 +20,26 @@ namespace RengaBri4kaKernel.Geometry
             Start = start;
             End = end;
             Level = level;
+        }
+
+        public ContourSegment(Point3D start, Point3D end, double level, int startIndex, int endIndex)
+        {
+            Start = start;
+            End = end;
+            Level = level;
+            StartVertexIndex = startIndex;
+            EndVertexIndex = endIndex;
+        }
+
+        public bool Equals(ContourSegment other)
+        {
+            return (StartVertexIndex == other.StartVertexIndex && EndVertexIndex == other.EndVertexIndex) |
+                   (StartVertexIndex == other.EndVertexIndex && EndVertexIndex == other.StartVertexIndex);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is ContourSegment other && Equals(other);
         }
     }
 

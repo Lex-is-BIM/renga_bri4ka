@@ -7,12 +7,14 @@ using System.Reflection;
 using System.Diagnostics;
 using System.Windows;
 
+using Renga;
+using Renga.GridTypes;
+
 using RengaBri4kaKernel;
 using RengaBri4kaKernel.Functions;
 using RengaBri4kaKernel.UI.Windows;
 using RengaBri4kaKernel.Configs;
-
-using Renga;
+using RengaBri4kaKernel.Extensions;
 
 
 namespace RengaBri4kaLoader
@@ -24,21 +26,25 @@ namespace RengaBri4kaLoader
         RENGA_BRI4KA_TRIANGLESSTAT,
         RENGA_BRI4KA_FILEMETADATA,
         RENGA_BRI4KA_SETENT3DGEOMPROPS,
-        RENGA_BRI4KA_LEVEL2STAT,
+        RENGA_BRI4KA_GETBBOXPROPS,
+        RENGA_BRI4KA_SAVEELEVATION,
         RENGA_BRI4KA_TEXTCOLORING,
         RENGA_BRI4KA_COLLISIONSMANAGER,
         RENGA_BRI4KA_COLLISIONSVIEWER,
         RENGA_BRI4KA_SOLARSHADOWANAL,
         RENGA_BRI4KA_FLOORBYROOM,
         RENGA_BRI4KA_VIEWCUBE,
-        RENGA_BRI4KA_FOLLOWUSERSELECTION,
-        RENGA_BRI4KA_ELEVATIONIMPORT,
         RENGA_BRI4KA_COMMANDLINEPREPROC,
         RENGA_BRI4KA_VIEWPOINTSMANAGER,
-        //RENGA_BRI4KA_FOLLOWDELETED,
-        RENGA_BRI4KA_PLUGINVERSION,
+        RENGA_BRI4KA_LINKROOMWITHFLOOR,
+        RENGA_BRI4KA_FOLLOWUSERSELECTION,
+        RENGA_BRI4KA_PINLINKED,
+        RENGA_BRI4KA_UNPINALL,
+        RENGA_BRI4KA_PINSELECTED,
+        RENGA_BRI4KA_ELEVATIONIMPORT,
         RENGA_BRI4KA_PLUGINSETTINGS,
-        //RENGA_BRI4KA_PLUGINHELP
+        RENGA_BRI4KA_PLUGINVERSION,
+        RENGA_BRI4KA_SHOWHELP,
     }
 
     internal class PluginMenuItem
@@ -120,7 +126,21 @@ namespace RengaBri4kaLoader
                     }
                 case PluginFunctionVariant.RENGA_BRI4KA_SETENT3DGEOMPROPS:
                     {
-                        new RengaGeometryStat2().Calculate();
+                        RengaGeometryStat2 func = new RengaGeometryStat2();
+                        func.Calculate();
+                        break;
+                    }
+                case PluginFunctionVariant.RENGA_BRI4KA_GETBBOXPROPS:
+                    {
+                        RengaBBoxStat func = new RengaBBoxStat();
+                        func.Calculate();
+
+                        break;
+                    }
+                case PluginFunctionVariant.RENGA_BRI4KA_SAVEELEVATION:
+                    {
+                        RengaElevationCalc func = new RengaElevationCalc();
+                        func.Calculate();
                         break;
                     }
 
@@ -192,12 +212,44 @@ namespace RengaBri4kaLoader
                         }
                         break;
                     }
+                case PluginFunctionVariant.RENGA_BRI4KA_LINKROOMWITHFLOOR:
+                    {
+#if DEBUG
+                        Bri4ka_LinkRoomAndFloor func = new Bri4ka_LinkRoomAndFloor();
+                        func.ShowDialog();
+#else
+                        RengaLinkRoomWithFloor func = new RengaLinkRoomWithFloor();
+                        func.Calculate(new LinkRoomWithFloorConfig() { UseOnlyVisible = false, RoomGeometryMode = RoomGeometryVariant.Centroid});
+#endif
+                        break;
+                    }
                 // Импорт и экспорт
                 case PluginFunctionVariant.RENGA_BRI4KA_ELEVATIONIMPORT:
                     {
                         Bri4ka_ElevationImporterSettings elevImport = new Bri4ka_ElevationImporterSettings();
                         elevImport.ShowDialog();
 
+                        break;
+                    }
+
+                // Блокировка
+                case PluginFunctionVariant.RENGA_BRI4KA_PINSELECTED:
+                    {
+                        Bri4ka_PinCategories window = new Bri4ka_PinCategories();
+                        if (window.ShowDialog() == true)
+                        {
+                            RengaObjectPinFunctions.setPinned(true, window.Categories);
+                        }
+                        break;
+                    }
+                case PluginFunctionVariant.RENGA_BRI4KA_UNPINALL:
+                    {
+                        RengaObjectPinFunctions.setPinned(false, null);
+                        break;
+                    }
+                case PluginFunctionVariant.RENGA_BRI4KA_PINLINKED:
+                    {
+                        RengaObjectPinFunctions.pinLinked();
                         break;
                     }
 
@@ -215,25 +267,41 @@ namespace RengaBri4kaLoader
                         MessageBox.Show("Версия плагина: " + ass_info.Version.ToString());
                     }
                     break;
-                    //case PluginFunctionVariant.RENGA_BRI4KA_PLUGINHELP:
-                    //    {
+                case PluginFunctionVariant.RENGA_BRI4KA_SHOWHELP:
+                    {
 
-                    //        string pdfGuidePath = Path.Combine(PluginData.PluginFolder, "Bri4kaGuide.pdf");
-                    //        if (File.Exists(pdfGuidePath))
-                    //        {
-                    //            using Process fileopener = new Process();
-                    //            fileopener.StartInfo.FileName = "explorer";
-                    //            fileopener.StartInfo.Arguments = "\"" + pdfGuidePath + "\"";
+                        string pdfGuidePath = Path.Combine(Path.GetDirectoryName(PluginData.PluginFolder), "Bri4kaGuide.pdf");
+                        if (File.Exists(pdfGuidePath))
+                        {
+                            // Create a safe method inspite in clasic CadAddinManager
+                            ProcessStartInfo processStartInfo = new ProcessStartInfo()
+                            {
+                                FileName = "explorer.exe",
+                                Arguments = $"\"{pdfGuidePath}\"",
+                                UseShellExecute = true, // Use shell execute for opening with default application
+                                CreateNoWindow = true,
+                                ErrorDialog = false
+                            };
+                            try
+                            {
+                                using (var process = new Process { StartInfo = processStartInfo })
+                                {
+                                    process.Start();
+                                }
+                            }
+                            catch (Exception ex)
+                            {
 
-                    //            fileopener.Start();
-                    //            //Process.Start("explorer.exe", pdfGuidePath);
-                    //        }
-                    //break;
-                //    }
+                            }
+                        }
+                        break;
+                    }
+            
                 //    
 
                 case PluginFunctionVariant._RENGA_TEST:
                     {
+                        RengaTestFunction.Start();
                         break;
                     }
 

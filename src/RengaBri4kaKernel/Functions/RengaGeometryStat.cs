@@ -1,6 +1,7 @@
 using Renga;
 using RengaBri4kaKernel.AuxFunctions;
 using RengaBri4kaKernel.Extensions;
+using RengaBri4kaKernel.RengaInternalResources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,11 +42,11 @@ namespace RengaBri4kaKernel.Functions
             RengaPropertiesUtils.RegisterPropertyIfNotReg(ParametersGeometryStat.NormalsCountId, ParametersGeometryStat.NormalsCount, PropertyType.PropertyType_Integer);
 
             //TODO: создавать только для объектов, имеющих 3D-представление
-            RengaPropertiesUtils.AssignPropertiesToTypes(ParametersGeometryStat.MeshesCountId, null);
-            RengaPropertiesUtils.AssignPropertiesToTypes(ParametersGeometryStat.GridsCountId, null);
-            RengaPropertiesUtils.AssignPropertiesToTypes(ParametersGeometryStat.VerticesCountId, null);
-            RengaPropertiesUtils.AssignPropertiesToTypes(ParametersGeometryStat.TrianglesCountId, null);
-            RengaPropertiesUtils.AssignPropertiesToTypes(ParametersGeometryStat.NormalsCountId, null);
+            RengaPropertiesUtils.AssignPropertiesToTypes(ParametersGeometryStat.MeshesCountId, RengaObjectTypes.GetObject3dCategories());
+            RengaPropertiesUtils.AssignPropertiesToTypes(ParametersGeometryStat.GridsCountId, RengaObjectTypes.GetObject3dCategories());
+            RengaPropertiesUtils.AssignPropertiesToTypes(ParametersGeometryStat.VerticesCountId, RengaObjectTypes.GetObject3dCategories());
+            RengaPropertiesUtils.AssignPropertiesToTypes(ParametersGeometryStat.TrianglesCountId, RengaObjectTypes.GetObject3dCategories());
+            RengaPropertiesUtils.AssignPropertiesToTypes(ParametersGeometryStat.NormalsCountId, RengaObjectTypes.GetObject3dCategories());
         }
 
         public void Calculate()

@@ -6,6 +6,38 @@ using System.Threading.Tasks;
 
 namespace RengaBri4kaKernel.Geometry
 {
+    //public class EdgeTmp
+    //{
+    //    public int Start { get; }
+    //    public int End { get; }
+
+    //    public Point3D StartVertex { get; set; }
+    //    public Point3D EndVertex { get; set; }
+
+    //    public EdgeTmp(int start, int end, Point3D startVertex, Point3D endVertex)
+    //    {
+    //        Start = start;
+    //        End = end;
+    //        StartVertex = startVertex;
+    //        EndVertex = endVertex;
+    //    }
+
+    //    private static bool VectorEquals(int a, int b)
+    //    {
+    //        return (a - b) < 1e-10;
+    //    }
+
+    //    public bool Equals(EdgeTmp other)
+    //    {
+    //        return (VectorEquals(Start, other.Start) && VectorEquals(End, other.End)) ||
+    //               (VectorEquals(Start, other.End) && VectorEquals(End, other.Start));
+    //    }
+
+    //    public override bool Equals(object obj)
+    //    {
+    //        return obj is EdgeTmp other && Equals(other);
+    //    }
+    //}
     public struct Edge : IEquatable<Edge>
     {
         public Vector3 Start { get; }
@@ -16,6 +48,8 @@ namespace RengaBri4kaKernel.Geometry
             Start = start;
             End = end;
         }
+
+
 
         public Edge Normalized()
         {

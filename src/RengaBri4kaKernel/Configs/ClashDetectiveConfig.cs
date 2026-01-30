@@ -1,4 +1,5 @@
 using RengaBri4kaKernel.AuxFunctions;
+using RengaBri4kaKernel.RengaInternalResources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +53,7 @@ namespace RengaBri4kaKernel.Configs
         public override string ToString()
         {
             StringBuilder report = new StringBuilder();
-            var rengaTypes = RengaUtils.GetRengaObjectTypes();
+            var rengaTypes = RengaObjectTypes.GetRengaObjectTypesInfo();
 
             string[] names1 = Group1.Select(id=> rengaTypes.Where(t=>t.Id == id).First().Name).ToArray();
             string[] names2 = Group2.Select(id => rengaTypes.Where(t => t.Id == id).First().Name).ToArray();

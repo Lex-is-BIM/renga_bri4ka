@@ -16,7 +16,7 @@ using System.Windows.Shapes;
 using RengaBri4kaKernel.Configs;
 using RengaBri4kaKernel.Functions;
 using RengaBri4kaKernel.AuxFunctions;
-using Renga;
+using RengaBri4kaKernel.RengaInternalResources;
 
 namespace RengaBri4kaKernel.UI.Windows
 {
@@ -28,7 +28,7 @@ namespace RengaBri4kaKernel.UI.Windows
         public Bri4ka_ClashDetective()
         {
             InitializeComponent();
-            pRengaTypes = RengaUtils.GetRengaObjectTypes();
+            pRengaTypes = RengaObjectTypes.GetRengaObjectTypesInfo(true);
             setObjectTypes(this.ListBox_Group1);
             setObjectTypes(this.ListBox_Group2);
 

@@ -4,6 +4,7 @@ using RengaBri4kaKernel.Geometry;
 using RengaBri4kaKernel.RengaInternalResources;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -71,7 +72,7 @@ namespace RengaBri4kaKernel.Extensions
             editOperation.Start();
 
             Renga.INewEntityArgs creationParams = rengaModel.CreateNewEntityArgs();
-            creationParams.TypeId = Renga.EntityTypes.ModelText;
+            creationParams.TypeId = RengaObjectTypes.ModelText;
             double cos = Math.Cos(angleRadians);
             double sin = Math.Sin(angleRadians);
 
@@ -86,7 +87,7 @@ namespace RengaBri4kaKernel.Extensions
             };
             if (textType == TextObjectType.DrawingText)
             {
-                creationParams.TypeId = Renga.EntityTypes.DrawingText;
+                creationParams.TypeId = RengaObjectTypes.DrawingText;
                 creationParams.Placement2D = new Renga.Placement2D()
                 {
                     Origin = new Renga.Point2D() { X = Position.X, Y = Position.Y },
@@ -196,7 +197,7 @@ namespace RengaBri4kaKernel.Extensions
             editOperation.Start();
 
             Renga.INewEntityArgs creationParams = rengaModel.CreateNewEntityArgs();
-            creationParams.TypeId = Renga.EntityTypes.Level;
+            creationParams.TypeId = RengaObjectTypes.Level;
             creationParams.Placement3D = new Renga.Placement3D()
             {
                 //Тут не задает elevation
@@ -409,6 +410,32 @@ namespace RengaBri4kaKernel.Extensions
 
         }
 
+        public static Renga.IModelObject[]? GetObjectsOnLevel(this Renga.IModel rengaModel, int rengaLevelId)
+        {
+            Renga.IModelObjectCollection? allObjects = GetObjectsSafe(rengaModel);
+
+            List<Renga.IModelObject> resultObjects = new List<IModelObject>();
+            if (allObjects == null) return null;
+
+            for (int i = 0; i < allObjects.Count; i++)
+            {
+                Renga.IModelObject rengaObject = allObjects.GetByIndex(i);
+                if (rengaObject.ObjectType == RengaObjectTypes.Level) continue;
+                Renga.ILevelObject? rengaObjectOnLevel = null;
+                try
+                {
+                    rengaObjectOnLevel = rengaObject.GetInterfaceByName("ILevelObject") as Renga.ILevelObject;
+                }
+                catch { }
+
+                
+                if (rengaObjectOnLevel == null) continue;
+
+                if (rengaObjectOnLevel.LevelId == rengaLevelId) resultObjects.Add(rengaObject);
+            }
+            return resultObjects.ToArray();
+        }
+
         public static IEnumerable<Renga.IModelObject>? GetAllObjects(this Renga.IModel rengaModel, bool visibleOnly = true)
         {
             var view = PluginData.rengaApplication.ActiveView;
@@ -428,7 +455,7 @@ namespace RengaBri4kaKernel.Extensions
             return needObjects;
         }
 
-        public static Renga.IModelObjectCollection? GetObjects(this Renga.IModel rengaModel)
+        public static Renga.IModelObjectCollection? GetObjectsSafe(this Renga.IModel rengaModel)
         {
             Renga.IModelObjectCollection? result = null;
             try
@@ -437,6 +464,37 @@ namespace RengaBri4kaKernel.Extensions
             }
             catch (Exception ex) { }
             return result;
+        }
+
+        public static Renga.IModelObject[]? GetObjects2(this Renga.IModel rengaModel, Guid[]? types)
+        {
+            Renga.IModelObjectCollection? allObjects = GetObjectsSafe(rengaModel);
+            if (allObjects == null) return null;
+
+            bool procTypes = false;
+            if (types != null && types.Any()) procTypes = true;
+
+            List<Renga.IModelObject> resultObjects = new List<IModelObject>();
+            for (int i = 0; i < allObjects.Count; i++)
+            {
+                Renga.IModelObject rengaObject = allObjects.GetByIndex(i);
+                if ((procTypes && types.Contains(rengaObject.ObjectType)) | !procTypes) resultObjects.Add(rengaObject);
+            }
+            return resultObjects.ToArray();
+        }
+
+        public static Renga.IModelObject[] GetObjectsByIntIds(this Renga.IModel rengaModel, int[] ids)
+        {
+            Renga.IModelObject[] resultObjects = new IModelObject[ids.Length];
+
+            Renga.IModelObjectCollection? allObjects = GetObjectsSafe(rengaModel);
+            if (allObjects == null) return resultObjects;
+
+            for (int i = 0; i < ids.Length; i++)
+            {
+                resultObjects[i] = allObjects.GetById(ids[i]);
+            }
+            return resultObjects;
         }
 
         public static int GetLevelIdByName(this Renga.IModel rengaModel, string name)

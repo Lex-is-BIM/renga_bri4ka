@@ -21,6 +21,7 @@ namespace RengaBri4kaKernel.Extensions
                 case Renga.PropertyType.PropertyType_Length:
                 case Renga.PropertyType.PropertyType_Mass:
                 case Renga.PropertyType.PropertyType_Volume:
+                case Renga.PropertyType.PropertyType_Area:
                     {
                         double? propDataDouble = propData as double?;
                         if (propDataDouble != null)
@@ -42,6 +43,9 @@ namespace RengaBri4kaKernel.Extensions
                                     break;
                                 case Renga.PropertyType.PropertyType_Volume:
                                     property.SetVolumeValue((double)propDataDouble, Renga.VolumeUnit.VolumeUnit_Meters3);
+                                    break;
+                                case Renga.PropertyType.PropertyType_Area:
+                                    property.SetAreaValue((double)propDataDouble, Renga.AreaUnit.AreaUnit_Meters2);
                                     break;
                             }
                         }

@@ -3,6 +3,7 @@ using RengaBri4kaKernel.Functions;
 using RengaBri4kaKernel.RengaInternalResources;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -13,22 +14,24 @@ namespace RengaBri4kaKernel.AuxFunctions
     internal class RengaUtils
     {
 
-        public static RengaTypeInfo[] GetRengaObjectTypes()
-        {
-            if (mRengaEntTypes == null)
-            {
-                var ids = typeof(Renga.EntityTypes).GetRuntimeFields();
-                mRengaEntTypes = new RengaTypeInfo[ids.Count()];
-                for (int i = 0; i < ids.Count(); i++)
-                {
-                    FieldInfo field = ids.ElementAt(i);
-                    var startIdx = field.Name.IndexOf('<');
-                    var endIdx = field.Name.IndexOf('>');
-                    mRengaEntTypes[i] = new RengaTypeInfo() { Id = (Guid)field.GetValue(null)!, Name = field.Name.Substring(startIdx + 1, endIdx - 1) };
-                }
-            }
-            return mRengaEntTypes;
-        }
+        //public static RengaTypeInfo[] GetRengaObjectTypes(bool only3d = false)
+        //{
+        //    var objects_3d = RengaObjectTypes.GetObject3dCategories();
+
+        //    if (mRengaEntTypes == null)
+        //    {
+        //        var ids = typeof(Renga.EntityTypes).GetRuntimeFields();
+        //        mRengaEntTypes = new RengaTypeInfo[ids.Count()];
+        //        for (int i = 0; i < ids.Count(); i++)
+        //        {
+        //            FieldInfo field = ids.ElementAt(i);
+        //            var startIdx = field.Name.IndexOf('<');
+        //            var endIdx = field.Name.IndexOf('>');
+        //            mRengaEntTypes[i] = new RengaTypeInfo() { Id = (Guid)field.GetValue(null)!, Name = field.Name.Substring(startIdx + 1, endIdx - 1) };
+        //        }
+        //    }
+        //    return mRengaEntTypes.OrderBy(t=>t.Name).ToArray();
+        //}
         private static RengaTypeInfo[]? mRengaEntTypes;
 
         public static int[]? ConvertUniqueIdsToId(Guid[]? objectsUniqId)
@@ -71,6 +74,32 @@ namespace RengaBri4kaKernel.AuxFunctions
             PluginData.rengaApplication.UI.ShowMessageBox(Renga.MessageIcon.MessageIcon_Warning, "Bri4ka Предупреждение", text);
         }
 
+        public static void AddLog(string text)
+        {
+
+#if DEBUG
+            Logger.Write(text);
+#endif
+        }
+
+    }
+
+    internal class Logger
+    {
+        private Logger()
+        {
+            if (File.Exists(pLogPath)) File.Delete(pLogPath); 
+        }
+        public static void Write(string text)
+        {
+            if (mInstance == null) mInstance = new Logger();
+
+            File.AppendAllText(pLogPath, text);
+        }
+
+
+        private static string pLogPath = "tmpLog.txt";
+        private static Logger? mInstance;
     }
 
     internal class RengaTypeInfo
